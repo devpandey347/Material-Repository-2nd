@@ -1,0 +1,661 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem2/ECE182">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE182/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE182/Unit6/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/ECE182/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ECE182</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            10 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Operational amplifiers and applications</h1>
+<h2>1. Introduction to Operational Amplifiers (Op-Amps)</h2>
+<p>An operational amplifier (Op-Amp) is a highly stable, high-gain DC-coupled voltage amplifier with a differential input and, typically, a single-ended output. Originally designed to perform mathematical operations (addition, integration, differentiation) in analog computers, op-amps are now the fundamental building blocks of modern analog electronics, widely used in robotics for signal conditioning, filtering, and control systems.</p>
+<hr/>
+<h2>2. The 741 Op-Amp</h2>
+<p>The IC 741 is a classic, universally recognized, and widely used operational amplifier. It is a monolithic integrated circuit comprising bipolar junction transistors (BJTs), resistors, and a capacitor.</p>
+<h3>2.1 Block Diagram of the 741 Op-Amp</h3>
+<p>The internal architecture of a standard op-amp like the 741 can be divided into four distinct stages:</p>
+<ol>
+<li><strong>Input Stage (Dual-Input, Balanced-Output Differential Amplifier):</strong> Provides most of the voltage gain and establishes the input resistance. It determines the Common-Mode Rejection Ratio (CMRR).</li>
+<li><strong>Intermediate Stage (Dual-Input, Unbalanced-Output Differential Amplifier):</strong> Driven by the output of the first stage, this stage provides additional voltage gain.</li>
+<li><strong>Level Shifting Stage:</strong> Because the op-amp is directly coupled, the DC voltage level increases from stage to stage. The level shifter brings the DC level back to zero volts with respect to ground.</li>
+<li><strong>Output Stage (Push-Pull Amplifier):</strong> Provides high current sourcing/sinking capability, low output impedance, and limits the output swing. It drives the external load.</li>
+</ol>
+<h3>2.2 Pin Configuration (8-Pin DIP)</h3>
+<p>The standard 741 IC comes in an 8-pin Dual In-line Package (DIP).</p>
+<ul>
+<li><strong>Pin 1 (Offset Null):</strong> Used to eliminate the offset voltage. Connected to a potentiometer alongside Pin 5.</li>
+<li><strong>Pin 2 (Inverting Input, IN-):</strong> A positive voltage applied here yields a negative voltage at the output (180° phase shift).</li>
+<li><strong>Pin 3 (Non-Inverting Input, IN+):</strong> A positive voltage applied here yields a positive voltage at the output (0° phase shift).</li>
+<li><strong>Pin 4 (V- or <span class="katex-inline" data-math="V_{EE}"></span>):</strong> Negative power supply terminal.</li>
+<li><strong>Pin 5 (Offset Null):</strong> Used in conjunction with Pin 1.</li>
+<li><strong>Pin 6 (Output):</strong> The amplified output signal.</li>
+<li><strong>Pin 7 (V+ or <span class="katex-inline" data-math="V_{CC}"></span>):</strong> Positive power supply terminal.</li>
+<li><strong>Pin 8 (NC):</strong> No Connection.</li>
+</ul>
+<hr/>
+<h2>3. Characteristics of Op-Amps</h2>
+<h3>3.1 Ideal vs. Practical (741) Characteristics</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Ideal Op-Amp</th>
+<th style="text-align: left;">Practical 741 Op-Amp</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Voltage Gain (<span class="katex-inline" data-math="A_v"></span>)</strong></td>
+<td style="text-align: left;">Infinite (<span class="katex-inline" data-math="\infty"></span>)</td>
+<td style="text-align: left;">Very High (~200,000)</td>
+<td style="text-align: left;">Open-loop gain without feedback.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Input Impedance (<span class="katex-inline" data-math="Z_{in}"></span>)</strong></td>
+<td style="text-align: left;">Infinite (<span class="katex-inline" data-math="\infty"></span>)</td>
+<td style="text-align: left;">High (~2 M<span class="katex-inline" data-math="\Omega"></span>)</td>
+<td style="text-align: left;">Draws no current from the input signal source.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Output Impedance (<span class="katex-inline" data-math="Z_{out}"></span>)</strong></td>
+<td style="text-align: left;">Zero (0 <span class="katex-inline" data-math="\Omega"></span>)</td>
+<td style="text-align: left;">Low (~75 <span class="katex-inline" data-math="\Omega"></span>)</td>
+<td style="text-align: left;">Can drive any load without voltage drop.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Bandwidth (BW)</strong></td>
+<td style="text-align: left;">Infinite (<span class="katex-inline" data-math="\infty"></span>)</td>
+<td style="text-align: left;">Limited (~1 MHz)</td>
+<td style="text-align: left;">Range of frequencies it can amplify.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CMRR</strong></td>
+<td style="text-align: left;">Infinite (<span class="katex-inline" data-math="\infty"></span>)</td>
+<td style="text-align: left;">High (~90 dB)</td>
+<td style="text-align: left;">Ability to reject signals common to both inputs.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Slew Rate (SR)</strong></td>
+<td style="text-align: left;">Infinite (<span class="katex-inline" data-math="\infty"></span>)</td>
+<td style="text-align: left;">0.5 V/µs</td>
+<td style="text-align: left;">Maximum rate of change of the output voltage.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Offset Voltage</strong></td>
+<td style="text-align: left;">Zero (0 V)</td>
+<td style="text-align: left;">~2 mV</td>
+<td style="text-align: left;">Output voltage when both inputs are grounded.</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 Applications of Op-Amps in Robotics</h3>
+<ul>
+<li><strong>Signal Conditioning:</strong> Amplifying weak signals from sensors (e.g., encoders, photodiodes, strain gauges).</li>
+<li><strong>Filtering:</strong> Removing mechanical noise or electrical interference from sensor readings.</li>
+<li><strong>Control Systems:</strong> Implementing PID (Proportional-Integral-Derivative) controllers for motor control.</li>
+<li><strong>Analog-to-Digital Interfacing:</strong> Buffering and scaling analog signals before they reach a microcontroller's ADC.</li>
+</ul>
+<hr/>
+<h2>4. Basic Amplifier Configurations</h2>
+<h3>4.1 Inverting Amplifier</h3>
+<p>In this configuration, the input signal is applied to the inverting terminal (Pin 2) through a resistor (<span class="katex-inline" data-math="R_{in}"></span>), and the non-inverting terminal is grounded. Feedback is provided from the output to the inverting input via <span class="katex-inline" data-math="R_f"></span>.</p>
+<ul>
+<li><strong>Virtual Ground Concept:</strong> Because <span class="katex-inline" data-math="Z_{in}"></span> is infinite and gain is infinite, the voltage difference between the two input terminals is practically zero. Since Pin 3 is grounded (0V), Pin 2 acts as a "virtual ground".</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V_{out} = - \left( \frac{R_f}{R_{in}} \right) V_{in}"></span></li>
+<li><strong>Characteristics:</strong> Produces a 180° phase shift. Gain is determined solely by external resistors.</li>
+</ul>
+<h3>4.2 Non-Inverting Amplifier</h3>
+<p>The input signal is applied to the non-inverting terminal (Pin 3). The inverting terminal is connected to ground through a resistor (<span class="katex-inline" data-math="R_{in}"></span>), and feedback is applied via <span class="katex-inline" data-math="R_f"></span>.</p>
+<ul>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V_{out} = \left( 1 + \frac{R_f}{R_{in}} \right) V_{in}"></span></li>
+<li><strong>Characteristics:</strong> The output is in phase with the input. High input impedance makes it ideal for buffering.</li>
+</ul>
+<h3>4.3 Constant Gain Amplifier</h3>
+<p>Both the inverting and non-inverting configurations function as constant gain amplifiers. By selecting precise, temperature-stable resistors for <span class="katex-inline" data-math="R_f"></span> and <span class="katex-inline" data-math="R_{in}"></span>, the op-amp provides a fixed, reliable amplification factor regardless of internal op-amp parameter variations. </p>
+<h3>4.4 Voltage Buffer (Unity Gain Follower)</h3>
+<p>A special case of the non-inverting amplifier where <span class="katex-inline" data-math="R_f = 0"></span> (short circuit) and <span class="katex-inline" data-math="R_{in} = \infty"></span> (open circuit).</p>
+<ul>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V_{out} = V_{in}"></span> (Gain <span class="katex-inline" data-math="A_v = 1"></span>)</li>
+<li><strong>Function:</strong> While it does not amplify the voltage, it serves as an impedance matching device. It presents an extremely high impedance to the source (drawing no current) and a very low impedance to the load, preventing signal degradation.</li>
+</ul>
+<hr/>
+<h2>5. Mathematical Operations</h2>
+<h3>5.1 Summing Amplifier (Inverting Summer)</h3>
+<p>An extension of the inverting amplifier that allows multiple input signals to be added together.</p>
+<ul>
+<li><strong>Circuit:</strong> Multiple inputs (<span class="katex-inline" data-math="V_1, V_2, V_3"></span>) are connected to the inverting terminal via respective resistors (<span class="katex-inline" data-math="R_1, R_2, R_3"></span>).</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V_{out} = -R_f \left( \frac{V_1}{R_1} + \frac{V_2}{R_2} + \frac{V_3}{R_3} \right)"></span></li>
+<li><strong>Application:</strong> Audio mixing, combining sensor data, D/A converters.</li>
+</ul>
+<h3>5.2 Difference Amplifier (Subtractor)</h3>
+<p>Amplifies the difference between two input voltages.</p>
+<ul>
+<li><strong>Circuit:</strong> Input 1 is applied to the inverting terminal; Input 2 is applied to the non-inverting terminal via resistor divider networks.</li>
+<li><strong>Formula:</strong> If <span class="katex-inline" data-math="R_1 = R_2 = R_3 = R_4"></span>, then <span class="katex-inline" data-math="V_{out} = V_2 - V_1"></span>.</li>
+<li><strong>Application:</strong> Rejecting common-mode noise, measuring voltage drops across components.</li>
+</ul>
+<h3>5.3 Differentiator</h3>
+<p>Produces an output voltage proportional to the rate of change (derivative) of the input voltage.</p>
+<ul>
+<li><strong>Circuit:</strong> A capacitor (<span class="katex-inline" data-math="C"></span>) is placed at the input, and a resistor (<span class="katex-inline" data-math="R"></span>) is in the feedback loop.</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V_{out} = -RC \frac{dV_{in}}{dt}"></span></li>
+<li><strong>Practical constraint:</strong> A basic differentiator is highly susceptible to high-frequency noise. A practical differentiator adds a small resistor in series with the input capacitor to limit high-frequency gain.</li>
+<li><strong>Application:</strong> Edge detection in square waves, rate-of-change sensors in robotics.</li>
+</ul>
+<h3>5.4 Integrator</h3>
+<p>Produces an output voltage proportional to the integral (area under the curve) of the input voltage over time.</p>
+<ul>
+<li><strong>Circuit:</strong> A resistor (<span class="katex-inline" data-math="R"></span>) is at the input, and a capacitor (<span class="katex-inline" data-math="C"></span>) is in the feedback loop.</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V_{out} = -\frac{1}{RC} \int V_{in} dt"></span></li>
+<li><strong>Practical constraint:</strong> A basic integrator is prone to DC drift, which saturates the op-amp. A large resistor is usually placed in parallel with the feedback capacitor to provide a DC feedback path.</li>
+<li><strong>Application:</strong> Generating ramp or triangle waves, calculating distance from velocity (in robotics navigation).</li>
+</ul>
+<hr/>
+<h2>6. Advanced Amplifiers</h2>
+<h3>6.1 Differential Amplifier</h3>
+<p>A differential amplifier amplifies the difference between two signals while actively rejecting signals that are common to both inputs (such as 50/60 Hz mains hum). </p>
+<ul>
+<li><strong>Performance Metric:</strong> The effectiveness is measured by the Common-Mode Rejection Ratio (CMRR). <span class="katex-inline" data-math="CMRR = 20 \log(A_d / A_c)"></span>, where <span class="katex-inline" data-math="A_d"></span> is differential gain and <span class="katex-inline" data-math="A_c"></span> is common-mode gain.</li>
+</ul>
+<h3>6.2 Instrumentation Amplifier</h3>
+<p>An advanced, precision differential amplifier consisting of three op-amps. It solves the low-input-impedance problem of the standard difference amplifier.</p>
+<ul>
+<li><strong>Architecture:</strong> Two non-inverting buffer stages feeding into a standard difference amplifier stage.</li>
+<li><strong>Key Features:</strong>
+<ul>
+<li><strong>Extremely High Input Impedance:</strong> Does not load the sensor.</li>
+<li><strong>High CMRR:</strong> Excellent noise rejection.</li>
+<li><strong>Programmable Gain:</strong> The gain of the entire circuit can be easily adjusted by changing a single external resistor (<span class="katex-inline" data-math="R_{gain}"></span>).</li>
+</ul></li>
+<li><strong>Applications:</strong> Reading biomedical signals (ECG/EEG), strain gauges, load cells in robotic joints, and thermocouples.</li>
+</ul>
+<hr/>
+<h2>7. Active Filters</h2>
+<p>Filters allow certain frequencies to pass while attenuating others. <strong>Active filters</strong> use op-amps alongside resistors and capacitors, eliminating the need for bulky, expensive inductors. Op-amps also provide voltage gain, preventing the signal attenuation seen in purely passive filters.</p>
+<h3>7.1 Low Pass Filter (LPF)</h3>
+<p>Allows low-frequency signals to pass and attenuates high-frequency signals.</p>
+<ul>
+<li><strong>First-Order LPF Circuit:</strong> An RC low-pass network connected to the non-inverting input of an op-amp, which is configured as a non-inverting amplifier.</li>
+<li><strong>Cutoff Frequency (<span class="katex-inline" data-math="f_c"></span>):</strong> <span class="katex-inline" data-math="f_c = \frac{1}{2\pi RC}"></span></li>
+<li><strong>Roll-off:</strong> -20 dB/decade for a first-order filter.</li>
+<li><strong>Application:</strong> Smoothing out PWM signals to create DC voltages, removing high-frequency sensor noise.</li>
+</ul>
+<h3>7.2 High Pass Filter (HPF)</h3>
+<p>Allows high-frequency signals to pass and attenuates low-frequency signals (including DC).</p>
+<ul>
+<li><strong>First-Order HPF Circuit:</strong> The resistor and capacitor positions of the LPF are swapped. The input goes through <span class="katex-inline" data-math="C"></span>, with <span class="katex-inline" data-math="R"></span> going to ground.</li>
+<li><strong>Cutoff Frequency (<span class="katex-inline" data-math="f_c"></span>):</strong> <span class="katex-inline" data-math="f_c = \frac{1}{2\pi RC}"></span></li>
+<li><strong>Application:</strong> Removing DC offset or low-frequency drift from audio or dynamic sensor signals.</li>
+</ul>
+<hr/>
+<h2>8. Comparators and Detectors</h2>
+<p>A comparator compares two voltages and switches its output to indicate which is larger. It is an op-amp operated in <strong>open-loop</strong> mode (no feedback), causing the high gain to drive the output into saturation.</p>
+<h3>8.1 Basic Comparator</h3>
+<ul>
+<li><strong>Operation:</strong> If <span class="katex-inline" data-math="V_{in(+)} &gt; V_{in(-)}"></span>, the output goes to <span class="katex-inline" data-math="+V_{sat}"></span> (near <span class="katex-inline" data-math="+V_{cc}"></span>). If <span class="katex-inline" data-math="V_{in(-)} &gt; V_{in(+)}"></span>, the output goes to <span class="katex-inline" data-math="-V_{sat}"></span> (near <span class="katex-inline" data-math="-V_{ee}"></span>).</li>
+<li><strong>Application:</strong> Level detection, threshold triggers for robotic sensors (e.g., line-following robots comparing light sensor voltage against a threshold).</li>
+</ul>
+<h3>8.2 Zero Crossing Detector (ZCD)</h3>
+<p>A specific type of comparator where the reference voltage is set to exactly 0V (Ground).</p>
+<ul>
+<li><strong>Operation:</strong> Detects when an AC signal crosses the 0V baseline. The output toggles between <span class="katex-inline" data-math="+V_{sat}"></span> and <span class="katex-inline" data-math="-V_{sat}"></span> precisely at the zero-crossing point.</li>
+<li><strong>Application:</strong> Sine-to-square wave conversion, phase angle detection, AC power synchronization for solid-state relays.</li>
+</ul>
+<hr/>
+<h2>9. Datasheet of Op-Amps</h2>
+<p>Understanding an op-amp datasheet is critical for proper circuit design. Key sections include:</p>
+<ol>
+<li><strong>Absolute Maximum Ratings:</strong> Exceeding these values (e.g., maximum supply voltage, maximum differential input voltage) will permanently damage the IC.</li>
+<li><strong>Input Offset Voltage (<span class="katex-inline" data-math="V_{os}"></span>):</strong> The small DC voltage that must be applied to the input terminals to force the resting output to precisely zero.</li>
+<li><strong>Input Bias Current (<span class="katex-inline" data-math="I_b"></span>):</strong> The average of the currents flowing into the two input terminals to bias the internal transistors.</li>
+<li><strong>Gain-Bandwidth Product (GBW):</strong> Indicates the frequency at which the op-amp's gain drops to unity (1). It defines the high-frequency limit of the amplifier.</li>
+<li><strong>Slew Rate (SR):</strong> The maximum rate of change of the output voltage (<span class="katex-inline" data-math="\Delta V / \Delta t"></span>). Crucial for high-frequency or high-amplitude signals to prevent distortion.</li>
+<li><strong>Power Supply Rejection Ratio (PSRR):</strong> A measure of how well the op-amp rejects noise coming from the power supply lines.</li>
+</ol>
+<hr/>
+<h2>10. Introduction to PSpice</h2>
+<p><strong>PSpice</strong> (Simulation Program with Integrated Circuit Emphasis) is a widely used circuit simulation software.</p>
+<ul>
+<li><strong>Purpose:</strong> Allows engineers to construct virtual electronics circuits and simulate their behavior under various conditions before physical prototyping.</li>
+<li><strong>Simulating Op-Amps in PSpice:</strong>
+<ul>
+<li><strong>Libraries:</strong> Op-amps are found in analog component libraries (e.g., <code>eval.slb</code> or <code>analog.opj</code>). The <code>uA741</code> model is commonly used for educational purposes.</li>
+<li><strong>Types of Analysis:</strong>
+<ul>
+<li><strong>DC Sweep:</strong> Sweeping a DC input voltage to see the linear and saturation regions of an op-amp.</li>
+<li><strong>AC Sweep:</strong> Evaluating the frequency response (Bode plots) to determine bandwidth and filter characteristics.</li>
+<li><strong>Transient Analysis:</strong> Observing circuit behavior over time, ideal for testing differentiators, integrators, and comparators with time-varying signals.</li>
+</ul></li>
+</ul></li>
+</ul>
+<hr/>
+<h2>11. Recent Trends in Electronics (Relevance to Robotics)</h2>
+<p>The field of electronics continuously evolves, directly impacting robotic architectures:</p>
+<ul>
+<li><strong>Miniaturization and Ultra-Low Power Op-Amps:</strong> Modern op-amps are packaged in microscopic forms (like SOT-23) and draw nano-amps of current. This is essential for battery-powered, swarm, and micro-robotics.</li>
+<li><strong>Rail-to-Rail Input/Output (RRIO):</strong> Older op-amps (like the 741) cannot swing their outputs all the way to the supply rails. Modern RRIO op-amps can swing from 0V to <span class="katex-inline" data-math="V_{cc}"></span>, maximizing dynamic range in low-voltage logic systems (3.3V or 1.8V).</li>
+<li><strong>Wide Bandgap Semiconductors:</strong> The shift from Silicon to Silicon Carbide (SiC) and Gallium Nitride (GaN) allows for highly efficient power amplifiers and motor drivers that switch faster and run cooler.</li>
+<li><strong>Flexible and Wearable Electronics:</strong> Development of flexible operational amplifiers printed on polymer substrates for use in soft robotics and electronic skin (e-skin) for robotic prosthetics.</li>
+<li><strong>Smart Sensors and Edge AI:</strong> Integrating the op-amp, ADC, and AI micro-accelerator on a single chip. This allows raw analog sensor data to be conditioned and processed locally at the "edge," sending only necessary digital data to the robot's main controller.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem2/ECE182/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

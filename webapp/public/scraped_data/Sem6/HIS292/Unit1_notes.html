@@ -1,0 +1,653 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/HIS292">HIS292</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/HIS292">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/HIS292/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/HIS292/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/HIS292/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>HIS292</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: The Delhi Sultanate (1206-1526): Political Expansion and Consolidation</h1>
+<h2>1. Sources for the Study of the Delhi Sultanate</h2>
+<p>The history of the Delhi Sultanate is reconstructed primarily through Persian chronicles, travelogues, and archaeological evidences.</p>
+<h3>A. Contemporary Persian Chronicles (Tarikh/Tawarikh)</h3>
+<p>These were court histories written by scholars under royal patronage. While detailed, they often suffer from exaggeration and religious bias.</p>
+<ul>
+<li><strong>Taj-ul-Maasir</strong> (Hasan Nizami): Covers the history of Qutbuddin Aibak and the early years of Iltutmish. It is the first official history of the Delhi Sultanate.</li>
+<li><strong>Tabaqat-i-Nasiri</strong> (Minhaj-us-Siraj): Dedicated to Sultan Nasiruddin Mahmud. It is the primary source for the history of the Mamluk (Slave) dynasty up to 1260 and gives detailed accounts of the Mongol invasions.</li>
+<li><strong>Tarikh-i-Firoz Shahi</strong> (Ziauddin Barani): The most vital source for the reigns of Balban, Alauddin Khalji, and the Tughlaqs (up to Firoz Shah’s 6th year). Barani focuses on political philosophy and the administration/economy (e.g., market reforms).</li>
+<li><strong>Khazain-ul-Futuh</strong> (Amir Khusrau): Describes the campaigns of Alauddin Khalji, particularly the Deccan conquests. Khusrau was a poet-historian who introduced a new rhetorical style.</li>
+<li><strong>Futuh-us-Salatin</strong> (Isami): A versified history of Muslim rule in India, critical of Muhammad bin Tughlaq.</li>
+</ul>
+<h3>B. Travelogues (Rehla)</h3>
+<ul>
+<li><strong>Ibn Battuta (The Rehla):</strong> A Moroccan traveler who served as Qazi in Delhi under Muhammad bin Tughlaq for eight years. His account provides invaluable insights into the social life, postal system, slavery, and the Sultan’s controversial projects.</li>
+</ul>
+<h3>C. Archaeological Sources</h3>
+<ul>
+<li><strong>Numismatics (Coins):</strong> Iltutmish introduced the Silver <em>Tanka</em> and Copper <em>Jital</em>. Alauddin Khalji’s coins omitted the Caliph’s name, while Muhammad bin Tughlaq introduced token currency.</li>
+<li><strong>Epigraphy (Inscriptions):</strong> Found on mosques, tombs, and baolis (step-wells). They help verify dates and genealogy.</li>
+<li><strong>Monuments:</strong> The Qutub Minar complex, Alai Darwaza, Tughlaqabad Fort, and Lodi Gardens reflect the evolution of Indo-Islamic architecture and the state's economic power.</li>
+</ul>
+<hr/>
+<h2>2. Turkish Invasions and Conquest</h2>
+<p>The establishment of the Sultanate was the culmination of successive invasions from the North-West frontier.</p>
+<h3>A. The Ghaznavid Prelude</h3>
+<ul>
+<li><strong>Mahmud of Ghazni (998–1030):</strong> Conducted 17 raids into India.
+<ul>
+<li><strong>Objective:</strong> Plunder wealth to finance campaigns in Central Asia; not empire building.</li>
+<li><strong>Impact:</strong> Exposed the military weakness of Indian states and paved the way for future conquerors. Annexed Punjab, making it a base for future Turkish incursions.</li>
+</ul></li>
+</ul>
+<h3>B. The Ghurid Conquest (Foundation of Rule)</h3>
+<ul>
+<li><strong>Muhammad Ghori (Muizzuddin Muhammad bin Sam):</strong> Unlike Mahmud, Ghori aimed at establishing a permanent political dominion in India.</li>
+<li><strong>The Battles of Tarain:</strong>
+<ul>
+<li><strong>First Battle of Tarain (1191):</strong> Prithviraj Chauhan defeated Ghori.</li>
+<li><strong>Second Battle of Tarain (1192):</strong> Decisive Turkish victory. Prithviraj was captured/killed. This battle is considered the turning point in Medieval Indian history.</li>
+</ul></li>
+<li><strong>Battle of Chandawar (1194):</strong> Defeat of Jaichand of Kannauj, extending Turkish control to the Ganga-Yamuna Doab.</li>
+</ul>
+<h3>C. Factors for Turkish Success</h3>
+<ol>
+<li><strong>Lack of Political Unity:</strong> The Rajput states were engaged in constant internecine warfare.</li>
+<li><strong>Military Tactics:</strong> Turks used mobile cavalry with mounted archers, whereas Indian armies relied on slow-moving elephants.</li>
+<li><strong>Feudal Organization:</strong> Indian armies were confederacies of feudal lords lacking a unified command structure.</li>
+</ol>
+<hr/>
+<h2>3. Territorial Expansion and Consolidation: Iltutmish (1211–1236)</h2>
+<p>Shamsuddin Iltutmish is regarded as the <strong>"Real Founder"</strong> of the Delhi Sultanate. He consolidated the precarious dominion left by Aibak.</p>
+<h3>A. Challenges Faced</h3>
+<ul>
+<li><strong>Rivals:</strong> Yaldiez (Ghazni) and Qubacha (Sindh/Multan) challenged his sovereignty.</li>
+<li><strong>Rajput Resistance:</strong> Rulers of Ranthambore, Gwalior, and Jalor declared independence.</li>
+<li><strong>Mongol Threat:</strong> Chengiz Khan reached the Indus in pursuit of the Khwarizm Prince Jalaluddin. Iltutmish diplomatically refused asylum to Jalaluddin, saving the infant Sultanate from Mongol wrath.</li>
+</ul>
+<h3>B. Military Consolidation</h3>
+<ul>
+<li>Defeated Yaldiez at the Battle of Tarain (1216).</li>
+<li>Defeated Qubacha (1228), annexing Multan and Sindh.</li>
+<li>Reconquered Gwalior, Ranthambore, and Malwa.</li>
+</ul>
+<h3>C. Administrative Organization</h3>
+<ol>
+<li><strong>The Iqta System:</strong> Institutionalized the transfer of land revenue rights (<em>Iqta</em>) to officials (<em>Iqtadars</em> or <em>Muqtis</em>) in lieu of cash salaries. This integrated the revenue and military administration.</li>
+<li><strong>Turkan-i-Chahalgani (The Forty):</strong> Created a corps of loyal Turkish slaves (nobles) to serve as a reliable administrative backbone, countering the old Ghurid nobility.</li>
+<li><strong>Currency Reforms:</strong> Introduced the <strong>Silver Tanka</strong> (175 grains) and <strong>Copper Jital</strong>, setting the standard for coinage in the Sultanate period.</li>
+<li><strong>Legal Authority:</strong> Secured a Letter of Investiture (<em>Mansur</em>) from the Abbasid Caliph in 1229, legally recognizing the Delhi Sultanate as an independent sovereign state within the Islamic world.</li>
+</ol>
+<hr/>
+<h2>4. Territorial Expansion and Consolidation: Alauddin Khalji (1296–1316)</h2>
+<p>Alauddin marked the zenith of the Sultanate’s military power and introduced radical economic reforms.</p>
+<h3>A. Theory of Kingship</h3>
+<ul>
+<li>Believed in absolute monarchy ("Kingship knows no kinship").</li>
+<li>Separated religion from politics; declared that he acted for the benefit of the state, regardless of Sharia.</li>
+</ul>
+<h3>B. Territorial Expansion</h3>
+<ul>
+<li><strong>Northern Campaigns:</strong>
+<ul>
+<li><strong>Gujarat (1299):</strong> Access to ports and trade routes.</li>
+<li><strong>Ranthambore (1301) &amp; Chittor (1303):</strong> Subjugated powerful Rajput forts. The Chittor campaign is associated with the legend of Padmini.</li>
+</ul></li>
+<li><strong>Southern Campaigns (The Deccan):</strong>
+<ul>
+<li>Led by his general <strong>Malik Kafur</strong>.</li>
+<li>Targets: Devagiri (Yadavas), Warangal (Kakatiyas), Dwarasamudra (Hoysalas), and Madurai (Pandyas).</li>
+<li><strong>Policy:</strong> He did not annex these kingdoms. He forced them to accept suzerainty and pay heavy annual tribute. This provided wealth without the administrative burden of direct rule.</li>
+</ul></li>
+</ul>
+<h3>C. Consolidation and Reforms</h3>
+<ol>
+<li><strong>Market Regulations (Price Control):</strong>
+<ul>
+<li>Fixed prices for all commodities (grain, cloth, horses, slaves).</li>
+<li>Established the <em>Shahana-i-Mandi</em> (Market Superintendent).</li>
+<li><strong>Objective:</strong> To maintain a large standing army at low salaries.</li>
+</ul></li>
+<li><strong>Military Reforms:</strong>
+<ul>
+<li>First Sultan to maintain a permanent <strong>Standing Army</strong> paid in cash.</li>
+<li>Introduced <strong>Dagh</strong> (branding of horses) and <strong>Chehra/Huliya</strong> (descriptive roll of soldiers) to prevent corruption.</li>
+</ul></li>
+<li><strong>Agrarian Reforms:</strong>
+<ul>
+<li>Measured land (<em>Masahat</em>) and fixed revenue based on measurement.</li>
+<li>Increased state share of revenue to 50% (<em>Kharaj</em>).</li>
+<li>Curbed the power of local intermediaries (Khuts, Muqaddams).</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>5. Territorial Expansion and Consolidation: Muhammad bin Tughlaq (1325–1351)</h2>
+<p>A learned scholar and rationalist, his reign saw the maximum territorial extent of the Sultanate but also the beginning of its disintegration due to administrative "experiments."</p>
+<h3>A. The Five Experiments</h3>
+<ol>
+<li><strong>Transfer of Capital (1327):</strong>
+<ul>
+<li>Shifted from Delhi to <strong>Daulatabad (Devagiri)</strong>.</li>
+<li><strong>Logic:</strong> Central location to control the newly annexed Deccan.</li>
+<li><strong>Failure:</strong> Hard to control North India from the South; forced migration caused immense suffering. The order was later reversed.</li>
+</ul></li>
+<li><strong>Introduction of Token Currency (1329):</strong>
+<ul>
+<li>Issued bronze/copper coins at par with silver tankas (influenced by Chinese paper currency).</li>
+<li><strong>Failure:</strong> Failed to prevent forgery. Every house became a mint. Trade collapsed, and the Sultan had to exchange token coins for silver from the treasury.</li>
+</ul></li>
+<li><strong>Taxation in the Doab:</strong>
+<ul>
+<li>Raised taxes in the fertile Ganga-Yamuna Doab during a famine.</li>
+<li>Resulted in peasant revolts and flight from land.</li>
+</ul></li>
+<li><strong>Khurasan Expedition:</strong>
+<ul>
+<li>Raised a vast army to conquer Khurasan (Central Asia) due to a power vacuum there.</li>
+<li>Disbanded the army after one year when political conditions changed, draining the treasury.</li>
+</ul></li>
+<li><strong>Qarachil Expedition:</strong>
+<ul>
+<li>Expedition to the Kumaon hills (Himalayas) to secure the frontier (or possibly aiming for China).</li>
+<li>Army was destroyed by the cold and guerilla warfare.</li>
+</ul></li>
+</ol>
+<h3>B. Territorial Impact</h3>
+<ul>
+<li>Unlike Alauddin, Muhammad bin Tughlaq tried to <strong>directly administer</strong> the Deccan.</li>
+<li>The administrative failures and severity of his rule led to massive rebellions.</li>
+<li><strong>Breakup:</strong> The Sultanate lost the South with the rise of <strong>Vijayanagara (1336)</strong> and the <strong>Bahmani Kingdom (1347)</strong>, and rebellions in Bengal and Sindh.</li>
+</ul>
+<hr/>
+<h2>6. Political Structure of Regional Sultanates</h2>
+<p>Following the decline of the Tughlaqs (post-1398 Timur invasion), several provincial governors declared independence.</p>
+<h3>A. General Characteristics</h3>
+<ul>
+<li><strong>Successor States:</strong> Most regional sultanates (Jaunpur, Malwa, Gujarat) were founded by former Tughlaq governors.</li>
+<li><strong>Cultural Synthesis:</strong> They fostered regional languages, literature, and a unique architectural style (provincial style) blending Islamic and local Hindu traditions.</li>
+<li><strong>Conflict:</strong> Constant warfare occurred between neighboring regional states (e.g., Malwa vs. Gujarat) and against the weakening Delhi Sultanate.</li>
+</ul>
+<h3>B. Key Regional Sultanates</h3>
+<ol>
+<li><strong>Jaunpur (The Sharqi Dynasty):</strong>
+<ul>
+<li>Known as "Shiraz-i-Hind" due to its patronage of learning and culture.</li>
+<li>Famous for the Atala Masjid.</li>
+<li>Constant conflict with the Lodi Sultans of Delhi.</li>
+</ul></li>
+<li><strong>Gujarat:</strong>
+<ul>
+<li>Founded by Zafar Khan.</li>
+<li><strong>Ahmad Shah I:</strong> Founded Ahmedabad; established a strong administration.</li>
+<li><strong>Mahmud Begarha:</strong> The most powerful ruler; captured Champaner and Junagadh; developed the navy to fight the Portuguese.</li>
+</ul></li>
+<li><strong>Malwa:</strong>
+<ul>
+<li>Capital at Mandu (known for Jahaz Mahal/Hindola Mahal).</li>
+<li>Strategic location connecting North and South India.</li>
+</ul></li>
+<li><strong>Bengal:</strong>
+<ul>
+<li>Often independent due to distance from Delhi.</li>
+<li>Ilyas Shahi and Hussain Shahi dynasties promoted the Bengali language and religious tolerance (Chaitanya Mahaprabhu flourished here).</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>7. The Lodis (1451-1526)</h2>
+<p>The Lodis were the first <strong>Afghan</strong> (Pashtun) dynasty to rule Delhi, replacing the Turkish nobility.</p>
+<h3>A. Bahlul Lodi (1451–1489)</h3>
+<ul>
+<li><strong>Founder:</strong> Displaced the Sayyid dynasty.</li>
+<li><strong>Political Theory:</strong> Kingship based on tribal equality. He sat on the carpet with his nobles and did not treat them as servants but as <em>masnad-i-ali</em> (peers).</li>
+<li><strong>Achievement:</strong> Conquered the Sharqi kingdom of Jaunpur, restoring some prestige to Delhi.</li>
+</ul>
+<h3>B. Sikandar Lodi (1489–1517)</h3>
+<ul>
+<li><strong>The Ablest Lodi:</strong> Consolidator of the empire.</li>
+<li><strong>Expansion:</strong> Extended control over Bihar and humbled Rajput chiefs.</li>
+<li><strong>Administration:</strong>
+<ul>
+<li>Founded <strong>Agra (1504)</strong> to control the Doab and trade routes to Malwa/Rajasthan.</li>
+<li>Introduced <strong>Gaz-i-Sikandari</strong> (approx. 30 inches) for land measurement.</li>
+<li>Tightened espionage and audited accounts of nobles (moving away from Bahlul’s tribal equality).</li>
+</ul></li>
+<li><strong>Culture:</strong> A poet (pen name <em>Gulrukhi</em>); patron of music (<em>Lahjat-i-Sikandar Shahi</em>).</li>
+</ul>
+<h3>C. Ibrahim Lodi (1517–1526)</h3>
+<ul>
+<li><strong>Conflict with Nobility:</strong> Abandoned the Afghan tribal theory of kingship for Turkish-style autocracy ("A King has no kinship").</li>
+<li><strong>Rebellions:</strong> Humiliated senior nobles, leading to revolts. Daulat Khan Lodi (Governor of Punjab) and Rana Sanga invited Babur to invade India.</li>
+<li><strong>The End:</strong>
+<ul>
+<li><strong>First Battle of Panipat (1526):</strong> Ibrahim Lodi was defeated and killed by Babur.</li>
+<li>Babur’s use of artillery (cannons) and the <em>Tulughma</em> tactic marked the end of the Delhi Sultanate and the beginning of the Mughal Empire.</li>
+</ul></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/HIS292/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

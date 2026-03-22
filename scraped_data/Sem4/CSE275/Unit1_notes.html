@@ -1,0 +1,631 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/CSE275">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE275/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE275/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE275/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE275</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            2 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Introduction to Optimization in Machine Learning</h1>
+<h2>1.1 The Role of Optimization in AI and Machine Learning</h2>
+<p>At its core, <strong>Machine Learning (ML)</strong> is the process of building systems that learn from data. This "learning" is fundamentally an <strong>optimization problem</strong>. The goal is to find the optimal set of parameters for a model that best captures the underlying patterns in the data.</p>
+<ul>
+<li><strong>Learning as Optimization:</strong> When we "train" a machine learning model, we are essentially searching for a set of parameters (or "weights") that minimizes an error function or maximizes a performance metric. The entire training process is an iterative optimization procedure.</li>
+<li><strong>Model Representation:</strong> An ML model is a mathematical function that maps inputs to outputs. For example, a linear regression model is <code>y = wx + b</code>. Here, <code>w</code> (weight) and <code>b</code> (bias) are the parameters.</li>
+<li><strong>Objective Function:</strong> To determine how "good" a set of parameters is, we define an <strong>objective function</strong> (also known as a <strong>loss function</strong>, <strong>cost function</strong>, or <strong>error function</strong>). This function quantifies the discrepancy between the model's predictions and the actual ground truth values in the training data.</li>
+<li><strong>The Goal:</strong> The primary role of optimization in ML is to find the parameters that minimize this objective function. A lower value of the objective function implies a better-fitting model on the training data.</li>
+</ul>
+<p><strong>In essence, optimization provides the engine that powers the learning in machine learning. Without optimization algorithms, we would have no systematic way of adjusting model parameters to improve their performance.</strong></p>
+<hr/>
+<h2>1.2 Optimization Problems in Learning Systems</h2>
+<p>A formal optimization problem can be defined by three components:</p>
+<ol>
+<li><strong>Objective Function <code>f(x)</code>:</strong> The function we aim to minimize or maximize. In ML, this is typically a loss function that we want to minimize.</li>
+<li><strong>Decision Variables <code>x</code>:</strong> These are the parameters of the model that we can control. In a neural network, <code>x</code> would be the vector of all weights and biases.</li>
+<li><strong>Constraints <code>g(x), h(x)</code>:</strong> These are rules that the decision variables must satisfy. While not always present, they are common in techniques like Support Vector Machines or in regularization.</li>
+</ol>
+<p>The standard form of a minimization problem is:</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">minimize f(x)
+subject to:
+    g_i(x) &lt;= 0, for i = 1, ..., m   (Inequality constraints)
+    h_j(x) = 0, for j = 1, ..., p   (Equality constraints)
+</code></pre></div></p>
+<p>Where:</p>
+<ul>
+<li><code>x</code> is the vector of model parameters (e.g., <code>[w_1, w_2, ..., w_n, b]</code>).</li>
+<li><code>f(x)</code> is the loss function.</li>
+</ul>
+<p><strong>Examples of Loss Functions in ML:</strong></p>
+<ul>
+<li><strong>Mean Squared Error (MSE)</strong> for Regression: Measures the average squared difference between predicted and actual values.<br/>
+<code>L(w, b) = 1/N * Σ(y_pred_i - y_true_i)^2</code></li>
+<li><strong>Binary Cross-Entropy</strong> for Classification: Measures the performance of a classification model whose output is a probability between 0 and 1.<br/>
+<code>L(w, b) = -1/N * Σ [y_true_i * log(y_pred_i) + (1 - y_true_i) * log(1 - y_pred_i)]</code></li>
+</ul>
+<p>The set of all possible values for the parameters <code>x</code> is called the <strong>parameter space</strong> or <strong>search space</strong>. The optimization algorithm's job is to navigate this space to find the point <code>x*</code> that results in the minimum value of <code>f(x)</code>.</p>
+<hr/>
+<h2>1.3 Loss Minimization and Search-Based Optimization</h2>
+<p>The process of training an ML model can be viewed through two complementary lenses:</p>
+<h3>Loss Minimization</h3>
+<p>This is the quantitative goal of optimization. The process involves:</p>
+<ol>
+<li><strong>Define a Model:</strong> Choose a model architecture (e.g., linear regression, neural network).</li>
+<li><strong>Define a Loss Function:</strong> Select a function (e.g., MSE) that measures the model's error for a given set of parameters. The surface created by plotting the loss for every possible parameter combination is called the <strong>loss landscape</strong>.</li>
+<li><strong>Minimize the Loss:</strong> Use an optimization algorithm to find the parameters that correspond to the lowest point (the minimum) on the loss landscape for the training data.</li>
+</ol>
+<p>A critical challenge in loss minimization is <strong>overfitting</strong>. A model that perfectly minimizes the loss on the training data might have learned the noise and specific quirks of that data, rather than the general underlying pattern. This leads to poor performance on new, unseen data. Techniques like regularization are used to prevent overfitting by adding a penalty term to the loss function, which discourages overly complex models.</p>
+<h3>Search-Based Optimization</h3>
+<p>This is the procedural view of optimization. We frame the problem as a search for the best solution in a vast space of possibilities.</p>
+<ul>
+<li><strong>Search Space:</strong> The set of all possible parameter configurations for the model. For a simple model, this might be a 2D or 3D space. For a deep neural network, this is a space with millions or even billions of dimensions.</li>
+<li><strong>Search Algorithm:</strong> The optimization algorithm (e.g., Gradient Descent) is the strategy used to navigate this search space. The algorithm starts at an initial point (randomly initialized parameters) and takes iterative steps towards regions of lower loss.</li>
+</ul>
+<p>The efficiency and effectiveness of the search depend entirely on the algorithm chosen. Some algorithms take large, confident steps, while others explore more cautiously. The nature of the search space (e.g., smooth and bowl-shaped vs. rocky and full of valleys) heavily influences which search strategy will be successful.</p>
+<hr/>
+<h2>1.4 Gradient-Based vs. Gradient-Free Optimization</h2>
+<p>Optimization algorithms can be broadly categorized based on whether they use derivative information.</p>
+<h3>Gradient-Based Optimization</h3>
+<p>These methods use the derivative (or <strong>gradient</strong>) of the objective function to guide the search. The gradient is a vector that points in the direction of the steepest ascent of the function. To minimize the function, we take steps in the opposite direction of the gradient.</p>
+<ul>
+<li><strong>Core Idea:</strong> It's like being on a foggy mountain and wanting to get to the bottom. The most reliable strategy is to feel the ground at your feet to find the direction of the steepest slope and take a step downhill.</li>
+<li><strong>Mathematical Formulation:</strong> The fundamental update rule for Gradient Descent is:<br/>
+<code>θ_new = θ_old - η * ∇J(θ)</code><br/>
+Where:
+<ul>
+<li><code>θ</code> represents the model parameters.</li>
+<li><code>η</code> (eta) is the <strong>learning rate</strong>, a hyperparameter that controls the step size.</li>
+<li><code>∇J(θ)</code> is the gradient of the loss function <code>J</code> with respect to the parameters <code>θ</code>.</li>
+</ul></li>
+<li><strong>Examples:</strong>
+<ul>
+<li><strong>Gradient Descent (GD):</strong> Computes the gradient using the entire training dataset.</li>
+<li><strong>Stochastic Gradient Descent (SGD):</strong> Computes the gradient using a single data point or a small mini-batch, making the updates faster but noisier.</li>
+<li><strong>Adam, RMSprop, Adagrad:</strong> Advanced "adaptive" methods that adjust the learning rate for each parameter individually.</li>
+</ul></li>
+<li><strong>Pros:</strong>
+<ul>
+<li>Highly efficient and fast convergence on problems with differentiable objective functions.</li>
+<li>The backbone of modern deep learning (backpropagation is the algorithm for efficiently calculating gradients in a neural network).</li>
+</ul></li>
+<li><strong>Cons:</strong>
+<ul>
+<li>Requires the objective function to be differentiable.</li>
+<li>Can get stuck in local minima or saddle points in non-convex landscapes.</li>
+</ul></li>
+</ul>
+<h3>Gradient-Free Optimization (Zeroth-Order Optimization)</h3>
+<p>These methods, also known as <strong>black-box optimization</strong>, do not require gradient information. They only need to evaluate the objective function at different points to make decisions.</p>
+<ul>
+<li><strong>Core Idea:</strong> Instead of finding the steepest path, you try multiple different locations (parameter sets), evaluate their "height" (loss value), and move towards the ones that are lower.</li>
+<li><strong>When to Use:</strong>
+<ul>
+<li>The objective function is <strong>non-differentiable</strong>, discontinuous, or "noisy."</li>
+<li>Calculating the gradient is computationally infeasible or impossible.</li>
+<li>The problem is discrete (e.g., feature selection) or involves complex simulations.</li>
+<li>The goal is to escape local minima in a very complex landscape.</li>
+</ul></li>
+<li><strong>Examples:</strong>
+<ul>
+<li><strong>Grid Search / Random Search:</strong> Systematically or randomly trying combinations of hyperparameters.</li>
+<li><strong>Evolutionary Algorithms (e.g., Genetic Algorithms):</strong> Mimic natural selection to "evolve" a population of candidate solutions.</li>
+<li><strong>Bayesian Optimization:</strong> Builds a probabilistic model of the objective function to intelligently select the next point to evaluate.</li>
+<li><strong>Simulated Annealing:</strong> A probabilistic method inspired by the process of annealing in metallurgy.</li>
+</ul></li>
+<li><strong>Pros:</strong>
+<ul>
+<li>Can handle a very wide range of problem types.</li>
+<li>Better at global exploration and less likely to get trapped in poor local minima.</li>
+</ul></li>
+<li><strong>Cons:</strong>
+<ul>
+<li>Often much less sample-efficient; they can require a very large number of function evaluations.</li>
+<li>May be significantly slower to converge than gradient-based methods on problems where gradients are available.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>1.5 Convex vs. Non-Convex Optimization in ML</h2>
+<p>The geometry of the loss landscape determines the difficulty of an optimization problem.</p>
+<h3>Convex Optimization</h3>
+<p>A problem is convex if the objective function is a <strong>convex function</strong> and the set of constraints forms a <strong>convex set</strong>.</p>
+<ul>
+<li><strong>Definition of a Convex Function:</strong> A function is convex if the line segment connecting any two points on its graph lies on or above the graph. Visually, it looks like a single bowl, with no smaller dips or valleys.</li>
+<li><strong>The Golden Property:</strong> For a convex optimization problem, <strong>any local minimum is also a global minimum</strong>. This is a powerful guarantee. If a gradient-based algorithm finds a point where the gradient is zero, we have found the best possible solution.</li>
+<li><strong>ML Examples:</strong>
+<ul>
+<li>Linear Regression with MSE loss.</li>
+<li>Logistic Regression.</li>
+<li>Support Vector Machines (SVMs).</li>
+</ul></li>
+</ul>
+<h3>Non-Convex Optimization</h3>
+<p>A problem is non-convex if its objective function is not convex.</p>
+<ul>
+<li><strong>Properties:</strong> The loss landscape can have multiple <strong>local minima</strong> (small valleys that are not the absolute lowest point), <strong>plateaus</strong> (flat regions where the gradient is close to zero), and <strong>saddle points</strong> (points that are a minimum along one dimension but a maximum along another).</li>
+<li><strong>The Challenge:</strong> Optimization algorithms, especially simple gradient-based ones, can easily get trapped in a local minimum and fail to find the global minimum. There is no guarantee that the solution found is the best possible one.</li>
+<li><strong>ML Examples:</strong>
+<ul>
+<li><strong>Deep Neural Networks:</strong> The loss landscapes are highly non-convex and high-dimensional.</li>
+<li>K-Means Clustering.</li>
+<li>Matrix Factorization.</li>
+</ul></li>
+</ul>
+<p><strong>Implication for ML:</strong> While convex problems are "solved" in the sense that we can reliably find the optimal solution, most state-of-the-art models (especially in deep learning) are non-convex. The goal of optimization in this context shifts from finding the <em>true global minimum</em> to finding a <em>sufficiently good local minimum</em> that generalizes well to new data.</p>
+<hr/>
+<h2>1.6 The Need for Metaheuristic Optimization</h2>
+<p><strong>Metaheuristics</strong> are high-level, problem-independent algorithmic frameworks that provide strategies for developing heuristic optimization algorithms. They are essentially "recipes" for creating search algorithms.</p>
+<p><strong>Why are they needed in Machine Learning?</strong></p>
+<ol>
+<li><strong>To Escape Local Optima:</strong> In the complex, non-convex landscapes of modern ML, gradient-based methods are prone to getting stuck. Metaheuristics often incorporate stochastic (random) elements and population-based approaches that allow them to "jump" out of local minima and explore the search space more globally.</li>
+<li><strong>To Solve Gradient-Free Problems:</strong> Many crucial ML tasks are inherently gradient-free. For example, selecting the best set of hyperparameters or designing a neural network architecture are discrete or black-box problems. Metaheuristics provide a powerful framework for tackling these challenges.</li>
+<li><strong>To Handle Combinatorial Complexity:</strong> Problems like feature selection involve choosing the best subset from a vast number of combinations (<code>2^N</code> possibilities for <code>N</code> features). This is a combinatorial optimization problem where metaheuristics like Genetic Algorithms or Ant Colony Optimization are far more suitable than gradient-based methods.</li>
+</ol>
+<p><strong>Common Metaheuristic Approaches:</strong></p>
+<ul>
+<li><strong>Evolutionary Algorithms (e.g., Genetic Algorithms - GA):</strong> Inspired by biological evolution. A "population" of candidate solutions (e.g., sets of hyperparameters) is maintained. In each "generation," the best solutions are selected (survival of the fittest), combined (crossover), and randomly mutated to produce the next generation.</li>
+<li><strong>Particle Swarm Optimization (PSO):</strong> Inspired by the flocking behavior of birds. A "swarm" of particles (candidate solutions) "flies" through the parameter space. Each particle adjusts its trajectory based on its own best-known position and the best-known position of the entire swarm.</li>
+<li><strong>Simulated Annealing (SA):</strong> Inspired by the annealing process in metallurgy. The algorithm starts by exploring the space broadly (high "temperature") and gradually "cools down," reducing the probability of accepting worse solutions, to converge on a good minimum.</li>
+</ul>
+<hr/>
+<h2>1.7 Applications of Optimization in Machine Learning</h2>
+<p>Optimization is not just for training the model's primary weights. It is used at multiple stages of the ML pipeline.</p>
+<h3>1.7.1 Feature Selection</h3>
+<ul>
+<li><strong>The Problem:</strong> Choosing a subset of the most relevant features from a larger set to improve model performance, reduce computational cost, and enhance interpretability.</li>
+<li><strong>As an Optimization Problem:</strong>
+<ul>
+<li><strong>Search Space:</strong> The set of all possible feature subsets. This is a discrete, combinatorial space.</li>
+<li><strong>Objective Function:</strong> The performance of a chosen ML model (e.g., cross-validation accuracy) when trained using a given feature subset.</li>
+</ul></li>
+<li><strong>Optimization Techniques:</strong> This is a classic application for gradient-free metaheuristics.
+<ul>
+<li>A <strong>Genetic Algorithm</strong> can be used where each "chromosome" is a binary string representing the inclusion (1) or exclusion (0) of each feature. The fitness function is the model's performance.</li>
+</ul></li>
+</ul>
+<h3>1.7.2 Hyperparameter Tuning</h3>
+<ul>
+<li><strong>The Problem:</strong> Finding the optimal values for hyperparameters, which are settings that are not learned during training but are configured before the training process begins (e.g., learning rate <code>η</code>, regularization strength <code>λ</code>, number of trees in a random forest).</li>
+<li><strong>As an Optimization Problem:</strong>
+<ul>
+<li><strong>Search Space:</strong> The multi-dimensional space defined by the ranges of all hyperparameters.</li>
+<li><strong>Objective Function:</strong> A "black-box" function that takes a set of hyperparameters, trains a model, evaluates it on a validation set, and returns a performance score (e.g., validation loss). Each evaluation of this function can be very time-consuming.</li>
+</ul></li>
+<li><strong>Optimization Techniques:</strong>
+<ul>
+<li><strong>Simple:</strong> Grid Search (exhaustive), Random Search (often more effective).</li>
+<li><strong>Advanced:</strong> <strong>Bayesian Optimization</strong> is highly effective as it builds a surrogate model of the objective function to intelligently choose which hyperparameters to try next, minimizing the number of expensive evaluations. Evolutionary algorithms are also widely used.</li>
+</ul></li>
+</ul>
+<h3>1.7.3 Model Selection</h3>
+<ul>
+<li><strong>The Problem:</strong> Choosing the best overall model for a given task. This can range from selecting between different model families (e.g., SVM vs. Random Forest) to designing the specific architecture of a neural network.</li>
+<li><strong>As an Optimization Problem:</strong>
+<ul>
+<li><strong>Search Space:</strong> A discrete space of model architectures. In <strong>Neural Architecture Search (NAS)</strong>, this space can be enormous, defining possible layer types, connections, and neuron counts.</li>
+<li><strong>Objective Function:</strong> The validation performance of a trained architecture.</li>
+</ul></li>
+<li><strong>Optimization Techniques:</strong>
+<ul>
+<li>NAS is a cutting-edge field that uses sophisticated optimization techniques like <strong>Reinforcement Learning</strong> (where an agent learns to build good architectures) and <strong>Evolutionary Algorithms</strong> (where architectures are "evolved") to navigate the vast search space of possible network designs.</li>
+</ul></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/CSE275/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

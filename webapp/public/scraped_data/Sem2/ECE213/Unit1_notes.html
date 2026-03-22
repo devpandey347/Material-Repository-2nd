@@ -1,0 +1,656 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem2/ECE213">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE213/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE213/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/ECE213/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ECE213</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Number Systems</h1>
+<h2>1. Introduction: Digital Systems and Logic</h2>
+<h3>Analog vs. Digital Systems</h3>
+<ul>
+<li><strong>Analog Systems:</strong> Process signals that are continuous in both time and amplitude.
+<ul>
+<li><em>Example:</em> Audio signals, temperature sensors, classical clocks.</li>
+<li><em>Characteristics:</em> Susceptible to noise; difficult to store and process with precision.</li>
+</ul></li>
+<li><strong>Digital Systems:</strong> Process signals that are discrete. They represent information using a finite set of distinct values (usually two: 0 and 1).
+<ul>
+<li><em>Example:</em> Computers, smartphones, digital watches.</li>
+<li><em>Characteristics:</em> High noise immunity, easy storage, programmable, reproducible accuracy.</li>
+</ul></li>
+</ul>
+<h3>Implementation of Digital Systems</h3>
+<ul>
+<li><strong>Logic Circuits:</strong> The fundamental building blocks of digital systems. They manipulate binary information based on logic rules (AND, OR, NOT).</li>
+<li><strong>Levels of Integration:</strong> Digital systems are implemented using Integrated Circuits (ICs), ranging from SSI (Small Scale Integration) to VLSI (Very Large Scale Integration).</li>
+</ul>
+<hr/>
+<h2>2. Positional Number Systems</h2>
+<p>A positional number system represents values using an ordered set of digits where the value of each digit depends on its position.</p>
+<h3>Key Concepts</h3>
+<ul>
+<li><strong>Radix (Base, <span class="katex-inline" data-math="r"></span>):</strong> The number of unique digits used in the system.</li>
+<li><strong>Weights:</strong> The multiplier associated with each position (e.g., <span class="katex-inline" data-math="r^0, r^1, r^2, \dots"></span>).</li>
+<li><strong>Formula:</strong> Value = <span class="katex-inline" data-math="\sum (Digit \times Base^{position})"></span></li>
+</ul>
+<h3>Common Number Systems</h3>
+<h4>Binary Number System (Base 2)</h4>
+<ul>
+<li><strong>Digits:</strong> 0, 1.</li>
+<li><strong>Application:</strong> The native language of digital circuits (Switches: OFF=0, ON=1).</li>
+</ul>
+<h4>Octal Number System (Base 8)</h4>
+<ul>
+<li><strong>Digits:</strong> 0, 1, 2, 3, 4, 5, 6, 7.</li>
+<li><strong>Application:</strong> Shorthand for binary (grouping 3 bits). Used in legacy computing (e.g., PDP-8) and file permissions (Unix).</li>
+</ul>
+<h4>Hexadecimal Number System (Base 16)</h4>
+<ul>
+<li><strong>Digits:</strong> 0-9 and A, B, C, D, E, F (where A=10, ..., F=15).</li>
+<li><strong>Application:</strong> Standard shorthand for binary (grouping 4 bits). Used in memory addressing, color codes, and assembly language.</li>
+</ul>
+<hr/>
+<h2>3. Methods of Base Conversions</h2>
+<h3>Decimal to Any Base (<span class="katex-inline" data-math="r"></span>)</h3>
+<ol>
+<li><strong>Integer Part (Successive Division):</strong>
+<ul>
+<li>Divide the decimal number by the target base <span class="katex-inline" data-math="r"></span>.</li>
+<li>Record the remainder.</li>
+<li>Repeat with the quotient until it reaches 0.</li>
+<li>Read remainders from <strong>bottom to top</strong>.</li>
+</ul></li>
+<li><strong>Fractional Part (Successive Multiplication):</strong>
+<ul>
+<li>Multiply the fraction by base <span class="katex-inline" data-math="r"></span>.</li>
+<li>Record the integer part.</li>
+<li>Repeat with the new fractional part.</li>
+<li>Read integers from <strong>top to bottom</strong>.</li>
+</ul></li>
+</ol>
+<h3>Any Base (<span class="katex-inline" data-math="r"></span>) to Decimal</h3>
+<ul>
+<li><strong>Sum of Weights Method:</strong> Multiply each digit by its positional weight (<span class="katex-inline" data-math="r^n"></span>) and sum the results.
+<ul>
+<li><em>Example (Hex to Dec):</em> <span class="katex-inline" data-math="(1A)_{16} = 1 \times 16^1 + 10 \times 16^0 = 16 + 10 = 26_{10}"></span>.</li>
+</ul></li>
+</ul>
+<h3>Binary <span class="katex-inline" data-math="\leftrightarrow"></span> Octal</h3>
+<ul>
+<li><strong>Binary to Octal:</strong> Group bits into sets of <strong>3</strong> starting from the radix point (LSD). Convert each group to its Octal equivalent.</li>
+<li><strong>Octal to Binary:</strong> Convert each Octal digit into a 3-bit binary block.</li>
+</ul>
+<h3>Binary <span class="katex-inline" data-math="\leftrightarrow"></span> Hexadecimal</h3>
+<ul>
+<li><strong>Binary to Hex:</strong> Group bits into sets of <strong>4</strong> starting from the radix point. Convert each group.</li>
+<li><strong>Hex to Binary:</strong> Convert each Hex digit into a 4-bit binary block.</li>
+</ul>
+<hr/>
+<h2>4. Arithmetic Operations</h2>
+<h3>Binary Arithmetic</h3>
+<ul>
+<li><strong>Addition:</strong>
+<ul>
+<li><span class="katex-inline" data-math="0+0=0"></span></li>
+<li><span class="katex-inline" data-math="0+1=1"></span></li>
+<li><span class="katex-inline" data-math="1+0=1"></span></li>
+<li><span class="katex-inline" data-math="1+1=0"></span> (Carry 1)</li>
+<li><span class="katex-inline" data-math="1+1+1=1"></span> (Carry 1)</li>
+</ul></li>
+<li><strong>Subtraction:</strong>
+<ul>
+<li><span class="katex-inline" data-math="0-0=0"></span></li>
+<li><span class="katex-inline" data-math="1-0=1"></span></li>
+<li><span class="katex-inline" data-math="1-1=0"></span></li>
+<li><span class="katex-inline" data-math="0-1=1"></span> (Borrow 1 from the next higher bit)</li>
+</ul></li>
+</ul>
+<h3>Octal Arithmetic</h3>
+<ul>
+<li><strong>Addition:</strong> Add digits normally. If sum <span class="katex-inline" data-math="\ge 8"></span>, subtract 8 to get the sum digit and generate a carry of 1.
+<ul>
+<li><em>Example:</em> <span class="katex-inline" data-math="7_8 + 6_8 = 13_{10}"></span>. <span class="katex-inline" data-math="13 - 8 = 5"></span> (Sum), Carry 1. Result: <span class="katex-inline" data-math="15_8"></span>.</li>
+</ul></li>
+<li><strong>Subtraction:</strong> If borrowing is needed, you borrow "8" (the base) from the next column.</li>
+</ul>
+<h3>Hexadecimal Arithmetic</h3>
+<ul>
+<li><strong>Addition:</strong> Add digits. If sum <span class="katex-inline" data-math="\ge 16"></span>, subtract 16 and carry 1.
+<ul>
+<li><em>Example:</em> <span class="katex-inline" data-math="A (10) + 8 = 18"></span>. <span class="katex-inline" data-math="18 - 16 = 2"></span>, Carry 1. Result: <span class="katex-inline" data-math="12_{16}"></span>.</li>
+</ul></li>
+<li><strong>Subtraction:</strong> If borrowing is needed, you borrow "16".</li>
+</ul>
+<hr/>
+<h2>5. Complements and Signed Numbers</h2>
+<p>To perform subtraction using adder circuits and to represent negative numbers, we use complements.</p>
+<h3>Types of Complements</h3>
+<ol>
+<li><strong><span class="katex-inline" data-math="(r-1)"></span>'s Complement:</strong>
+<ul>
+<li><strong>Decimal (9's comp):</strong> Subtract each digit from 9.</li>
+<li><strong>Binary (1's comp):</strong> Invert every bit (<span class="katex-inline" data-math="0 \to 1, 1 \to 0"></span>).</li>
+</ul></li>
+<li><strong><span class="katex-inline" data-math="r"></span>'s Complement:</strong>
+<ul>
+<li>Formula: <span class="katex-inline" data-math="r"></span>'s Complement = <span class="katex-inline" data-math="(r-1)"></span>'s Complement + 1.</li>
+<li><strong>Binary (2's comp):</strong> Invert bits and add 1 to the LSB.</li>
+</ul></li>
+</ol>
+<h3>Representation of Signed Numbers</h3>
+<p>How digital systems store negative integers:</p>
+<ol>
+<li><strong>Sign-Magnitude:</strong> MSB is sign (0=+, 1=-), remaining bits are magnitude.
+<ul>
+<li><em>Issue:</em> Two zeros (+0 and -0). Hard to implement arithmetic.</li>
+</ul></li>
+<li><strong>1's Complement:</strong> Negative numbers are the bitwise inversion of positive numbers.
+<ul>
+<li><em>Issue:</em> Two zeros exist.</li>
+</ul></li>
+<li><strong>2's Complement (Standard):</strong> MSB indicates sign. Negative numbers are stored as the 2's complement of the positive value.
+<ul>
+<li><em>Advantage:</em> Only one zero; subtraction is performed as addition.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>6. Fixed and Floating Point Numbers</h2>
+<h3>Fixed Point Representation</h3>
+<ul>
+<li>The radix point is fixed (usually at the extreme right for integers or extreme left for fractions).</li>
+<li><strong>Limitations:</strong> Limited range; cannot represent very large or very small numbers easily without overflow/underflow.</li>
+</ul>
+<h3>Floating Point Representation (IEEE 754)</h3>
+<p>Allows representation of a vast range of real numbers (scientific notation).</p>
+<ul>
+<li><strong>Structure:</strong>
+<ol>
+<li><strong>Sign bit (S):</strong> 0 for positive, 1 for negative.</li>
+<li><strong>Exponent (E):</strong> Biased exponent to handle negative powers.</li>
+<li><strong>Mantissa/Significand (M):</strong> The precision bits (fractional part).</li>
+</ol></li>
+<li><strong>Value Formula:</strong> <span class="katex-inline" data-math="(-1)^S \times (1.M) \times 2^{(E - Bias)}"></span></li>
+</ul>
+<hr/>
+<h2>7. Binary Codes</h2>
+<p>Binary codes map alphanumeric characters or numeric values to specific binary strings.</p>
+<h3>Weighted Codes</h3>
+<p>Each position has a specific weight.</p>
+<ul>
+<li><strong>BCD (Binary Coded Decimal / 8421 Code):</strong>
+<ul>
+<li>Each decimal digit (0-9) is represented by a 4-bit binary group.</li>
+<li>Weights: 8, 4, 2, 1.</li>
+<li><em>Invalid Codes:</em> 1010 through 1111 (10-15) are invalid in BCD.</li>
+<li><em>Use:</em> Digital clocks, voltmeters.</li>
+</ul></li>
+</ul>
+<h3>Non-Weighted Codes</h3>
+<p>Positions do not have fixed weights.</p>
+<ul>
+<li><strong>Excess-3 Code (XS-3):</strong>
+<ul>
+<li>Created by adding 3 (0011) to the BCD code.</li>
+<li><em>Property:</em> Self-complementing (9's complement of decimal can be found by inverting bits).</li>
+</ul></li>
+<li><strong>Gray Code:</strong>
+<ul>
+<li><strong>Unit Distance Code:</strong> Only <strong>one bit changes</strong> between successive numbers.</li>
+<li><strong>Not a positional system.</strong></li>
+<li><strong>Application:</strong> Rotary encoders, K-Maps (prevents spurious output during transitions).</li>
+<li><strong>Binary to Gray Conversion:</strong>
+<ul>
+<li>MSB remains same.</li>
+<li><span class="katex-inline" data-math="G_i = B_i \oplus B_{i+1}"></span> (XOR current binary bit with next higher bit).</li>
+</ul></li>
+</ul></li>
+</ul>
+<hr/>
+<h2>8. Error Detection and Correction</h2>
+<p>Data transmission often introduces errors due to noise. Codes are added to detect or correct these.</p>
+<h3>Parity Check Codes (Error Detection)</h3>
+<p>A simplified method to detect <strong>single-bit errors</strong>. An extra bit (parity bit) is appended to the data.</p>
+<ol>
+<li><strong>Even Parity:</strong> The total number of 1s (including parity bit) must be Even.
+<ul>
+<li>If data has three 1s, Parity bit = 1 (total 4).</li>
+</ul></li>
+<li><strong>Odd Parity:</strong> The total number of 1s must be Odd.</li>
+<li><strong>Limitation:</strong> Cannot detect two bits flipping (which would preserve parity) and cannot correct the error.</li>
+</ol>
+<h3>Hamming Code (Error Correction)</h3>
+<p>A linear block code that can <strong>detect two-bit errors</strong> and <strong>correct single-bit errors</strong>.</p>
+<ol>
+<li><strong>Redundant Bits (r):</strong> Calculate number of parity bits needed for <span class="katex-inline" data-math="m"></span> data bits using <span class="katex-inline" data-math="2^r \ge m + r + 1"></span>.</li>
+<li><strong>Positioning:</strong> Parity bits are placed at positions of powers of 2 (1, 2, 4, 8...).</li>
+<li><strong>Parity Generation:</strong> Each parity bit checks specific bit positions based on binary representation.
+<ul>
+<li><span class="katex-inline" data-math="P_1"></span> checks positions 1, 3, 5, 7, 9...</li>
+<li><span class="katex-inline" data-math="P_2"></span> checks positions 2, 3, 6, 7, 10...</li>
+<li><span class="katex-inline" data-math="P_4"></span> checks positions 4, 5, 6, 7, 12...</li>
+</ul></li>
+<li><strong>Correction:</strong> On the receiving end, parity checks are recalculated. The resulting binary word (Syndrome) points to the exact position of the error bit, which is then flipped.</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem2/ECE213/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

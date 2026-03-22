@@ -1,154 +1,55 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Pandey - Note Sharing</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Redirecting - Material Repository 2nd</title>
+    <meta http-equiv="refresh" content="0; url=webapp/dist/index.html#/">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #f5f2eb;
+            color: #1f2a2b;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .card {
+            background: #fffdf8;
+            border: 1px solid #d8ceb8;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 520px;
+            box-shadow: 0 10px 28px rgba(44, 62, 80, 0.08);
+        }
+
+        a {
+            color: #9a3412;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay">
-        <div class="loader"></div>
+    <div class="card">
+        <h1 style="margin-top: 0;">Opening Material Repository 2nd...</h1>
+        <p>If you are not redirected automatically, open <a href="webapp/dist/index.html#/">the website home page</a>.
+        </p>
+        <p style="margin-bottom: 0;">Tip: if this page opens but app files are missing, run <strong>npm run
+                build</strong> inside <strong>webapp</strong> once.</p>
     </div>
 
-    <nav class="navbar">
-        <div class="logo">DEV PANDEY</div>
-    </nav>
-
-    <header class="hero-section">
-        <h1><b>Material Repository</b></h1>
-        <p>Everything you need for your exams, all in one place</p>
-    </header>
-
-    <main class="container">
-        <div class="cards-grid">
-            <!-- 10 Subject Cards -->
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">42 files</span>
-                    <h2>MTH166</h2>
-                    <p>Differential Equation And Vector Calculus</p>
-                    <a href="subjects/MTH166.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">6 files</span>
-                    <h2>CSE121</h2>
-                    <p>Computer Science Fundamentals</p>
-                    <a href="subjects/CSE121.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">27 files</span>
-                    <h2>CSE320</h2>
-                    <p>Course Materials & Notes</p>
-                    <a href="subjects/CSE320.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">29 files</span>
-                    <h2>INT306</h2>
-                    <p>Database Management Systems</p>
-                    <a href="subjects/INT306.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">21 files</span>
-                    <h2>PEL121-125</h2>
-                    <p>Professional English Language</p>
-                    <a href="subjects/PEL121-125.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">15 files</span>
-                    <h2>CHE110</h2>
-                    <p>Environmental Chemistry</p>
-                    <a href="subjects/CHE110.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">30 files</span>
-                    <h2>ECE249</h2>
-                    <p>Basic Electrical & Electronics Engineering</p>
-                    <a href="subjects/ECE249.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">64 files</span>
-                    <h2>ECE279</h2>
-                    <p>ECE Lab Experiments & Images</p>
-                    <a href="subjects/ECE279.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">35 files</span>
-                    <h2>MEC136</h2>
-                    <p>Engineering Graphics & Drawing</p>
-                    <a href="subjects/MEC136.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">45 files</span>
-                    <h2>PHY110</h2>
-                    <p>Engineering Physics</p>
-                    <a href="subjects/PHY110.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-content">
-                    <span class="file-badge">6 files</span>
-                    <h2>Books</h2>
-                    <p>Handbooks & Reference Materials</p>
-                    <a href="subjects/Books.html" class="btn">Browse Files</a>
-                </div>
-            </div>
-            <div class="card upcoming-card">
-                <div class="card-content">
-                    <span class="file-badge">Coming Soon</span>
-                    <h2>🕒 Upcoming</h2>
-                    <p>More subjects will be added soon</p>
-                    <a href="subjects/Upcoming.html" class="btn">View Updates</a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="footer">
-        <div class="footer-content">
-            <h3>📚 Dev's Material Repository</h3>
-            <p class="footer-message">Happy studying! If these notes helped you, share them with your friends.</p>
-            <a href="https://devprotfolio-aavuiqxvf-dev-pandeys-projects-24e9f338.vercel.app/" target="_blank"
-                class="portfolio-link">
-                🌐 Visit My Portfolio
-            </a>
-            <div class="whatsapp-section">
-                <p class="whatsapp-message">📢 Stay updated with new materials!</p>
-                <a href="https://chat.whatsapp.com/ElGakQUGGa1IMam5FlAiqw" target="_blank" class="whatsapp-link">
-                    <svg class="whatsapp-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                    </svg>
-                    Join WhatsApp Community
-                </a>
-            </div>
-            <p class="footer-copyright">© 2026 Dev Pandey | All Rights Reserved</p>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+    <script>
+        window.location.replace('webapp/dist/index.html#/');
+    </script>
 </body>
 
 </html>

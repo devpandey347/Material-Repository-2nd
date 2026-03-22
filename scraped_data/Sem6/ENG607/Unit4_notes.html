@@ -1,0 +1,608 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/ENG607">ENG607</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 4</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/ENG607">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/ENG607/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/ENG607/Unit4/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/ENG607/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/ENG607/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ENG607</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            11 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Ted Hughes</h1>
+<h2>1. Introduction to Ted Hughes (1930-1998)</h2>
+<h3>a. Biographical Context</h3>
+<ul>
+<li><strong>Early Life:</strong> Born in Mytholmroyd, Yorkshire. The bleak, rugged landscape of the moors profoundly influenced his poetry, instilling a deep connection to the natural world, its cycles of life and death, and its inherent violence.</li>
+<li><strong>Cambridge and Sylvia Plath:</strong> Studied Archaeology and Anthropology at Cambridge, which fueled his interest in myth, folklore, and ritual. He met and married the American poet Sylvia Plath in 1956. Their intense and tragic relationship is a central, and often controversial, aspect of his life and work.</li>
+<li><strong>Poetic Career:</strong> His first collection, <em>The Hawk in the Rain</em> (1957), brought him immediate acclaim. He served as the Poet Laureate of the United Kingdom from 1984 until his death in 1998.</li>
+<li><strong>Final Work:</strong> His final collection, <em>Birthday Letters</em> (1998), published months before his death, broke a 35-year public silence about his relationship with Plath, becoming a literary sensation.</li>
+</ul>
+<h3>b. Major Themes</h3>
+<ul>
+<li><strong>The Power and Violence of Nature:</strong> Hughes presents nature not as a gentle, romantic backdrop, but as a powerful, amoral force governed by instinct, survival, and brutality.</li>
+<li><strong>The Animal World:</strong> Animals are central to his work. They are not personified but are depicted as embodiments of pure, instinctual energy, often serving as a stark contrast to the conflicted, self-conscious nature of humanity.</li>
+<li><strong>Mythology and Shamanism:</strong> Hughes frequently draws on classical myths, folklore, and shamanic traditions to explore primal human energies and the subconscious. He often creates his own powerful mythology (e.g., in <em>Crow</em>).</li>
+<li><strong>Human Consciousness and Instinct:</strong> His poetry often explores the tension between the rational, civilized human mind and the deeper, more violent instincts we share with the animal kingdom.</li>
+</ul>
+<h3>c. Poetic Style</h3>
+<ul>
+<li><strong>Language:</strong> Muscular, visceral, and often harsh. He uses strong verbs and concrete nouns to create a palpable, physical reality.</li>
+<li><strong>Sound and Rhythm:</strong> Employs heavy use of alliteration, assonance, and consonance to create a dense, textured, and often jarring soundscape. While he primarily uses free verse, his lines have a strong, elemental rhythm.</li>
+<li><strong>Perspective:</strong> Often adopts the perspective of the animal or natural force itself, giving the reader an unmediated, unsentimental view of the world.</li>
+</ul>
+<hr/>
+<h2>2. 'The Hawk in The Rain' (1957)</h2>
+<p>This is the title poem from Hughes's first collection, establishing many of the key themes and stylistic features that would define his career.</p>
+<h3>a. Summary</h3>
+<p>The poem presents a speaker struggling to walk across a muddy, rain-lashed field. He feels physically overwhelmed by the storm, comparing his body to the land and feeling the weight of mortality. In stark contrast, a hawk hangs effortlessly in the same violent wind, a symbol of absolute mastery, control, and predatory power. The speaker contemplates the moment of the hawk's death, imagining it will be as violent and absolute as its life.</p>
+<h3>b. In-depth Analysis</h3>
+<h4>i. Themes</h4>
+<ul>
+<li><strong>Human Frailty vs. Natural Power:</strong> The central conflict is between the struggling, mortal human and the seemingly immortal, effortless power of the hawk. The speaker is "drowning" in the mud, while the hawk is a "master" of the storm.</li>
+<li><strong>Consciousness vs. Instinct:</strong> The speaker's self-awareness makes his struggle more profound; he is conscious of his own mortality and physical limitations ("my braced muscles straining"). The hawk, operating on pure instinct, is free from such anxieties. It simply <em>is</em>.</li>
+<li><strong>Violence and Survival:</strong> The landscape itself is violent ("the drumming ploughland," "the wind's battering"). The hawk embodies this violence in its potential to kill ("hooked head and hooked feet"). For both man and beast, existence is a struggle.</li>
+</ul>
+<h4>ii. Language and Poetic Devices</h4>
+<ul>
+<li><strong>Violent Imagery:</strong> The language is consistently brutal and physical. The speaker feels the land might "drag him to the bottom," and the rain "hammers." This creates a sense of primal conflict.</li>
+<li><strong>Alliteration and Consonance:</strong> The poem is rich with harsh, percussive sounds that mimic the storm.
+<blockquote>
+<p>I drown in the <strong>d</strong>rumming ploughlan<strong>d</strong>, I ro<strong>ll</strong> a<strong>l</strong>ong the <strong>l</strong>ightning<br/>
+The hard consonants (<code>d</code>, <code>l</code>, <code>t</code>, <code>k</code>) create a physical, jarring rhythm.</p>
+</blockquote></li>
+<li><strong>Metaphor:</strong>
+<ul>
+<li>The speaker’s struggle is a metaphor for the human condition itself—a difficult journey through a hostile world.</li>
+<li>The hawk becomes a complex symbol: it is a "master-fulcrum of violence," a point of stability in chaos, and an embodiment of nature's amoral, predatory essence.</li>
+</ul></li>
+<li><strong>Perspective Shift:</strong> The poem is grounded in the speaker's first-person experience ("I drown"), but it constantly looks up at the hawk, creating a powerful vertical axis of human earthliness and the hawk's airy dominion.</li>
+</ul>
+<h4>iii. Structure and Form</h4>
+<ul>
+<li><strong>Form:</strong> Four quatrains (four-line stanzas) with a loose, irregular rhyme scheme (e.g., <code>ABBA</code> in the first stanza). The contained form of the stanzas contrasts with the chaotic violence they describe, mirroring the hawk's controlled presence in the storm.</li>
+<li><strong>Enjambment:</strong> The use of enjambment (lines running into one another without punctuation) pulls the reader forward, mimicking the relentless force of the wind and rain.</li>
+</ul>
+<h3>c. Key Quotations and Analysis</h3>
+<blockquote>
+<p><code>I drown in the drumming ploughland, I drag up</code><br/>
+<code>Heel after heel from the swallowing of the earth's mouth,</code></p>
+</blockquote>
+<ul>
+<li><strong>Analysis:</strong> Establishes the speaker's vulnerability and the personification of the earth as a devouring entity. The alliteration of "drumming" creates an auditory image of the relentless rain.</li>
+</ul>
+<blockquote>
+<p><code>The hawk hangs still -</code><br/>
+<code>That maybe in his own time meets the weather</code><br/>
+<code>Coming from the wrong way, suffers the air, hurled up, and hung</code></p>
+</blockquote>
+<ul>
+<li><strong>Analysis:</strong> The caesura (pause) after "still" emphasizes the hawk's incredible control. The speaker speculates on the hawk's potential vulnerability, but even its imagined death is a violent, dramatic event, not a slow decay.</li>
+</ul>
+<blockquote>
+<p><code>The diamond point of will that polestars</code><br/>
+<code>The sea drowner's endurance:</code></p>
+</blockquote>
+<ul>
+<li><strong>Analysis:</strong> A powerful metaphor describing the hawk's essence. It is pure, hard, unthinking "will," a fixed point of reference (<code>polestars</code>) in the chaotic world, much like the North Star for a sailor.</li>
+</ul>
+<hr/>
+<h2>3. 'Snow' (from <em>Wodwo</em>, 1967)</h2>
+<p>This poem represents a shift towards a more abstract, surreal, and psychological landscape. It uses the image of snow to explore themes of consciousness, survival, and oblivion.</p>
+<h3>a. Summary</h3>
+<p>The poem describes a world being completely overwhelmed by snow. The speaker's perception is altered and frozen by this elemental force. The snow is not just external but internal, invading the body and mind, freezing blood and thought. Consciousness becomes a fragile, flickering thing, a "black hole" trying to absorb the overwhelming whiteness. The poem ends on a note of endurance, with the speaker still "watching."</p>
+<h3>b. In-depth Analysis</h3>
+<h4>i. Themes</h4>
+<ul>
+<li><strong>Oblivion and Consciousness:</strong> The central theme is the battle between the obliterating, uniform force of the snow (representing nothingness, death, or overwhelming reality) and the fragile pinpoint of human consciousness that observes it.</li>
+<li><strong>Internal vs. External Landscapes:</strong> The snow-covered world is a reflection of the speaker's internal state. The physical coldness mirrors a psychological or spiritual freezing. The boundary between the self and the world dissolves.</li>
+<li><strong>Survival and Endurance:</strong> Despite the overwhelming force, the poem is framed by the act of "Watching." This suggests that the act of perception, however difficult, is a form of survival and resistance against complete dissolution.</li>
+</ul>
+<h4>ii. Language and Poetic Devices</h4>
+<ul>
+<li><strong>Repetition:</strong> The word "snow" and the phrase "Watching the snow--" are repeated, creating a hypnotic, monotonous effect that mirrors the endless, falling snow. This emphasizes the obsessive, trapped state of the speaker.</li>
+<li><strong>Metaphor and Imagery:</strong> The imagery is stark, minimalist, and surreal.
+<ul>
+<li><code>The globe of the eye is a snowflake.</code> (Perception itself is frozen and patterned by the overwhelming force).</li>
+<li><code>the blood is a frozen tree.</code> (The internal life force is brought to a standstill).</li>
+<li><code>The eye's pupil, a black hole, / Drinks the whole blizzard in.</code> (A stunning image of consciousness as a void attempting to absorb an infinite, hostile reality).</li>
+</ul></li>
+<li><strong>Sensory Deprivation:</strong> The poem creates a world stripped of colour, sound, and warmth. The overwhelming "whiteness" erases detail and distinction, contributing to the sense of oblivion.</li>
+</ul>
+<h4>iii. Structure and Form</h4>
+<ul>
+<li><strong>Free Verse:</strong> The poem is written in fragmented free verse with short, stark lines and irregular stanzas.</li>
+<li><strong>Structure:</strong> The structure is non-linear and cyclical. It doesn't progress towards a resolution but rather deepens the experience of being trapped in the snowstorm. This formal choice reflects the theme of endlessness and stasis. The short lines force the reader to pause, creating a sense of cold, deliberate, and difficult thought.</li>
+</ul>
+<h3>c. Key Quotations and Analysis</h3>
+<blockquote>
+<p><code>Watching the snow--</code></p>
+</blockquote>
+<ul>
+<li><strong>Analysis:</strong> The opening and recurring phrase. It establishes the poem's core action: a passive but intense act of observation. It is both a state of mesmerization and a fight to remain conscious.</li>
+</ul>
+<blockquote>
+<p><code>The blizzard, a wolf, / With its tail of stillness.</code></p>
+</blockquote>
+<ul>
+<li><strong>Analysis:</strong> A powerful zoomorphic metaphor. The blizzard is not just weather but a predator—a wolf. The "tail of stillness" is a chilling paradox, suggesting that the aftermath of its violence is a profound, deathly silence.</li>
+</ul>
+<blockquote>
+<p><code>And the body, a sheet of paper, / Blanked out, in the blizzard, / Awaiting snow's signature.</code></p>
+</blockquote>
+<ul>
+<li><strong>Analysis:</strong> The self is reduced to a blank slate, its identity erased. It awaits the final "signature" of the snow, which implies death or complete surrender to the overwhelming force.</li>
+</ul>
+<hr/>
+<h2>4. 'Birthday Letters' (1998)</h2>
+<p>A collection of 88 poems written over more than 25 years, addressed to Sylvia Plath. It is Hughes's direct, personal, and mythological account of their life together.</p>
+<h3>a. Overall Context and Significance</h3>
+<ul>
+<li><strong>Breaking the Silence:</strong> For decades, Hughes was vilified by some for his perceived role in Plath's suicide. This collection was his only public, poetic response, offering his perspective on their shared history.</li>
+<li><strong>A Modern Myth:</strong> Hughes frames their story not just as a personal tragedy but as a collision of powerful, mythic forces. He uses metaphors of fate, destiny, and mythology to explain their relationship.</li>
+<li><strong>Dialogue with the Dead:</strong> The poems are written in the second person, directly addressing "you" (Plath). This creates an intensely intimate, and at times harrowing, dialogue with her memory and her own poetry.</li>
+</ul>
+<h3>b. In-depth Analysis of Key Poems</h3>
+<h4>i. 'Fulbright Scholars'</h4>
+<ul>
+<li><strong>Summary:</strong> The opening poem recalls the photograph of Plath and other smiling Fulbright Scholars before Hughes had met her. He reflects on this image of her pre-destined arrival in his life.</li>
+<li><strong>Themes:</strong> Fate, destiny, premonition. The poem is filled with dramatic irony, as the reader knows the tragic outcome of this "fated" meeting.</li>
+<li><strong>Analysis:</strong> The tone is one of gentle awe and inevitability. He describes her as if she were a character in a story that was already written. The "Transatlantic swell" that brought her to him is both a literal ocean and a metaphor for the unstoppable force of their destiny. The simple detail, "your grin," is made poignant and heavy with future tragedy.</li>
+</ul>
+<h4>ii. 'The Shot'</h4>
+<ul>
+<li><strong>Summary:</strong> A central and aggressive poem that presents a powerful extended metaphor. Plath is a "high-velocity bullet" fired by her father's "God" (his memory, his influence). Hughes was simply the "after-shadow" or target that happened to be in her trajectory.</li>
+<li><strong>Themes:</strong> Destiny, blame, psychological inheritance. It explores the idea that Plath's trajectory of self-destruction was set long before she met Hughes.</li>
+<li><strong>Analysis:</strong>
+<ul>
+<li><strong>Extended Metaphor:</strong> The "bullet" metaphor is brutal and effective. It captures her intensity, her focused energy, and her destructive potential. <code>Your Daddy, the god with the smoking gun.</code></li>
+<li><strong>Shift of Responsibility:</strong> This is one of the most controversial poems, as it can be read as Hughes deflecting blame for the tragedy onto Plath's relationship with her father, Otto Plath. He positions himself as a secondary victim, caught in the crossfire.</li>
+<li><strong>Language:</strong> The language is explosive and dynamic, filled with words like "ricochet," "velocity," "triggered," and "shot."</li>
+</ul></li>
+</ul>
+<h4>iii. 'Red'</h4>
+<ul>
+<li><strong>Summary:</strong> The final poem of the collection. Hughes reflects on the colour red, which he associates with Plath—her preference, her artistic muse, her raw vitality, and her blood. He contrasts it with "blue," the colour of salvation and peace, which she rejected.</li>
+<li><strong>Themes:</strong> Colour symbolism, life vs. death, art, memory, and final judgment.</li>
+<li><strong>Analysis:</strong>
+<ul>
+<li><strong>Symbolism:</strong> "Red was your colour." Red represents everything Plath embodied: passion, danger, blood, sacrifice, and raw life ("the heart's last gouts"). "Blue was better for you." Blue represents serenity, stability, heaven, and perhaps a life she could have had but was not in her nature to choose.</li>
+<li><strong>Elegiac Tone:</strong> The poem is a final, sorrowful address. It is both an accusation ("you revelled in red") and a lament.</li>
+<li><strong>Final Lines:</strong> The closing lines, <code>But the jewel you lost / Was blue,</code> are profoundly moving. They serve as a final, tragic summary of what was lost—not just Plath's life, but a potential for peace and calm that was ultimately unattainable for her. The "jewel" suggests something precious and rare that was sacrificed for the violent intensity of "red."</li>
+</ul></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem6/ENG607/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/ENG607/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,538 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/ENG606">ENG606</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/ENG606">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/ENG606/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/ENG606/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/ENG606/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ENG606</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: The Dance of the Happy Shades by Alice Munro</h1>
+<h2>1. Biography of Alice Munro</h2>
+<p><strong>Alice Munro (née Laidlaw)</strong> is widely regarded as one of the world’s premier writers of short fiction. Often cited as the "Canadian Chekhov," her work revolutionized the architecture of the modern short story.</p>
+<ul>
+<li><strong>Birth and Background:</strong> Born in 1931 in Wingham, Ontario. Her background in rural Southwestern Ontario (often fictionalized as "Soweto" or "Jubilee") provides the setting for much of her work.</li>
+<li><strong>Literary Career:</strong> Munro began writing in her teens. Her first collection, <em>Dance of the Happy Shades</em>, was published in 1968 and won the Governor General’s Award (Canada’s highest literary honor).</li>
+<li><strong>Style and Focus:</strong> unlike many contemporaries who moved to novels to secure fame, Munro remained dedicated to the short story form. She focuses on "Southern Ontario Gothic," examining the complexities of human relationships, the lives of girls and women, memory, and the dark undercurrents of small-town life.</li>
+<li><strong>Recognition:</strong> In 2013, she was awarded the <strong>Nobel Prize in Literature</strong>, cited as a "master of the contemporary short story." She is also a winner of the Man Booker International Prize and the Giller Prize.</li>
+</ul>
+<hr/>
+<h2>2. Plot Analysis</h2>
+<p>The story is a first-person narrative recounting an annual piano recital hosted by an elderly, eccentric music teacher, Miss Marsalles.</p>
+<h3>Exposition</h3>
+<p>The story begins with the narrator describing the reluctance of her mother and the other mothers in the neighborhood to attend Miss Marsalles's parties. The recital is viewed as a social obligation rather than a pleasure. Miss Marsalles is an aging spinster whose fortunes are declining; she has moved from a respectable brick house to a cramped duplex on Bala Street.</p>
+<h3>Rising Action</h3>
+<ul>
+<li><strong>The Setting:</strong> The atmosphere is hot, stifling, and awkward. The narrator describes the sensory details of the house—the smell of galoshes, the flies, and the crowded living room.</li>
+<li><strong>The Attendees:</strong> The mothers are judgmental of Miss Marsalles’s poverty and lack of style. They attend only out of a sense of "dutiful charity."</li>
+<li><strong>The Surprise Arrival:</strong> The recital is interrupted by the arrival of children from the "Greenhill School." It is revealed subtly that these are children with cognitive disabilities (likely Down syndrome). The mothers react with stiff discomfort, fear, and suppressed judgment.</li>
+</ul>
+<h3>Climax</h3>
+<p>The recital proceeds with mediocre performances by the regular students. Finally, one of the Greenhill students, a girl with "tow-colored hair," sits at the piano. She plays a piece called "The Dance of the Happy Shades" by Gluck. Her performance is technically perfect and musically sensitive—far superior to the other children. The audience is stunned into silence; for a brief moment, the social awkwardness and judgment are suspended by the beauty of the art.</p>
+<h3>Falling Action</h3>
+<p>The music ends, and the spell breaks. Miss Marsalles, seemingly oblivious to the social tension or the "otherness" of the Greenhill children, expresses pure delight. She hands out gifts to the children. The mothers immediately revert to their cynicism, desperate to leave the stifling environment.</p>
+<h3>Resolution</h3>
+<p>On the drive home, the narrator’s mother dismisses the miracle of the performance, saying, "It is all very well," implying that the girl's talent does not change her social status or disability. However, the narrator has an epiphany. She realizes that Miss Marsalles lives in a different realm—one of art and acceptance—that the narrator and her mother can no longer access.</p>
+<hr/>
+<h2>3. Character Analysis</h2>
+<h3>Miss Marsalles</h3>
+<ul>
+<li><strong>The Artist Figure:</strong> She represents total devotion to art for art’s sake. She lacks social ambition and is seemingly naive about her own poverty and the mothers' condescension.</li>
+<li><strong>The Equalizer:</strong> She treats all students exactly the same, whether they are the children of aspiring socialites or children with disabilities. She sees the <em>music</em> in them, not their social standing or physical appearance.</li>
+<li><strong>Symbol of Obsolescence:</strong> To the mothers, she represents a bygone era of unnecessary sentimentality and failed success.</li>
+</ul>
+<h3>The Narrator</h3>
+<ul>
+<li><strong>The Observer:</strong> A young girl on the cusp of adolescence. She acts as the bridge between the adult world of judgment and the childhood world of acceptance.</li>
+<li><strong>Internal Conflict:</strong> She participates in the mocking of Miss Marsalles to fit in with her mother, yet she possesses the sensitivity to understand the profundity of the final musical performance.</li>
+<li><strong>Development:</strong> By the end, she understands that she, too, will eventually adopt her mother’s cynicism, making the story a lament for lost innocence.</li>
+</ul>
+<h3>The Mother</h3>
+<ul>
+<li><strong>The Antagonist (Thematically):</strong> She represents social conformity, superficiality, and the fear of awkwardness.</li>
+<li><strong>Motivation:</strong> Her actions are driven by what is "proper" rather than what is kind. She views the recital as a burden.</li>
+<li><strong>Cynicism:</strong> Her refusal to acknowledge the beauty of the Greenhill girl's performance highlights her spiritual hollowness. She cannot allow herself to be moved by someone she deems "unfortunate."</li>
+</ul>
+<h3>The Girl from Greenhill School</h3>
+<ul>
+<li><strong>The Catalyst:</strong> She is the character who precipitates the climax.</li>
+<li><strong>Symbolism:</strong> She represents the "Happy Shade"—a spirit who transcends her physical and mental limitations through the medium of music.</li>
+</ul>
+<hr/>
+<h2>4. Thematic Analysis</h2>
+<h3>Social Class and Superficiality</h3>
+<p>Munro critiques the rigid social structures of the town. The mothers are obsessed with appearances—real estate values, proper dress, and social standing. They view Miss Marsalles with pity because she is poor, missing the fact that she is spiritually richer than they are. The story satirizes the middle-class fear of "falling" socially.</p>
+<h3>The Transformative Power of Art</h3>
+<p>Music is presented as a force that can temporarily bridge the gap between the "normal" world and the "other." During the performance of Gluck’s piece, the boundaries of disability, class, and age dissolve. The music is the only "true" thing in a room full of artificial pleasantries.</p>
+<h3>Perception of "The Other" (Disability)</h3>
+<p>The story tackles how society views those who are different. The mothers view the Greenhill children with "an absolute chill," seeing them only as medical tragedies or sources of embarrassment. Miss Marsalles, conversely, sees them simply as students and musicians. Munro challenges the reader to question who is actually "disabled"—the children who can create beautiful music, or the mothers who are emotionally incapable of appreciating it?</p>
+<h3>Aging and Obsolescence</h3>
+<p>Miss Marsalles is a relic of a past time. Her gifts are unwanted, her house is decaying, and her teaching methods are considered quaint. The story explores the cruelty with which the modern world discards the old and the sentimental.</p>
+<hr/>
+<h2>5. Stylistic Devices</h2>
+<h3>Narrative Voice (First-Person Retrospective)</h3>
+<ul>
+<li>The story is told by the narrator looking back. This allows for a double-vision: we see the events through the eyes of the child she was (embarrassed, observant) and the understanding of the adult she became (analytical, regretful).</li>
+</ul>
+<h3>Irony</h3>
+<ul>
+<li><strong>Situational Irony:</strong> The mothers attend the recital expecting a disaster, but the only true moment of grace comes from the children they fear most.</li>
+<li><strong>Dramatic Irony:</strong> The mothers pity Miss Marsalles, but the reader realizes that Miss Marsalles is the only one who is truly happy and fulfilled.</li>
+</ul>
+<h3>Imagery and Atmosphere</h3>
+<ul>
+<li>Munro uses oppressive heat imagery (the "dog days," the stifling living room) to mirror the suffocating social pressure and the mothers' discomfort.</li>
+<li><strong>Olfactory Imagery:</strong> The smell of "galoshes and unventilated woolen clothing" creates a visceral sense of the unpleasantness the mothers associate with Miss Marsalles.</li>
+</ul>
+<h3>Allusion</h3>
+<ul>
+<li>The title piece, <em>Dance of the Happy Shades</em>, is from Christoph Willibald Gluck’s opera <em>Orfeo ed Euridice</em>. This allusion is central to understanding the story (see below).</li>
+</ul>
+<hr/>
+<h2>6. Significance of the Title</h2>
+<p>The title <em>The Dance of the Happy Shades</em> is multi-layered and serves as the interpretive key to the story.</p>
+<h3>1. Literal Meaning</h3>
+<p>It refers to the specific piano piece played by the girl from the Greenhill School. It is a "Danse des Champs-Élysées" (Dance of the Elysian Fields) by Gluck.</p>
+<h3>2. Mythological Context</h3>
+<p>In the opera <em>Orfeo ed Euridice</em>, Orpheus travels to the Underworld to retrieve his wife. The "Happy Shades" are the spirits of the blessed dead who dwell in the Elysian Fields. They are dead to the living world, but they exist in a state of peaceful, eternal bliss.</p>
+<h3>3. Metaphorical Application</h3>
+<ul>
+<li><strong>The Greenhill Children:</strong> Society views these children as "dead" or "ghosts" (Shades)—invisible, unwanted, and living in a separate reality. However, in their music, they are "Happy." They inhabit a world of purity that the "living" (the mothers) cannot touch.</li>
+<li><strong>Miss Marsalles:</strong> She is also a "Shade." She belongs to a dead era. She is ghost-like in her irrelevance to the modern world, yet she is happy in her artistic bubble.</li>
+<li><strong>The Irony:</strong> The "living" people (the mothers) are miserable, anxious, and constrained by social rules. The "Shades" (the outcasts) are the only ones capable of joy.</li>
+</ul>
+<h3>4. The Final Message</h3>
+<p>The title suggests that true happiness and artistic truth may lie in the margins of society—among the "shades"—rather than in the bright, superficial world of the socially ambitious.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/ENG606/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/ENG606/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

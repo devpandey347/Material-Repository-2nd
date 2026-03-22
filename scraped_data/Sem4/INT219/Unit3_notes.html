@@ -1,0 +1,728 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/INT219">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT219/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT219/Unit3/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT219/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT219/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT219</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            9 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Advanced JavaScript and Asynchronous Programming</h1>
+<h2>1. Execution Context and Scope Chain</h2>
+<p>JavaScript code does not run directly; it runs inside an environment called the <strong>Execution Context</strong>. Understanding this is fundamental to understanding hoisting, scope, and closure.</p>
+<h3>Types of Execution Contexts</h3>
+<ol>
+<li><strong>Global Execution Context (GEC):</strong> The default context where code resides that is not inside any function. It creates the global object (<code>window</code> in browsers, <code>global</code> in Node.js) and sets the <code>this</code> keyword equal to that global object.</li>
+<li><strong>Function Execution Context (FEC):</strong> Created whenever a function is <strong>invoked</strong> (not defined). Each function call creates a new context.</li>
+<li><strong>Eval Execution Context:</strong> Code executed inside an <code>eval</code> function (rarely used due to security/performance concerns).</li>
+</ol>
+<h3>The Execution Stack (Call Stack)</h3>
+<p>JavaScript is single-threaded. It uses a <strong>LIFO (Last In, First Out)</strong> stack to manage execution contexts.</p>
+<ol>
+<li>Script starts: GEC is pushed to the bottom of the stack.</li>
+<li>Function called: New FEC is pushed on top.</li>
+<li>Function returns: FEC is popped off the stack.</li>
+</ol>
+<h3>Phases of Execution Context</h3>
+<p>Every execution context goes through two phases:</p>
+<h4>A. Creation Phase (Memory Creation)</h4>
+<p>Before code execution, the engine scans the code:</p>
+<ul>
+<li><strong>Variable Object (VO):</strong> Memory is allocated for variables and functions.</li>
+<li><strong>Hoisting:</strong>
+<ul>
+<li><code>function</code> declarations are stored fully in memory.</li>
+<li><code>var</code> variables are initialized as <code>undefined</code>.</li>
+<li><code>let</code> and <code>const</code> are placed in the <strong>Temporal Dead Zone (TDZ)</strong> and are not initialized (accessing them causes a ReferenceError).</li>
+</ul></li>
+<li><strong>Scope Chain Creation:</strong> Links to outer lexical environments are established.</li>
+<li><strong><code>this</code> binding:</strong> The value of <code>this</code> is determined.</li>
+</ul>
+<h4>B. Execution Phase</h4>
+<p>The engine runs through the code line by line, assigning values to variables and executing function calls.</p>
+<h3>Scope and Scope Chain</h3>
+<ul>
+<li><strong>Lexical Scope:</strong> Scope is determined by the physical location of the code definition. Inner functions have access to outer function variables.</li>
+<li><strong>Scope Chain:</strong> If a variable is not found in the current scope (local memory), the engine looks up the chain to the parent's lexical environment, continuing until the Global Scope. If not found there, a <code>ReferenceError</code> occurs.</li>
+</ul>
+<hr/>
+<h2>2. Closures</h2>
+<p>A <strong>closure</strong> is the combination of a function bundled together (enclosed) with references to its surrounding state (the <strong>lexical environment</strong>).</p>
+<h3>Core Concept</h3>
+<p>In JavaScript, functions form a closure around the data they are defined in. This allows an inner function to access variables from an outer function <em>even after the outer function has finished executing</em> and popped off the call stack.</p>
+<h3>Code Example</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">function outerFunction(outerVariable) {
+    const secret = "I am hidden";
+
+    return function innerFunction(innerVariable) {
+        console.log(`Outer: ${outerVariable}`);
+        console.log(`Inner: ${innerVariable}`);
+        console.log(`Secret: ${secret}`); // Accessing variable from closed-over scope
+    };
+}
+
+const newFunction = outerFunction("outside");
+// outerFunction has finished execution here.
+// Yet, newFunction retains access to 'outerVariable' and 'secret'.
+
+newFunction("inside"); 
+// Output: 
+// Outer: outside
+// Inner: inside
+// Secret: I am hidden
+</code></pre></div></p>
+<h3>Practical Use Cases</h3>
+<ol>
+<li><strong>Data Privacy / Emulating Private Methods:</strong> Hiding implementation details and exposing only a public API (Module Pattern).</li>
+<li><strong>Function Factories:</strong> Creating functions with preset configurations (Currying).</li>
+<li><strong>Memoization:</strong> Caching results of expensive function calls.</li>
+<li><strong>Iterators:</strong> Maintaining state across asynchronous calls.</li>
+</ol>
+<hr/>
+<h2>3. Prototype and Prototype Chain</h2>
+<p>JavaScript is a <strong>prototype-based</strong> language, meaning objects inherit properties and methods directly from other objects.</p>
+<h3><code>__proto__</code> vs <code>prototype</code></h3>
+<ul>
+<li><strong><code>prototype</code>:</strong> A property that exists on <strong>constructor functions</strong> (and classes). It is the template used to build the <code>__proto__</code> of instances created by that constructor.</li>
+<li><strong><code>__proto__</code> (or <code>[[Prototype]]</code>):</strong> A property that exists on <strong>instances</strong> (objects). It points to the prototype of the constructor that created it.</li>
+</ul>
+<h3>The Prototype Chain</h3>
+<p>When accessing a property on an object:</p>
+<ol>
+<li>JS checks if the object has the property (Own Property).</li>
+<li>If not, it looks at the object's <code>__proto__</code>.</li>
+<li>It continues up the chain until it finds the property or reaches <code>null</code>.</li>
+</ol>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">function Animal(name) {
+    this.name = name;
+}
+
+Animal.prototype.speak = function() {
+    console.log(`${this.name} makes a noise.`);
+};
+
+const dog = new Animal("Rex");
+
+// Look up process for dog.speak():
+// 1. Does 'dog' have 'speak'? No.
+// 2. Does dog.__proto__ (Animal.prototype) have 'speak'? Yes. Execute it.
+dog.speak(); // Rex makes a noise.
+</code></pre></div></p>
+<h3>Prototypal Inheritance</h3>
+<p>Before ES6 Classes, inheritance was achieved manually:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">function Dog(name) {
+    Animal.call(this, name); // Super constructor call
+}
+
+// Link prototypes
+Dog.prototype = Object.create(Animal.prototype);
+Dog.prototype.constructor = Dog;
+
+Dog.prototype.bark = function() {
+    console.log("Woof!");
+};
+</code></pre></div></p>
+<hr/>
+<h2>4. Event Loop and Concurrency Model</h2>
+<p>JavaScript uses a <strong>non-blocking, event-driven</strong> concurrency model. While the engine is single-threaded (one call stack), the browser (or Node.js) provides additional threads via <strong>Web APIs</strong> to handle asynchronous operations.</p>
+<h3>Key Components</h3>
+<ol>
+<li><strong>Call Stack:</strong> Executes synchronous code.</li>
+<li><strong>Web APIs (Browser) / C++ APIs (Node):</strong> Handles tasks like <code>setTimeout</code>, DOM events, and HTTP requests (<code>fetch</code>). These run outside the main JS thread.</li>
+<li><strong>Callback Queue (Task Queue):</strong> Holds callbacks from async operations waiting to be executed.</li>
+<li><strong>Event Loop:</strong> A mechanism that constantly monitors the Call Stack and the Callback Queue.
+<ul>
+<li><em>Rule:</em> If the Call Stack is <strong>empty</strong>, the Event Loop takes the first item from the Queue and pushes it onto the Stack.</li>
+</ul></li>
+</ol>
+<h3>Visual Flow</h3>
+<ol>
+<li><code>console.log('Start')</code> -&gt; Stack -&gt; Execute -&gt; Pop.</li>
+<li><code>setTimeout(...)</code> -&gt; Stack -&gt; Offloaded to Web API -&gt; Stack Pop.</li>
+<li><code>console.log('End')</code> -&gt; Stack -&gt; Execute -&gt; Pop.</li>
+<li>Timer finishes in Web API -&gt; Callback moves to <strong>Queue</strong>.</li>
+<li>Event Loop sees Stack is empty -&gt; Moves Callback from Queue to Stack -&gt; Execute.</li>
+</ol>
+<hr/>
+<h2>5. Microtask and Macrotask Queues</h2>
+<p>Not all asynchronous tasks are treated equally. The Event Loop prioritizes the <strong>Microtask Queue</strong> over the <strong>Macrotask (Task) Queue</strong>.</p>
+<h3>The Hierarchy</h3>
+<ol>
+<li><strong>Macrotasks (Task Queue):</strong> <code>setTimeout</code>, <code>setInterval</code>, <code>setImmediate</code> (Node), I/O operations, UI rendering.</li>
+<li><strong>Microtasks:</strong> Promises (<code>.then</code>, <code>.catch</code>, <code>.finally</code>), <code>queueMicrotask</code>, <code>MutationObserver</code>, <code>process.nextTick</code> (Node - technically higher priority than promises).</li>
+</ol>
+<h3>Event Loop Execution Order</h3>
+<ol>
+<li>Execute all synchronous code in the script (Call Stack).</li>
+<li><strong>Process ALL Microtasks:</strong> The Event Loop checks the Microtask queue. It runs <em>all</em> pending microtasks until the queue is empty. If a microtask adds another microtask, that acts recursively and is run immediately.</li>
+<li><strong>Render:</strong> The browser may update the UI/render.</li>
+<li><strong>Process ONE Macrotask:</strong> The Event Loop picks the oldest task from the Macrotask queue and pushes it to the stack.</li>
+<li>Repeat.</li>
+</ol>
+<h3>Example</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">console.log('1'); // Sync
+
+setTimeout(() =&gt; console.log('2'), 0); // Macrotask
+
+Promise.resolve().then(() =&gt; console.log('3')); // Microtask
+
+console.log('4'); // Sync
+
+// Output: 1, 4, 3, 2
+// Explanation: 
+// 1, 4 run synchronously.
+// Stack empties.
+// Event Loop checks Microtasks: runs 3.
+// Microtasks empty.
+// Event Loop checks Macrotasks: runs 2.
+</code></pre></div></p>
+<hr/>
+<h2>6. Promises and Asynchronous Control Flow</h2>
+<h3>Promises</h3>
+<p>A Promise is an object representing the eventual completion or failure of an asynchronous operation. It solves the "Callback Hell" problem.</p>
+<p><strong>States:</strong></p>
+<ol>
+<li><strong>Pending:</strong> Initial state.</li>
+<li><strong>Fulfilled (Resolved):</strong> Operation completed successfully.</li>
+<li><strong>Rejected:</strong> Operation failed.</li>
+</ol>
+<p><strong>Consuming Promises:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const myPromise = new Promise((resolve, reject) =&gt; {
+    // async logic
+    if (success) resolve("Data");
+    else reject("Error");
+});
+
+myPromise
+    .then(data =&gt; console.log(data)) // Handles success
+    .catch(err =&gt; console.error(err)) // Handles error
+    .finally(() =&gt; console.log("Done")); // Runs regardless of outcome
+</code></pre></div></p>
+<h3>Static Methods</h3>
+<ul>
+<li><strong><code>Promise.all([p1, p2])</code>:</strong> Waits for all to resolve. If one rejects, the whole call rejects immediately.</li>
+<li><strong><code>Promise.allSettled([p1, p2])</code>:</strong> Waits for all to finish, regardless of status. Returns an array of objects with status/value.</li>
+<li><strong><code>Promise.race([p1, p2])</code>:</strong> Returns the result of the first promise to settle (resolve OR reject).</li>
+<li><strong><code>Promise.any([p1, p2])</code>:</strong> Returns the first fulfilled promise. Ignores rejections unless all reject.</li>
+</ul>
+<h3>Async / Await</h3>
+<p>Introduced in ES8 (ES2017), this is syntactic sugar built on top of Promises. It makes async code look synchronous.</p>
+<ul>
+<li><strong><code>async</code> function:</strong> Always returns a Promise.</li>
+<li><strong><code>await</code>:</strong> Pauses the execution of the async function until the Promise is resolved.</li>
+<li><strong>Error Handling:</strong> Uses standard <code>try...catch</code> blocks.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">async function fetchData() {
+    try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error("Fetch failed", error);
+    }
+}
+</code></pre></div></p>
+<hr/>
+<h2>7. ES6+ Language Features</h2>
+<h3>Block Scoping (<code>let</code> and <code>const</code>)</h3>
+<ul>
+<li><code>var</code> is function-scoped (or global).</li>
+<li><code>let</code> and <code>const</code> are block-scoped (scoped to the nearest <code>{}</code>).</li>
+<li><code>const</code> prevents reassignment (though objects declared with const can still be mutated).</li>
+</ul>
+<h3>Arrow Functions</h3>
+<ul>
+<li>Concise syntax: <code>const add = (a, b) =&gt; a + b;</code> (implicit return).</li>
+<li><strong>Lexical <code>this</code>:</strong> Arrow functions do not have their own <code>this</code>. They inherit <code>this</code> from the surrounding scope. Useful in callbacks and event listeners.</li>
+</ul>
+<h3>Destructuring</h3>
+<p>Extracting values from arrays or properties from objects into distinct variables.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// Object
+const user = { name: "Alice", age: 25 };
+const { name, age } = user;
+
+// Array
+const coords = [10, 20];
+const [x, y] = coords;
+</code></pre></div></p>
+<h3>Spread (...) and Rest (...) Operators</h3>
+<ul>
+<li><strong>Spread:</strong> Expands an iterable (like an array) into individual elements. Used for cloning/merging arrays and objects.
+<ul>
+<li><code>const newArr = [...oldArr, 4, 5];</code></li>
+</ul></li>
+<li><strong>Rest:</strong> Condenses multiple elements into a single array element. Used in function parameters.
+<ul>
+<li><code>function sum(...args) { return args.reduce((a,b) =&gt; a+b); }</code></li>
+</ul></li>
+</ul>
+<h3>Template Literals</h3>
+<p>String interpolation using backticks and <code>${}</code> syntax. Supports multiline strings.</p>
+<h3>Optional Chaining (<code>?.</code>) &amp; Nullish Coalescing (<code>??</code>)</h3>
+<ul>
+<li><code>user?.address?.street</code>: Returns <code>undefined</code> instead of throwing an error if <code>address</code> is null/undefined.</li>
+<li><code>foo ?? 'default'</code>: Returns 'default' only if <code>foo</code> is <code>null</code> or <code>undefined</code> (unlike <code>||</code> which triggers on falsy values like 0 or empty strings).</li>
+</ul>
+<hr/>
+<h2>8. JavaScript Modules</h2>
+<p>Modules allow code to be split into separate files, improving maintainability and namespace management.</p>
+<h3>Evolution</h3>
+<ul>
+<li><strong>IIFE (Immediately Invoked Function Expressions):</strong> The old way to simulate private scope.</li>
+<li><strong>CommonJS:</strong> Used in Node.js (<code>require</code> / <code>module.exports</code>). Synchronous loading.</li>
+<li><strong>ES Modules (ESM):</strong> The official standard for JavaScript (Browser and Node).</li>
+</ul>
+<h3>ES Modules Syntax</h3>
+<p><strong>1. Named Exports:</strong><br/>
+Can export multiple values. Must be imported with the specific name (in curly braces).</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// math.js
+export const add = (a, b) =&gt; a + b;
+export const sub = (a, b) =&gt; a - b;
+
+// main.js
+import { add, sub } from './math.js';
+</code></pre></div></p>
+<p><strong>2. Default Exports:</strong><br/>
+One default export per file. Can be named anything when importing.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// User.js
+export default class User { ... }
+
+// main.js
+import UserClass from './User.js'; // Name chosen by importer
+</code></pre></div></p>
+<h3>Features of ES Modules</h3>
+<ul>
+<li><strong>Strict Mode:</strong> Modules execute in strict mode (<code>"use strict"</code>) by default.</li>
+<li><strong>Defer:</strong> Module scripts in browsers (<code>&lt;script type="module"&gt;</code>) are deferred automatically (they wait for HTML parsing).</li>
+<li><strong>Tree Shaking:</strong> Modern bundlers (Webpack, Rollup) can remove unused exports from the final bundle to reduce file size.</li>
+<li><strong>Singleton:</strong> Modules are evaluated only once. Subsequent imports share the same instance.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/INT219/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/INT219/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

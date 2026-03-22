@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@layer base {
+
+    :root {
+        --primary-bg: #000000;
+        --card-bg: #111111;
+        --accent-red: #ff0000;
+        --text-color: #ffffff;
+        --text-muted: #888888;
+    }
+
+    html,
+    body,
+    #root {
+        min-height: 100%;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        background: var(--primary-bg);
+        overflow-x: hidden;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+}
+
+@layer utilities {
+    @keyframes rise-in {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse-border {
+
+        0%,
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.42);
+        }
+
+        50% {
+            box-shadow: 0 0 0 6px rgba(255, 0, 0, 0);
+        }
+    }
+
+    @keyframes drift {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-6px);
+        }
+    }
+
+    .animate-rise-in {
+        animation: rise-in 500ms ease-out both;
+    }
+
+    .animate-pulse-border {
+        animation: pulse-border 2.2s ease-in-out infinite;
+    }
+
+    .animate-drift {
+        animation: drift 3.2s ease-in-out infinite;
+    }
+
+    .glass-red {
+        background: var(--card-bg);
+        border: 1px solid #333333;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+
+    .glass-red:hover {
+        border-color: var(--accent-red);
+        box-shadow: 0 10px 30px rgba(255, 0, 0, 0.15);
+    }
+
+    .btn-red-outline {
+        background: transparent;
+        border: 1px solid var(--accent-red);
+        color: var(--accent-red);
+        border-radius: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-red-outline:hover {
+        background: var(--accent-red);
+        color: #ffffff;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    }
+
+    .muted-text {
+        color: var(--text-muted);
+    }
+}

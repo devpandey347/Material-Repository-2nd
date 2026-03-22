@@ -1,0 +1,741 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT394">INT394</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 4</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT394">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT394/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT394/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT394/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT394</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Regression and Clustering</h1>
+<h2>1. Difference Between Classification and Regression</h2>
+<p>Both classification and regression are types of <strong>Supervised Learning</strong>, where the model learns a mapping from input variables (<span class="katex-inline" data-math="X"></span>) to an output variable (<span class="katex-inline" data-math="Y"></span>). The fundamental difference lies in the nature of the output variable.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Regression</th>
+<th style="text-align: left;">Classification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Output Type</strong></td>
+<td style="text-align: left;">Continuous (Numerical)</td>
+<td style="text-align: left;">Discrete (Categorical)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Goal</strong></td>
+<td style="text-align: left;">Predict a quantity or value.</td>
+<td style="text-align: left;">Predict a class label or category.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Mapping Function</strong></td>
+<td style="text-align: left;"><span class="katex-inline" data-math="f: \mathbb{R}^n \rightarrow \mathbb{R}"></span></td>
+<td style="text-align: left;"><span class="katex-inline" data-math="f: \mathbb{R}^n \rightarrow \{c_1, c_2, ..., c_k\}"></span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Ordering</strong></td>
+<td style="text-align: left;">There is a natural ordering (e.g., <span class="katex-inline" data-math="100 &gt; 50"></span>).</td>
+<td style="text-align: left;">No natural ordering implies magnitude (e.g., Cat is not <span class="katex-inline" data-math="&gt;"></span> Dog).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Examples</strong></td>
+<td style="text-align: left;">House price prediction, Stock market forecasting, Temperature prediction.</td>
+<td style="text-align: left;">Spam detection, Handwritten digit recognition, Medical diagnosis (Sick/Healthy).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Algorithms</strong></td>
+<td style="text-align: left;">Linear Regression, SVR, Regression Trees.</td>
+<td style="text-align: left;">Logistic Regression, SVM, Decision Trees, Naive Bayes.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Evaluation Metrics</strong></td>
+<td style="text-align: left;">MSE, RMSE, MAE, <span class="katex-inline" data-math="R^2"></span> Score.</td>
+<td style="text-align: left;">Accuracy, Precision, Recall, F1-Score, ROC-AUC.</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>2. Linear vs. Non-linear Regression</h2>
+<p>Regression models are categorized based on the relationship between the independent variables and the dependent variable.</p>
+<h3>Linear Regression</h3>
+<p>Assumes a linear relationship between input variables (<span class="katex-inline" data-math="x"></span>) and the single output variable (<span class="katex-inline" data-math="y"></span>). The model fits a straight line (or hyperplane in higher dimensions).</p>
+<ul>
+<li><strong>Equation:</strong> <span class="katex-inline" data-math="y = w_0 + w_1x_1 + w_2x_2 + \dots + w_nx_n + \epsilon"></span>
+<ul>
+<li>Where <span class="katex-inline" data-math="w"></span> are weights (parameters) and <span class="katex-inline" data-math="\epsilon"></span> is the error term.</li>
+</ul></li>
+<li><strong>Characteristics:</strong>
+<ul>
+<li>Computationally efficient and simple to interpret.</li>
+<li>Susceptible to <strong>high bias</strong> (underfitting) if the underlying data relationship is complex.</li>
+<li>Solved using Ordinary Least Squares (OLS) or Gradient Descent.</li>
+</ul></li>
+</ul>
+<h3>Non-linear Regression</h3>
+<p>Assumes the relationship between inputs and output is modeled by a non-linear function. The model fits a curve rather than a straight line.</p>
+<ul>
+<li><strong>Equation:</strong> <span class="katex-inline" data-math="y = f(x, w) + \epsilon"></span> (where <span class="katex-inline" data-math="f"></span> is non-linear w.r.t parameters or variables).</li>
+<li><strong>Polynomial Regression:</strong> A specific form of linear regression where the input features are transformed to higher powers (e.g., <span class="katex-inline" data-math="y = w_0 + w_1x + w_2x^2"></span>). While the curve is non-linear, it is still linear with respect to the weights <span class="katex-inline" data-math="w"></span>.</li>
+<li><strong>Characteristics:</strong>
+<ul>
+<li>More flexible; can capture complex patterns.</li>
+<li>Susceptible to <strong>high variance</strong> (overfitting).</li>
+<li>Requires more computational power.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>3. Loss Functions for Regression</h2>
+<p>A loss function quantifies the error between the predicted value (<span class="katex-inline" data-math="\hat{y}"></span>) and the actual value (<span class="katex-inline" data-math="y"></span>). The goal of training is to minimize this loss.</p>
+<h3>A. Mean Squared Error (MSE)</h3>
+<p>The average of the squared differences between predicted and actual values.<br/>
+<span class="math-display" data-math="MSE = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2"></span></p>
+<ul>
+<li><strong>Pros:</strong> Differentiable (great for Gradient Descent); penalizes large errors heavily.</li>
+<li><strong>Cons:</strong> Very sensitive to outliers.</li>
+</ul>
+<h3>B. Mean Absolute Error (MAE)</h3>
+<p>The average of the absolute differences.<br/>
+<span class="math-display" data-math="MAE = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|"></span></p>
+<ul>
+<li><strong>Pros:</strong> Robust to outliers compared to MSE.</li>
+<li><strong>Cons:</strong> Non-differentiable at 0 (requires sub-gradient methods); gradients are constant regardless of how close the prediction is.</li>
+</ul>
+<h3>C. Root Mean Squared Error (RMSE)</h3>
+<p>The square root of MSE.<br/>
+<span class="math-display" data-math="RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}"></span></p>
+<ul>
+<li><strong>Pros:</strong> Represents error in the same units as the target variable (<span class="katex-inline" data-math="y"></span>).</li>
+</ul>
+<h3>D. Huber Loss</h3>
+<p>A hybrid loss function that acts like MSE for small errors (quadratic) and MAE for large errors (linear).<br/>
+<span class="math-display" data-math="L_{\delta}(y, f(x)) = \begin{cases} \frac{1}{2}(y - f(x))^2 &amp; \text{for } |y - f(x)| \le \delta, \\ \delta |y - f(x)| - \frac{1}{2}\delta^2 &amp; \text{otherwise.} \end{cases}"></span></p>
+<ul>
+<li><strong>Pros:</strong> Combines the best of both worlds: differentiable at 0 and robust to outliers.</li>
+</ul>
+<hr/>
+<h2>4. Non-parametric Regression</h2>
+<p>Unlike parametric regression (e.g., Linear Regression), which assumes a fixed functional form with a finite set of parameters, non-parametric regression makes no strong assumptions about the underlying function. The structure of the model is determined by the data.</p>
+<h3>Key Characteristics</h3>
+<ul>
+<li><strong>Flexible:</strong> Can model very complex distributions.</li>
+<li><strong>Data-Driven:</strong> The complexity of the model grows with the number of data points (<span class="katex-inline" data-math="N"></span>).</li>
+<li><strong>Risk:</strong> Requires large amounts of data to avoid overfitting (Curse of Dimensionality).</li>
+</ul>
+<h3>Common Algorithms</h3>
+<h4>1. K-Nearest Neighbors (KNN) Regression</h4>
+<p>Predicts the output based on the average of the <span class="katex-inline" data-math="k"></span> nearest training points.</p>
+<ul>
+<li><strong>Logic:</strong> To predict <span class="katex-inline" data-math="y"></span> for a new <span class="katex-inline" data-math="x"></span>, find the <span class="katex-inline" data-math="k"></span> closest examples in the training set and calculate their mean (or weighted mean).</li>
+<li><strong>Hyperparameter:</strong> <span class="katex-inline" data-math="K"></span> (number of neighbors). Small <span class="katex-inline" data-math="K"></span> = Overfitting; Large <span class="katex-inline" data-math="K"></span> = Underfitting.</li>
+</ul>
+<h4>2. Kernel Regression (Nadaraya-Watson)</h4>
+<p>Calculates a weighted average of training outputs, where weights are determined by a <strong>kernel function</strong> (e.g., Gaussian Kernel) based on distance.</p>
+<ul>
+<li>Formula: <span class="katex-inline" data-math="\hat{y} = \frac{\sum K_h(x - x_i)y_i}{\sum K_h(x - x_i)}"></span></li>
+<li>Points closer to the query point have higher influence.</li>
+</ul>
+<h4>3. Regression Trees (Decision Trees)</h4>
+<p>Splits the input space into distinct, non-overlapping regions (boxes). For a new observation, the prediction is the mean of the training observations in that region.</p>
+<ul>
+<li><strong>Algorithm:</strong> CART (Classification and Regression Trees).</li>
+<li>Uses metrics like Variance Reduction or Standard Deviation Reduction to decide splits.</li>
+</ul>
+<hr/>
+<h2>5. Difference Between Classification and Clustering</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Classification</th>
+<th style="text-align: left;">Clustering</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Learning Paradigm</strong></td>
+<td style="text-align: left;"><strong>Supervised</strong> Learning.</td>
+<td style="text-align: left;"><strong>Unsupervised</strong> Learning.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Input Data</strong></td>
+<td style="text-align: left;">Labeled data <span class="katex-inline" data-math="\{(x, y)\}"></span>. Input variables and target labels are provided.</td>
+<td style="text-align: left;">Unlabeled data <span class="katex-inline" data-math="\{x\}"></span>. Only input variables are provided.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Goal</strong></td>
+<td style="text-align: left;">Assign data points to predefined classes.</td>
+<td style="text-align: left;">Group data points based on similarity; discover inherent structures.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Phases</strong></td>
+<td style="text-align: left;">Distinct Training and Testing phases.</td>
+<td style="text-align: left;">No predefined "training" phase; the algorithm runs on the dataset directly to find patterns.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Validation</strong></td>
+<td style="text-align: left;">Easy to validate against Ground Truth labels (Accuracy).</td>
+<td style="text-align: left;">Difficult to validate; relies on internal metrics (Silhouette Score) or domain expertise.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Example</strong></td>
+<td style="text-align: left;">Is this email Spam or Not Spam?</td>
+<td style="text-align: left;">Segment customers based on purchasing behavior.</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>6. Similarity and Distance Measures</h2>
+<p>Clustering relies heavily on measuring how "close" or "similar" two data points are. If <span class="katex-inline" data-math="x"></span> and <span class="katex-inline" data-math="y"></span> are two data vectors:</p>
+<h3>A. Minkowski Distance (General Metric)</h3>
+<p><span class="math-display" data-math="D(x, y) = (\sum_{i=1}^{n} |x_i - y_i|^p)^{1/p}"></span></p>
+<h3>B. Euclidean Distance (<span class="katex-inline" data-math="p=2"></span>)</h3>
+<p>The straight-line distance between two points. Most common for K-Means.<br/>
+<span class="math-display" data-math="D(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}"></span></p>
+<ul>
+<li><strong>Note:</strong> Highly sensitive to the scale of features (normalization is required).</li>
+</ul>
+<h3>C. Manhattan Distance (<span class="katex-inline" data-math="p=1"></span>)</h3>
+<p>The sum of absolute differences (Taxi-cab geometry).<br/>
+<span class="math-display" data-math="D(x, y) = \sum_{i=1}^{n} |x_i - y_i|"></span></p>
+<ul>
+<li><strong>Use Case:</strong> High-dimensional data or robust regression.</li>
+</ul>
+<h3>D. Cosine Similarity</h3>
+<p>Measures the cosine of the angle between two vectors. Focuses on orientation, not magnitude.<br/>
+<span class="math-display" data-math="\text{Similarity}(x, y) = \frac{x \cdot y}{||x|| \times ||y||}"></span></p>
+<ul>
+<li><strong>Use Case:</strong> Text mining, Document clustering.</li>
+</ul>
+<h3>E. Jaccard Similarity</h3>
+<p>Used for binary attributes or sets.<br/>
+<span class="math-display" data-math="J(A, B) = \frac{|A \cap B|}{|A \cup B|}"></span></p>
+<hr/>
+<h2>7. Partition-based Clustering</h2>
+<p>Partitioning methods divide data into <span class="katex-inline" data-math="k"></span> distinct, non-overlapping groups.</p>
+<h3>K-Means Clustering</h3>
+<p>The most popular centroid-based algorithm.</p>
+<p><strong>Algorithm Steps:</strong></p>
+<ol>
+<li><strong>Initialization:</strong> Select <span class="katex-inline" data-math="k"></span> random points as initial centroids.</li>
+<li><strong>Assignment:</strong> Assign every data point to the nearest centroid (typically using Euclidean distance).</li>
+<li><strong>Update:</strong> Recalculate the centroids by taking the mean of all points assigned to that cluster.</li>
+<li><strong>Repeat:</strong> Steps 2 and 3 until convergence (centroids do not move or max iterations reached).</li>
+</ol>
+<p><strong>Objective Function:</strong><br/>
+Minimize the Within-Cluster Sum of Squares (WCSS) or Sum of Squared Errors (SSE).</p>
+<p><strong>Limitations of K-Means:</strong></p>
+<ul>
+<li>Requires specifying <span class="katex-inline" data-math="k"></span> in advance.</li>
+<li>Sensitive to initial centroid placement (can get stuck in local optima).</li>
+<li>Sensitive to outliers (centroids get pulled away).</li>
+<li>Assumes clusters are spherical and roughly equal in size.</li>
+</ul>
+<h3>K-Medoids (PAM - Partitioning Around Medoids)</h3>
+<p>Similar to K-Means, but the center of a cluster must be an <strong>actual data point</strong> (medoid), not the calculated mean.</p>
+<ul>
+<li><strong>Pros:</strong> More robust to noise and outliers than K-Means.</li>
+<li><strong>Cons:</strong> Computationally more expensive.</li>
+</ul>
+<hr/>
+<h2>8. Hierarchical Clustering</h2>
+<p>Builds a hierarchy of clusters. The result is a tree-like representation called a <strong>Dendrogram</strong>. This method does not require specifying <span class="katex-inline" data-math="k"></span> beforehand.</p>
+<h3>Types of Hierarchical Clustering</h3>
+<h4>1. Agglomerative (Bottom-Up)</h4>
+<ul>
+<li>Start: Treat each data point as a single cluster (N clusters).</li>
+<li>Step: Merge the two closest clusters.</li>
+<li>Repeat: Until only one huge cluster remains.</li>
+<li>Most common approach.</li>
+</ul>
+<h4>2. Divisive (Top-Down)</h4>
+<ul>
+<li>Start: All points in one cluster.</li>
+<li>Step: Split the cluster recursively.</li>
+<li>Repeat: Until each point is its own cluster.</li>
+</ul>
+<h3>Linkage Criteria (How to measure distance between two clusters)</h3>
+<p>When merging clusters <span class="katex-inline" data-math="A"></span> and <span class="katex-inline" data-math="B"></span>, how do we define distance?</p>
+<ol>
+<li><strong>Single Linkage (Min):</strong> Distance between the two <em>closest</em> members of clusters A and B.
+<ul>
+<li><em>Issue:</em> "Chaining effect" (long, stringy clusters).</li>
+</ul></li>
+<li><strong>Complete Linkage (Max):</strong> Distance between the two <em>farthest</em> members of clusters A and B.
+<ul>
+<li><em>Result:</em> Compact, spherical clusters.</li>
+</ul></li>
+<li><strong>Average Linkage:</strong> Average distance between all pairs of points in A and B.</li>
+<li><strong>Ward’s Method:</strong> Minimizes the increase in variance (SSE) when merging clusters.</li>
+</ol>
+<hr/>
+<h2>9. Cluster Validation and Evaluation</h2>
+<p>Since clustering is unsupervised, evaluation is challenging.</p>
+<h3>A. Internal Evaluation (Using only the data)</h3>
+<ol>
+<li>
+<p><strong>Elbow Method (For K-Means):</strong></p>
+<ul>
+<li>Plot <span class="katex-inline" data-math="k"></span> (x-axis) vs. WCSS/SSE (y-axis).</li>
+<li>Look for the "elbow" point where the decrease in error slows down significantly. This is the optimal <span class="katex-inline" data-math="k"></span>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Silhouette Coefficient:</strong></p>
+<ul>
+<li>Measures how similar a point is to its own cluster (cohesion) compared to other clusters (separation).</li>
+<li>Range: <span class="katex-inline" data-math="[-1, 1]"></span>.</li>
+<li><span class="katex-inline" data-math="+1"></span>: Well clustered.</li>
+<li>$0$: On the border.</li>
+<li><span class="katex-inline" data-math="-1"></span>: Incorrectly clustered.</li>
+</ul>
+</li>
+<li>
+<p><strong>Davies-Bouldin Index:</strong></p>
+<ul>
+<li>Ratio of within-cluster scatter to between-cluster separation.</li>
+<li><strong>Lower is better.</strong></li>
+</ul>
+</li>
+</ol>
+<h3>B. External Evaluation (When ground truth labels are available)</h3>
+<p>Used mostly for benchmarking algorithms on known datasets.</p>
+<ol>
+<li><strong>Purity:</strong> The percent of the total number of data points that were correctly clustered.</li>
+<li><strong>Adjusted Rand Index (ARI):</strong> Measures the similarity between the clustering result and the ground truth, correcting for chance. Range <span class="katex-inline" data-math="[-1, 1]"></span>.</li>
+<li><strong>Normalized Mutual Information (NMI):</strong> Information-theoretic measure of shared information between predicted clusters and true classes.</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT394/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT394/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

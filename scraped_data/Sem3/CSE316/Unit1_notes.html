@@ -1,0 +1,665 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem3/CSE316">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSE316/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSE316/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE316</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Introduction to Operating System and Process Management</h1>
+<h2>1. Operating System Overview</h2>
+<h3>Meaning and Definition</h3>
+<p>An <strong>Operating System (OS)</strong> is system software that manages computer hardware, software resources, and provides common services for computer programs. It acts as an intermediary between the user of a computer and the computer hardware.</p>
+<ul>
+<li><strong>Primary Goal:</strong> Convenience (Making the computer easier to use).</li>
+<li><strong>Secondary Goal:</strong> Efficiency (Using computer resources like CPU and memory in an efficient manner).</li>
+</ul>
+<h3>Functions of an Operating System</h3>
+<ol>
+<li><strong>Process Management:</strong> Creating, scheduling, and terminating processes. Handling synchronization and deadlock.</li>
+<li><strong>Memory Management:</strong> Allocation and deallocation of memory space to programs.</li>
+<li><strong>File Management:</strong> Creating, deleting, reading, and writing files and directories.</li>
+<li><strong>Device Management (I/O):</strong> Managing device drivers and buffers for hardware peripherals.</li>
+<li><strong>Security and Protection:</strong> Protecting data from unauthorized access and ensuring distinct processes do not interfere with each other.</li>
+<li><strong>Command Interpretation:</strong> Interpreting user commands (via CLI or GUI) and acting on them.</li>
+</ol>
+<hr/>
+<h2>2. Hardware Protection: Supervisor &amp; User Mode</h2>
+<p>To ensure proper operation, the OS must distinguish between the execution of operating system code and user-defined code. This is achieved through <strong>Dual Mode Operation</strong>.</p>
+<h3>Modes of Operation</h3>
+<ol>
+<li><strong>User Mode (Bit = 1):</strong>
+<ul>
+<li>Used when the computer is executing user applications.</li>
+<li>Restricted access to hardware instructions.</li>
+<li>Cannot execute <strong>privileged instructions</strong> (e.g., handling interrupts, switching modes).</li>
+</ul></li>
+<li><strong>Supervisor Mode (Kernel/System/Monitor Mode) (Bit = 0):</strong>
+<ul>
+<li>Used when the operating system code is running.</li>
+<li>Has unrestricted access to all hardware instructions and memory.</li>
+<li>Privileged instructions can only be executed in this mode.</li>
+</ul></li>
+</ol>
+<h3>Mode Transition</h3>
+<ul>
+<li><strong>User to Kernel:</strong> Occurs via a <strong>System Call</strong> (software interrupt) or a hardware interrupt/trap/exception. The mode bit flips from 1 to 0.</li>
+<li><strong>Kernel to User:</strong> Occurs when the OS finishes servicing the request and returns control to the application. The mode bit flips from 0 to 1.</li>
+</ul>
+<hr/>
+<h2>3. Evolution and Types of Operating Systems</h2>
+<p>The evolution of operating systems correlates with the development of hardware architectures.</p>
+<h3>A. Simple Batch Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Jobs with similar needs were batched together and executed through a card reader.</li>
+<li><strong>Operation:</strong> The operator sorts programs into batches with similar requirements. The CPU executes one job after another without user interaction.</li>
+<li><strong>Drawback:</strong> High CPU idle time. If a job performs I/O, the CPU sits idle.</li>
+</ul>
+<h3>B. Multiprogramming Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Keeps several jobs in memory simultaneously to maximize CPU utilization.</li>
+<li><strong>Operation:</strong> The OS picks a job and begins to execute it. If that job needs to wait (e.g., for I/O), the CPU switches to another job.</li>
+<li><strong>Key Benefit:</strong> Efficient use of CPU; the CPU is rarely idle.</li>
+</ul>
+<h3>C. Multitasking (Time-Sharing) Systems</h3>
+<ul>
+<li><strong>Concept:</strong> A logical extension of multiprogramming. The CPU switches jobs so frequently that users can interact with each program while it is running.</li>
+<li><strong>Mechanism:</strong> Uses <strong>Time Slicing (Quantum)</strong>. Each process gets a small amount of CPU time.</li>
+<li><strong>Key Benefit:</strong> Response time is rapid; allows for interactive computing.</li>
+</ul>
+<h3>D. Multiprocessing Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Systems with two or more processors (CPUs) in close communication, sharing the computer bus, clock, and sometimes memory.</li>
+<li><strong>Types:</strong>
+<ul>
+<li><strong>Symmetric Multiprocessing (SMP):</strong> Each processor runs an identical copy of the OS. All processors are peers.</li>
+<li><strong>Asymmetric Multiprocessing:</strong> Master-slave relationship. The master processor schedules and controls the slave processors.</li>
+</ul></li>
+<li><strong>Benefits:</strong> Increased throughput, economy of scale, and increased reliability (fault tolerance).</li>
+</ul>
+<h3>E. Parallel Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Tightly coupled systems where processors share memory and a clock. They are designed to solve a single complex problem by breaking it into smaller parts.</li>
+<li><strong>Focus:</strong> High performance and speed.</li>
+</ul>
+<h3>F. Distributed Systems</h3>
+<ul>
+<li><strong>Concept:</strong> A collection of physically separate, possibly heterogeneous computer systems that are networked to provide the users with access to the various resources that the system maintains.</li>
+<li><strong>Characteristics:</strong> Loosely coupled. Each processor has its own local memory.</li>
+<li><strong>Benefits:</strong> Resource sharing, load balancing, reliability.</li>
+</ul>
+<h3>G. Real-Time Operating Systems (RTOS)</h3>
+<ul>
+<li><strong>Concept:</strong> Used when there are rigid time requirements on the operation of a processor or the flow of data.</li>
+<li><strong>Hard Real-Time:</strong> Critical tasks must complete on time (e.g., pacemaker, flight control). Missing a deadline is a system failure.</li>
+<li><strong>Soft Real-Time:</strong> A critical real-time task gets priority over other tasks and retains that priority until it completes (e.g., video streaming).</li>
+</ul>
+<hr/>
+<h2>4. Operating System Structure</h2>
+<h3>Simple Structure (Monolithic)</h3>
+<ul>
+<li>No well-defined structure. Application programs have direct access to I/O routines.</li>
+<li><strong>Example:</strong> MS-DOS.</li>
+<li><strong>Pros:</strong> Fast.</li>
+<li><strong>Cons:</strong> Difficult to debug/maintain; one crash crashes the whole system.</li>
+</ul>
+<h3>Layered Approach</h3>
+<ul>
+<li>The OS is broken into a number of pieces (layers).</li>
+<li><strong>Layer 0:</strong> Hardware.</li>
+<li><strong>Layer N:</strong> User Interface.</li>
+<li>Each layer uses functions and services of only lower-level layers.</li>
+<li><strong>Pros:</strong> Easier debugging (verify layer 0, then layer 1, etc.).</li>
+</ul>
+<h3>Microkernel</h3>
+<ul>
+<li>Moves as much functionality as possible from the kernel into "user space."</li>
+<li>The kernel only handles minimal IPC, memory, and CPU scheduling.</li>
+<li><strong>Example:</strong> Mach, QNX.</li>
+<li><strong>Pros:</strong> More secure and reliable (if a service crashes, the kernel stays up).</li>
+<li><strong>Cons:</strong> Performance overhead due to increased system function communication.</li>
+</ul>
+<hr/>
+<h2>5. System Calls</h2>
+<p>The <strong>System Call</strong> provides the interface between a running program (user mode) and the operating system (kernel mode).</p>
+<h3>Mechanism</h3>
+<ol>
+<li>User program calls a function (e.g., <code>open()</code>).</li>
+<li>A trap (software interrupt) is triggered.</li>
+<li>Control switches to Kernel Mode.</li>
+<li>OS executes the specific service code.</li>
+<li>Control returns to User Mode.</li>
+</ol>
+<h3>Types of System Calls</h3>
+<ol>
+<li><strong>Process Control:</strong> <code>load</code>, <code>execute</code>, <code>end</code>, <code>abort</code>, <code>create process</code>, <code>terminate process</code>.</li>
+<li><strong>File Management:</strong> <code>create file</code>, <code>delete file</code>, <code>open</code>, <code>close</code>, <code>read</code>, <code>write</code>.</li>
+<li><strong>Device Management:</strong> <code>request device</code>, <code>release device</code>, <code>read</code>, <code>write</code>.</li>
+<li><strong>Information Maintenance:</strong> <code>get time or date</code>, <code>set time or date</code>, <code>get system data</code>.</li>
+<li><strong>Communications:</strong> <code>create connection</code>, <code>delete connection</code>, <code>send message</code>, <code>receive message</code>.</li>
+</ol>
+<hr/>
+<h2>6. Process Management</h2>
+<h3>Process Concept</h3>
+<p>A <strong>process</strong> is a program in execution. A program is a passive entity (stored on disk), while a process is an active entity.</p>
+<p><strong>Memory Layout of a Process:</strong></p>
+<ol>
+<li><strong>Text Section:</strong> The compiled program code.</li>
+<li><strong>Data Section:</strong> Global and static variables.</li>
+<li><strong>Heap:</strong> Dynamically allocated memory during run time.</li>
+<li><strong>Stack:</strong> Temporary data (function parameters, return addresses, local variables).</li>
+</ol>
+<h3>Process Life Cycle (Process States)</h3>
+<p>As a process executes, it changes state. The standard 5-state model includes:</p>
+<ol>
+<li><strong>New:</strong> The process is being created.</li>
+<li><strong>Ready:</strong> The process is waiting to be assigned to a processor. It is in the main memory.</li>
+<li><strong>Running:</strong> Instructions are being executed (the CPU is working on this process).</li>
+<li><strong>Waiting (Blocked):</strong> The process is waiting for some event to occur (such as an I/O completion or reception of a signal).</li>
+<li><strong>Terminated:</strong> The process has finished execution.</li>
+</ol>
+<p><strong>State Transitions:</strong></p>
+<ul>
+<li><strong>Admitted:</strong> New <span class="katex-inline" data-math="\rightarrow"></span> Ready</li>
+<li><strong>Scheduler Dispatch:</strong> Ready <span class="katex-inline" data-math="\rightarrow"></span> Running</li>
+<li><strong>Interrupt:</strong> Running <span class="katex-inline" data-math="\rightarrow"></span> Ready (e.g., time slice expired)</li>
+<li><strong>I/O or Event Wait:</strong> Running <span class="katex-inline" data-math="\rightarrow"></span> Waiting</li>
+<li><strong>I/O or Event Completion:</strong> Waiting <span class="katex-inline" data-math="\rightarrow"></span> Ready</li>
+<li><strong>Exit:</strong> Running <span class="katex-inline" data-math="\rightarrow"></span> Terminated</li>
+</ul>
+<h3>Process Control Block (PCB)</h3>
+<p>The OS maintains a data structure for each process called the <strong>PCB</strong> (also known as the Task Control Block). It serves as the repository for any information that may vary from process to process.</p>
+<p><strong>Contents of PCB:</strong></p>
+<ul>
+<li><strong>Process State:</strong> (Running, waiting, etc.)</li>
+<li><strong>Program Counter:</strong> Address of the next instruction to execute.</li>
+<li><strong>CPU Registers:</strong> Accumulators, index registers, stack pointers.</li>
+<li><strong>CPU Scheduling Information:</strong> Priority, pointers to scheduling queues.</li>
+<li><strong>Memory-Management Information:</strong> Base and limit registers, page tables.</li>
+<li><strong>Accounting Information:</strong> CPU used, time limits, account numbers.</li>
+<li><strong>I/O Status Information:</strong> List of I/O devices allocated, list of open files.</li>
+</ul>
+<hr/>
+<h2>7. Operations on Processes</h2>
+<h3>1. Process Creation</h3>
+<ul>
+<li>A process may create several new processes.</li>
+<li><strong>Parent Process:</strong> The creating process.</li>
+<li><strong>Child Process:</strong> The new process.</li>
+<li><strong>System Call:</strong> <code>fork()</code> (in UNIX/Linux).
+<ul>
+<li><code>fork()</code> creates an exact duplicate of the parent.</li>
+<li>It returns 0 to the child and the Child's PID to the parent.</li>
+</ul></li>
+<li><strong>Execution Options:</strong>
+<ol>
+<li>Parent and child execute concurrently.</li>
+<li>Parent waits until child terminates.</li>
+</ol></li>
+</ul>
+<h3>2. Process Termination</h3>
+<ul>
+<li>A process finishes execution and asks the OS to delete it (<code>exit()</code> system call).</li>
+<li>Resources are deallocated.</li>
+<li><strong>Cascading Termination:</strong> In some systems, if a parent terminates, all its children must also be terminated.</li>
+<li><strong>Zombie Process:</strong> A process that has terminated, but whose parent has not yet called <code>wait()</code> (the entry is still in the process table).</li>
+<li><strong>Orphan Process:</strong> A process whose parent has terminated without waiting (adopted by the <code>init</code> process).</li>
+</ul>
+<hr/>
+<h2>8. Cooperating vs. Independent Processes</h2>
+<h3>Independent Processes</h3>
+<ul>
+<li>A process is independent if it <strong>cannot</strong> affect or be affected by the other processes executing in the system.</li>
+<li>It does not share data with any other process.</li>
+</ul>
+<h3>Cooperating Processes</h3>
+<ul>
+<li>A process is cooperating if it <strong>can</strong> affect or be affected by other processes.</li>
+<li>They share data (variables, memory, files).</li>
+<li><strong>Reasons for Cooperation:</strong>
+<ol>
+<li><strong>Information Sharing:</strong> Several users may be interested in the same file.</li>
+<li><strong>Computation Speedup:</strong> Breaking a task into subtasks to run in parallel.</li>
+<li><strong>Modularity:</strong> Constructing a system in modular fashion.</li>
+<li><strong>Convenience:</strong> A user may perform many tasks at one time.</li>
+</ol></li>
+</ul>
+<h3>Inter-Process Communication (IPC)</h3>
+<p>Cooperating processes require an IPC mechanism. Two main models exist:</p>
+<ol>
+<li>
+<p><strong>Shared Memory:</strong></p>
+<ul>
+<li>A region of memory is established to be shared by cooperating processes.</li>
+<li>Processes can read and write to this region.</li>
+<li><strong>Pros:</strong> Very fast (memory speed).</li>
+<li><strong>Cons:</strong> Complicated to implement synchronization (avoiding race conditions).</li>
+</ul>
+</li>
+<li>
+<p><strong>Message Passing:</strong></p>
+<ul>
+<li>Communication takes place by means of exchanging messages via the kernel.</li>
+<li>Operations: <code>send(message)</code> and <code>receive(message)</code>.</li>
+<li><strong>Pros:</strong> Easier to implement for distributed systems; no conflict handling needed for memory.</li>
+<li><strong>Cons:</strong> Slower than shared memory (requires system calls/kernel intervention).</li>
+</ul>
+</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem3/CSE316/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,716 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT395">INT395</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT395">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT395/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT395/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT395</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Introduction and Data Preprocessing</h1>
+<h2>1. Overview of Supervised Learning</h2>
+<h3>Definition</h3>
+<p>Supervised learning is a paradigm of machine learning where the model is trained on a <strong>labeled dataset</strong>. The algorithm learns a mapping function <span class="katex-inline" data-math="f"></span> from input variables (<span class="katex-inline" data-math="X"></span>, also called features) to output variables (<span class="katex-inline" data-math="y"></span>, also called labels or targets).</p>
+<ul>
+<li><strong>Goal:</strong> To approximate the mapping function so well that when you have new input data (<span class="katex-inline" data-math="X"></span>), you can predict the output variables (<span class="katex-inline" data-math="y"></span>) for that data.</li>
+<li><strong>The Teacher Analogy:</strong> The process is supervised because we know the correct answers. The algorithm makes predictions on the training data and is corrected by the "teacher" (the loss function) whenever the predictions are wrong.</li>
+</ul>
+<h3>Key Use Cases</h3>
+<ol>
+<li><strong>Email Filtering:</strong> Classifying emails as "Spam" or "Not Spam."</li>
+<li><strong>Credit Scoring:</strong> Predicting if a customer will default on a loan based on credit history.</li>
+<li><strong>Real Estate:</strong> Predicting house prices based on square footage, location, and number of bedrooms.</li>
+<li><strong>Medical Diagnosis:</strong> Predicting disease presence (Positive/Negative) based on symptoms and test results.</li>
+<li><strong>Image Recognition:</strong> Identifying objects (e.g., cats vs. dogs) within an image.</li>
+</ol>
+<hr/>
+<h2>2. Types of Supervised Learning</h2>
+<p>Supervised learning problems are grouped based on the nature of the target variable (<span class="katex-inline" data-math="y"></span>).</p>
+<h3>A. Classification</h3>
+<p>The output variable is a <strong>category</strong> (discrete value).</p>
+<ul>
+<li><strong>Binary Classification:</strong> Two possible classes (e.g., Yes/No, Churn/Retain).</li>
+<li><strong>Multi-class Classification:</strong> More than two classes (e.g., Categorizing news articles into Sports, Politics, Tech).</li>
+<li><strong>Algorithms:</strong> Logistic Regression, Decision Trees, Support Vector Machines (SVM), k-Nearest Neighbors (KNN), Random Forest.</li>
+</ul>
+<h3>B. Regression</h3>
+<p>The output variable is a <strong>real value</strong> (continuous value).</p>
+<ul>
+<li><strong>Examples:</strong> Predicting temperature, stock prices, age, or sales revenue.</li>
+<li><strong>Algorithms:</strong> Linear Regression, Polynomial Regression, Support Vector Regression (SVR), Decision Tree Regression.</li>
+</ul>
+<hr/>
+<h2>3. Setting up Python and Scikit-learn Environment</h2>
+<p>To perform supervised learning, the Python ecosystem relies on a stack of scientific libraries.</p>
+<h3>Essential Libraries</h3>
+<ol>
+<li><strong>NumPy:</strong> Fundamental package for scientific computing (arrays, matrices).</li>
+<li><strong>Pandas:</strong> Data manipulation and analysis (DataFrames).</li>
+<li><strong>Matplotlib/Seaborn:</strong> Data visualization.</li>
+<li><strong>Scikit-learn (sklearn):</strong> The core machine learning library containing algorithms and preprocessing tools.</li>
+</ol>
+<h3>Installation</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">pip install numpy pandas matplotlib seaborn scikit-learn jupyter
+</code></pre></div></p>
+<h3>Basic Import Convention</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+# Specific models are imported as needed, e.g.:
+# from sklearn.linear_model import LinearRegression
+</code></pre></div></p>
+<hr/>
+<h2>4. Types of Data</h2>
+<p>Understanding the nature of features is critical for preprocessing.</p>
+<ol>
+<li><strong>Numerical (Quantitative):</strong>
+<ul>
+<li><strong>Continuous:</strong> Can take any value within a range (e.g., Height, Weight, Price).</li>
+<li><strong>Discrete:</strong> Countable integers (e.g., Number of children, Number of purchases).</li>
+</ul></li>
+<li><strong>Categorical (Qualitative):</strong>
+<ul>
+<li><strong>Nominal:</strong> Categories with no intrinsic ordering (e.g., Color: Red/Blue/Green, Gender: M/F).</li>
+<li><strong>Ordinal:</strong> Categories with a clear order (e.g., T-shirt size: S/M/L/XL, Rating: Low/Medium/High).</li>
+</ul></li>
+<li><strong>Time-Series:</strong> Data points indexed in time order (e.g., Daily stock closing prices).</li>
+</ol>
+<hr/>
+<h2>5. Loading Datasets</h2>
+<p>Data is usually stored in CSV, Excel, or SQL databases.</p>
+<h3>Using Pandas</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Loading CSV
+df = pd.read_csv('dataset.csv')
+
+# Loading Excel
+df = pd.read_excel('dataset.xlsx')
+</code></pre></div></p>
+<h3>Using Scikit-learn (Toy Datasets)</h3>
+<p>Useful for practice and prototyping.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">from sklearn.datasets import load_iris, load_boston
+
+# Load Iris dataset (Classification)
+data = load_iris()
+df = pd.DataFrame(data.data, columns=data.feature_names)
+df['target'] = data.target
+</code></pre></div></p>
+<hr/>
+<h2>6. Data Exploration (EDA) with Pandas and Visualization</h2>
+<p>Exploratory Data Analysis (EDA) allows us to understand the data structure, patterns, and anomalies before modeling.</p>
+<h3>Pandas Inspection Methods</h3>
+<ul>
+<li><code>df.head()</code>: View the first 5 rows.</li>
+<li><code>df.shape</code>: Dimensions of the dataset (rows, columns).</li>
+<li><code>df.info()</code>: Summarizes data types and non-null counts per column.</li>
+<li><code>df.describe()</code>: Statistical summary (mean, std, min, max, quartiles) for numerical features.</li>
+<li><code>df['column'].value_counts()</code>: Frequency of unique values (for categorical data).</li>
+</ul>
+<h3>Visualization (Matplotlib &amp; Seaborn)</h3>
+<ol>
+<li><strong>Histograms:</strong> Check distribution of numerical data (Normal vs. Skewed).<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    sns.histplot(df['age'], kde=True)
+    </code></pre></div></li>
+<li><strong>Box Plots:</strong> Identify outliers and quartiles.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    sns.boxplot(x=df['salary'])
+    </code></pre></div></li>
+<li><strong>Scatter Plots:</strong> Analyze relationships between two numerical variables.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    plt.scatter(df['experience'], df['salary'])
+    </code></pre></div></li>
+<li><strong>Heatmaps:</strong> Visualize correlation matrices to find collinearity.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
+    </code></pre></div></li>
+</ol>
+<hr/>
+<h2>7. Common Data Issues and Cleaning</h2>
+<p>Real-world data is "dirty." Models trained on bad data produce bad predictions (Garbage In, Garbage Out).</p>
+<h3>Common Issues</h3>
+<ol>
+<li><strong>Noise:</strong> Random error or variance in a measured variable.</li>
+<li><strong>Inconsistency:</strong> Formatting differences (e.g., "NY", "N.Y.", "New York").</li>
+<li><strong>Duplicates:</strong> Identical rows that bias the model.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    df.drop_duplicates(inplace=True)
+    </code></pre></div></li>
+</ol>
+<h3>Handling Missing Values</h3>
+<p>Missing data is represented as <code>NaN</code> (Not a Number) or <code>None</code>.</p>
+<p><strong>Detection:</strong> <code>df.isnull().sum()</code></p>
+<p><strong>Strategies:</strong></p>
+<ol>
+<li><strong>Dropping:</strong>
+<ul>
+<li>Remove rows (<code>df.dropna()</code>) if the dataset is large and missing rows are few.</li>
+<li>Remove columns if &gt;50% of the data is missing.</li>
+</ul></li>
+<li><strong>Imputation (Filling):</strong>
+<ul>
+<li><strong>Mean:</strong> Use for normally distributed numerical data.</li>
+<li><strong>Median:</strong> Use for skewed numerical data (robust to outliers).</li>
+<li><strong>Mode:</strong> Use for categorical data.</li>
+<li><strong>Model-based:</strong> Use KNN or Regression to predict missing values.</li>
+</ul></li>
+</ol>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">from sklearn.impute import SimpleImputer
+imputer = SimpleImputer(strategy='mean')
+df['age'] = imputer.fit_transform(df[['age']])
+</code></pre></div></p>
+<h3>Handling Outliers</h3>
+<p>Outliers are extreme values that deviate significantly from other observations.</p>
+<ol>
+<li><strong>Detection:</strong>
+<ul>
+<li><strong>Z-Score:</strong> Values beyond <span class="katex-inline" data-math="\pm 3"></span> standard deviations.</li>
+<li><strong>IQR (Interquartile Range):</strong> Values <span class="katex-inline" data-math="&lt; Q1 - 1.5 \times IQR"></span> or <span class="katex-inline" data-math="&gt; Q3 + 1.5 \times IQR"></span>.</li>
+</ul></li>
+<li><strong>Treatment:</strong>
+<ul>
+<li><strong>Trimming:</strong> Remove the outlier rows.</li>
+<li><strong>Capping (Winsorizing):</strong> Set outliers to the 5th or 95th percentile value.</li>
+<li><strong>Log Transformation:</strong> Compresses the range of high-magnitude values.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>8. Handling Class Imbalance</h2>
+<p>Occurs in classification when one class significantly outnumbers the other (e.g., Fraud Detection: 99% legitimate, 1% fraud). Models become biased toward the majority class.</p>
+<h3>Techniques</h3>
+<ol>
+<li><strong>Resampling:</strong>
+<ul>
+<li><strong>Undersampling:</strong> Randomly remove samples from the majority class (loss of information).</li>
+<li><strong>Oversampling:</strong> Duplicating samples from the minority class.</li>
+</ul></li>
+<li><strong>SMOTE (Synthetic Minority Over-sampling Technique):</strong> Creates synthetic (artificial) data points for the minority class by interpolating between existing samples.</li>
+<li><strong>Class Weights:</strong> Modify the algorithm to penalize errors on the minority class more heavily (e.g., <code>class_weight='balanced'</code> in Scikit-learn).</li>
+</ol>
+<hr/>
+<h2>9. Feature Scaling</h2>
+<p>Scaling ensures all features contribute equally to the result. It is crucial for distance-based algorithms (KNN, SVM, K-Means) and Gradient Descent optimization. Tree-based models (Random Forest) generally do not require scaling.</p>
+<h3>Techniques</h3>
+<ol>
+<li>
+<p><strong>Standardization (Z-score Normalization):</strong></p>
+<ul>
+<li>Scales features to have Mean (<span class="katex-inline" data-math="\mu"></span>) = 0 and Standard Deviation (<span class="katex-inline" data-math="\sigma"></span>) = 1.</li>
+<li>Preferred when data follows a Gaussian distribution or has outliers.</li>
+<li>Formula: <span class="katex-inline" data-math="z = \frac{x - \mu}{\sigma}"></span><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    </code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>Normalization (Min-Max Scaling):</strong></p>
+<ul>
+<li>Scales features to a range [0, 1].</li>
+<li>Preferred for neural networks or image processing.</li>
+<li>Formula: <span class="katex-inline" data-math="x_{norm} = \frac{x - x_{min}}{x_{max} - x_{min}}"></span><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    from sklearn.preprocessing import MinMaxScaler
+    scaler = MinMaxScaler()
+    </code></pre></div></li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h2>10. Encoding Categorical Variables</h2>
+<p>Machine learning models require numerical input. Categorical text data must be converted.</p>
+<h3>1. Label Encoding</h3>
+<p>Assigns a unique integer to each category (e.g., Low=0, Medium=1, High=2).</p>
+<ul>
+<li><strong>Use case:</strong> <strong>Ordinal</strong> data (where order matters).</li>
+<li><strong>Library:</strong> <code>sklearn.preprocessing.LabelEncoder</code></li>
+</ul>
+<h3>2. One-Hot Encoding</h3>
+<p>Creates a new binary column for each category.</p>
+<ul>
+<li><strong>Use case:</strong> <strong>Nominal</strong> data (where no order exists, e.g., Cities).</li>
+<li><strong>Issue:</strong> Can increase dimensionality significantly.</li>
+<li><strong>Library:</strong> <code>pd.get_dummies()</code> or <code>sklearn.preprocessing.OneHotEncoder</code>.</li>
+<li><strong>Dummy Variable Trap:</strong> Multicollinearity caused by including all dummy variables. Solution: Drop one column (<code>drop_first=True</code>).</li>
+</ul>
+<hr/>
+<h2>11. Feature Engineering</h2>
+<p>The art of creating new features from existing ones to improve model performance.</p>
+<p><strong>Examples:</strong></p>
+<ul>
+<li><strong>Binning:</strong> Converting continuous age into groups (Child, Teen, Adult, Senior).</li>
+<li><strong>Polynomial Features:</strong> Creating interaction terms (<span class="katex-inline" data-math="x_1^2, x_1 \cdot x_2"></span>) to capture non-linear relationships.</li>
+<li><strong>Date/Time Extraction:</strong> Extracting 'Day of Week', 'Month', or 'Hour' from a timestamp.</li>
+<li><strong>Domain Specific:</strong> Creating a "Debt-to-Income Ratio" from "Total Debt" and "Income" columns.</li>
+</ul>
+<hr/>
+<h2>12. Feature Selection</h2>
+<p>Selecting the most relevant subset of features to reduce overfitting, improve accuracy, and speed up training.</p>
+<h3>Methods</h3>
+<ol>
+<li><strong>Filter Methods:</strong> Use statistical tests to select features independent of the model.
+<ul>
+<li><em>Correlation Matrix:</em> Remove features highly correlated with each other (redundant).</li>
+<li><em>Chi-Square Test:</em> For categorical features.</li>
+</ul></li>
+<li><strong>Wrapper Methods:</strong> Evaluate specific subsets of features by training a model.
+<ul>
+<li><em>RFE (Recursive Feature Elimination):</em> Recursively removes the least important features.</li>
+</ul></li>
+<li><strong>Embedded Methods:</strong> Feature selection occurs during model training.
+<ul>
+<li><em>Lasso Regression (L1 Regularization):</em> Shrinks coefficients of less important features to zero.</li>
+<li><em>Tree-based Importance:</em> Random Forests provide a <code>feature_importances_</code> attribute.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>13. Data Splitting</h2>
+<p>We must separate data to evaluate how the model performs on unseen data.</p>
+<ul>
+<li><strong>Training Set:</strong> Used to train the model (usually 70-80%).</li>
+<li><strong>Testing Set:</strong> Used to evaluate performance (usually 20-30%).</li>
+<li><strong>Validation Set:</strong> (Optional) Used for hyperparameter tuning during training.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">from sklearn.model_selection import train_test_split
+
+X = df.drop('target', axis=1)
+y = df['target']
+
+# random_state ensures reproducibility
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+</code></pre></div></p>
+<hr/>
+<h2>14. Dimensionality Reduction</h2>
+<p>Reducing the number of input variables while retaining the meaningful information. Used to mitigate the <strong>Curse of Dimensionality</strong>.</p>
+<h3>Principal Component Analysis (PCA)</h3>
+<p>A linear unsupervised technique that projects data onto new orthogonal axes (Principal Components) that maximize variance.</p>
+<ul>
+<li><strong>Usage:</strong> Visualization (reducing to 2D/3D) or noise reduction.</li>
+<li><strong>Note:</strong> Data must be scaled (Standardized) before applying PCA.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">from sklearn.decomposition import PCA
+
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+</code></pre></div></p>
+<h3>Linear Discriminant Analysis (LDA)</h3>
+<p>A supervised technique that finds a linear combination of features that separates two or more classes. Unlike PCA, LDA focuses on maximizing class separability.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT395/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

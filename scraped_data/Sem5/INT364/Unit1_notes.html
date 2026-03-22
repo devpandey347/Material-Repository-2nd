@@ -1,0 +1,685 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT364">INT364</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT364">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT364/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT364/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT364</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            10 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Cloud Fundamentals and Security</h1>
+<h2>1. Cloud Architecting and AWS Global Infrastructure</h2>
+<h3>Cloud Architecting</h3>
+<p>Cloud architecting refers to the practice of evaluating trade-offs and making technical decisions to build and deploy systems on a cloud platform. It involves designing solutions that are scalable, reliable, secure, and cost-efficient. Unlike on-premises infrastructure, cloud architecting allows for disposable resources, loose coupling, and treating infrastructure as code.</p>
+<h3>AWS Global Infrastructure</h3>
+<p>The physical infrastructure of AWS is broken down into specific geographic and logical categorizations.</p>
+<h4>1. Regions</h4>
+<p>A <strong>Region</strong> is a separate geographic area. Each Region has multiple, isolated locations known as Availability Zones.</p>
+<ul>
+<li><strong>Independence:</strong> Regions are completely independent of one another (except for billing). This ensures that a disaster in one region does not affect another.</li>
+<li><strong>Data Sovereignty:</strong> Data stored in a region never leaves that region unless explicitly moved by the user.</li>
+<li><strong>Selection Factors:</strong>
+<ul>
+<li><strong>Compliance:</strong> Legal requirements regarding where data must reside.</li>
+<li><strong>Latency:</strong> Proximity to the end-user base to reduce delay.</li>
+<li><strong>Pricing:</strong> Services cost different amounts in different regions.</li>
+<li><strong>Service Availability:</strong> Not all AWS services are available in all regions immediately.</li>
+</ul></li>
+</ul>
+<h4>2. Availability Zones (AZs)</h4>
+<p>An <strong>Availability Zone</strong> is one or more discrete data centers with redundant power, networking, and connectivity in an AWS Region.</p>
+<ul>
+<li><strong>Isolation:</strong> AZs are physically separated by a meaningful distance (usually miles) to protect against local disasters (fires, floods) but close enough for low-latency replication (milliseconds).</li>
+<li><strong>Interconnectivity:</strong> AZs within a region are connected via high-bandwidth, low-latency networking.</li>
+<li><strong>Usage:</strong> Architects use multiple AZs to achieve <strong>High Availability (HA)</strong> and <strong>Fault Tolerance</strong>. If one AZ fails, traffic can be routed to another.</li>
+</ul>
+<h4>3. Edge Locations</h4>
+<p>Edge Locations are endpoints for AWS used for caching content.</p>
+<ul>
+<li><strong>CloudFront:</strong> Primarily used by Amazon CloudFront (Content Delivery Network - CDN) to deliver content to end-users with lower latency.</li>
+<li><strong>Count:</strong> There are significantly more Edge Locations than Regions or AZs.</li>
+<li><strong>Function:</strong> They cache static content (images, video) closer to the user to reduce the load on the origin server.</li>
+</ul>
+<hr/>
+<h2>2. AWS Well-Architected Framework</h2>
+<p>The Well-Architected Framework provides a consistent approach for customers and partners to evaluate architectures and implement designs that will scale over time. It consists of six pillars.</p>
+<h3>The Six Pillars</h3>
+<ol>
+<li>
+<p><strong>Operational Excellence:</strong></p>
+<ul>
+<li>Focuses on running and monitoring systems to deliver business value and continually improving processes and procedures.</li>
+<li><em>Key topics:</em> Automating changes, responding to events, and defining standards to manage daily operations (Infrastructure as Code).</li>
+</ul>
+</li>
+<li>
+<p><strong>Security:</strong></p>
+<ul>
+<li>Focuses on protecting information and systems.</li>
+<li><em>Key topics:</em> Confidentiality and integrity of data, identifying and managing who can do what (IAM), protecting systems, and establishing controls to detect security events.</li>
+</ul>
+</li>
+<li>
+<p><strong>Reliability:</strong></p>
+<ul>
+<li>Focuses on ensuring a workload performs its intended function correctly and consistently when it’s expected to.</li>
+<li><em>Key topics:</em> Distributed system design, recovery planning, and how to handle change (Self-healing systems).</li>
+</ul>
+</li>
+<li>
+<p><strong>Performance Efficiency:</strong></p>
+<ul>
+<li>Focuses on using IT and computing resources efficiently.</li>
+<li><em>Key topics:</em> Selecting the right resource types and sizes based on workload requirements, monitoring performance, and making informed decisions to maintain efficiency as business needs evolve.</li>
+</ul>
+</li>
+<li>
+<p><strong>Cost Optimization:</strong></p>
+<ul>
+<li>Focuses on avoiding unnecessary costs.</li>
+<li><em>Key topics:</em> Understanding and controlling where money is being spent, selecting the most appropriate and right number of resource types, and analyzing spend over time.</li>
+</ul>
+</li>
+<li>
+<p><strong>Sustainability:</strong></p>
+<ul>
+<li>Focuses on minimizing the environmental impacts of running cloud workloads.</li>
+<li><em>Key topics:</em> Shared responsibility model for sustainability, understanding impact, and maximizing utilization to minimize required resources.</li>
+</ul>
+</li>
+</ol>
+<h3>General Design Principles</h3>
+<ul>
+<li><strong>Stop guessing capacity:</strong> Use auto-scaling rather than fixed server provisioning.</li>
+<li><strong>Test systems at production scale:</strong> Create duplicate environments on demand, complete testing, and decommission them.</li>
+<li><strong>Automate to make architectural experimentation easier:</strong> Use CloudFormation.</li>
+<li><strong>Allow for evolutionary architectures:</strong> decoupled systems allow components to change independently.</li>
+<li><strong>Drive architectures using data:</strong> Collect logs and metrics to inform choices.</li>
+<li><strong>Improve through game days:</strong> Simulate events (stress tests) to test procedures.</li>
+</ul>
+<hr/>
+<h2>3. Identity and Access Management (IAM)</h2>
+<p>AWS IAM is the "front door" to the AWS cloud. It manages <strong>Authentication</strong> (who are you?) and <strong>Authorization</strong> (what can you do?). IAM is a global service; it is not bound to a specific region.</p>
+<h3>Core Components</h3>
+<ol>
+<li>
+<p><strong>Users:</strong></p>
+<ul>
+<li>Entities that represent a person or service.</li>
+<li><strong>Root User:</strong> The email address used to create the AWS account. It has unlimited access. <em>Best Practice:</em> Lock away the root user keys and never use them for daily tasks.</li>
+<li><strong>IAM User:</strong> Created for individuals within the organization. They have no permissions by default.</li>
+</ul>
+</li>
+<li>
+<p><strong>Groups:</strong></p>
+<ul>
+<li>Collections of IAM users.</li>
+<li>Permissions attached to a group apply to all users within that group.</li>
+<li><em>Example:</em> A "Developers" group having EC2 access.</li>
+</ul>
+</li>
+<li>
+<p><strong>Roles:</strong></p>
+<ul>
+<li>An identity that creates a set of permissions but is not associated with a specific person.</li>
+<li>Roles are <strong>assumed</strong> by trusted entities (like an EC2 instance, a Lambda function, or a user from another account) for temporary access.</li>
+<li>They rely on temporary security tokens, not long-term passwords or access keys.</li>
+</ul>
+</li>
+<li>
+<p><strong>Credentials:</strong></p>
+<ul>
+<li><strong>Console Password:</strong> For web interface access.</li>
+<li><strong>Access Keys (Access Key ID &amp; Secret Access Key):</strong> For programmatic access (CLI, SDKs).</li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h2>4. IAM Policies and Authorization Principles</h2>
+<p>IAM Policies are JSON documents that define permissions. When an IAM principal (user/role) makes a request, AWS evaluates these policies to allow or deny the request.</p>
+<h3>Policy Structure (JSON)</h3>
+<p>A standard policy contains the following elements:</p>
+<ul>
+<li><strong>Version:</strong> Policy language version (usually "2012-10-17").</li>
+<li><strong>Statement:</strong> The main container for the permission details.
+<ul>
+<li><strong>Sid:</strong> Statement ID (optional).</li>
+<li><strong>Effect:</strong> <code>Allow</code> or <code>Deny</code>.</li>
+<li><strong>Principal:</strong> The user/account/role allowed access (usually in Resource-based policies).</li>
+<li><strong>Action:</strong> The specific API call (e.g., <code>s3:ListBucket</code>).</li>
+<li><strong>Resource:</strong> The specific AWS object (e.g., a specific S3 bucket ARN).</li>
+<li><strong>Condition:</strong> Optional constraints (e.g., only from a specific IP address).</li>
+</ul></li>
+</ul>
+<p><strong>Example Policy:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JSON</span></div><pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::example_bucket"
+    }
+  ]
+}
+</code></pre></div></p>
+<h3>Authorization Principles</h3>
+<ol>
+<li><strong>Implicit Deny:</strong> By default, all requests are denied.</li>
+<li><strong>Explicit Allow:</strong> An administrator must attach a policy with "Allow" for a user to perform an action.</li>
+<li><strong>Explicit Deny:</strong> If any policy associated with the user contains a "Deny" statement for that action, the request is denied, regardless of any "Allow" statements. <strong>Explicit Deny trumps Explicit Allow.</strong></li>
+<li><strong>Least Privilege:</strong> Granting only the permissions required to perform a task and no more. This limits the blast radius if credentials are compromised.</li>
+</ol>
+<h3>Types of Policies</h3>
+<ul>
+<li><strong>Identity-based Policies:</strong> Attached to Users, Groups, or Roles.</li>
+<li><strong>Resource-based Policies:</strong> Attached directly to the resource (e.g., S3 Bucket Policy).</li>
+<li><strong>Permissions Boundaries:</strong> Advanced feature to set the maximum permissions an IAM entity can have.</li>
+</ul>
+<hr/>
+<h2>5. Federated Users and Managing Access Across AWS Accounts</h2>
+<p>Managing thousands of IAM users individually is inefficient. Federation allows users to use existing identities (corporate credentials, social logins) to access AWS.</p>
+<h3>Identity Federation</h3>
+<p>Federation enables you to manage users in a central <strong>Identity Provider (IdP)</strong> and grant them access to AWS resources without creating IAM users for them.</p>
+<ul>
+<li><strong>SAML 2.0 Federation:</strong> Used for enterprise integration (e.g., Active Directory, Okta). The user authenticates with their corporate IdP, which passes a SAML assertion to AWS STS (Security Token Service) to generate temporary credentials.</li>
+<li><strong>Web Identity Federation:</strong> Used for mobile apps or web apps authenticated via Amazon, Facebook, Google, or OpenID Connect (OIDC) providers. AWS Cognito is often used to facilitate this.</li>
+</ul>
+<h3>AWS IAM Identity Center (formerly AWS SSO)</h3>
+<p>The recommended service for managing human access to AWS. It centrally manages SSO access to multiple AWS accounts and business applications. It integrates with Active Directory.</p>
+<h3>Cross-Account Access</h3>
+<p>There are scenarios where User A in Account 1 needs to access Resource B in Account 2 (e.g., Dev account accessing Prod S3 bucket).</p>
+<ol>
+<li><strong>AssumeRole:</strong> User A does not get a username/password for Account 2. Instead, an IAM Role is created in Account 2 that trusts Account 1.</li>
+<li>User A calls the STS <code>AssumeRole</code> API.</li>
+<li>User A receives temporary credentials to act with the permissions defined in the Role in Account 2.</li>
+</ol>
+<h3>AWS Organizations</h3>
+<p>A service to consolidate multiple AWS accounts into an organization that you create and centrally manage.</p>
+<ul>
+<li><strong>Consolidated Billing:</strong> Combine usage across accounts to get volume discounts.</li>
+<li><strong>Service Control Policies (SCPs):</strong> These are organizational guardrails. An SCP acts as a filter on permissions. Even if an IAM Admin in a child account grants full admin access, if the SCP denies access to S3, the user cannot access S3.
+<ul>
+<li><em>Note:</em> SCPs never grant permissions; they only filter/limit them.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>6. Encrypting Data at Rest</h2>
+<p>Encryption at rest protects data stored on disk (AWS infrastructure) from unauthorized access, ensuring confidentiality even if physical drives are stolen.</p>
+<h3>AWS Key Management Service (AWS KMS)</h3>
+<p>KMS is the primary service for managing encryption keys in AWS.</p>
+<ul>
+<li><strong>KMS Keys (formerly CMK):</strong> The logical representation of a master key.</li>
+<li><strong>Symmetric Keys:</strong> The same key is used for encryption and decryption. Used by most AWS services (S3, EBS, RDS).</li>
+<li><strong>Asymmetric Keys:</strong> A public/private key pair (RSA/ECC). Used for signing and verification or encryption outside of AWS.</li>
+</ul>
+<h3>Envelope Encryption</h3>
+<p>AWS KMS does not encrypt large data files directly. It uses Envelope Encryption for performance.</p>
+<ol>
+<li><strong>Data Key:</strong> A unique key is generated to encrypt the actual data.</li>
+<li><strong>Encryption:</strong> The data is encrypted with the Data Key.</li>
+<li><strong>Envelope:</strong> The Data Key itself is encrypted using the root KMS Key.</li>
+<li><strong>Storage:</strong> The encrypted data and the encrypted Data Key are stored together.</li>
+<li><strong>Performance:</strong> This reduces network load on KMS, as only the small keys are sent over the network, not the massive data files.</li>
+</ol>
+<h3>Service Integration Examples</h3>
+<ul>
+<li><strong>EBS (Elastic Block Store):</strong> When creating a volume, checking "Encrypt" triggers KMS to handle the encryption of data, IO, and snapshots automatically.</li>
+<li><strong>S3 (Simple Storage Service):</strong>
+<ul>
+<li><strong>SSE-S3:</strong> AWS manages keys fully (AES-256).</li>
+<li><strong>SSE-KMS:</strong> AWS uses KMS keys (provides audit trail via CloudTrail).</li>
+<li><strong>SSE-C:</strong> Customer manages the keys, AWS performs the encryption.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>7. AWS Security Services</h2>
+<p>AWS divides security responsibility between the cloud provider and the customer (Shared Responsibility Model). AWS provides specific tools to secure the customer's side.</p>
+<h3>Infrastructure Protection</h3>
+<ul>
+<li><strong>AWS Shield:</strong> Managed DDoS (Distributed Denial of Service) protection.
+<ul>
+<li><em>Shield Standard:</em> Free, always on. Protects against common L3/L4 attacks.</li>
+<li><em>Shield Advanced:</em> Paid service. Protects against sophisticated attacks, offers 24/7 access to DDoS response team (DRT), and cost protection.</li>
+</ul></li>
+<li><strong>AWS WAF (Web Application Firewall):</strong> Protects web applications from common exploits (SQL injection, Cross-Site Scripting). It operates at Layer 7 (Application Layer) and attaches to CloudFront, ALB, or API Gateway.</li>
+<li><strong>AWS Firewall Manager:</strong> Central management of WAF rules across all accounts in an AWS Organization.</li>
+</ul>
+<h3>Threat Detection and Monitoring</h3>
+<ul>
+<li><strong>Amazon GuardDuty:</strong> An intelligent threat detection service. It analyzes logs (CloudTrail, VPC Flow Logs, DNS Logs) using Machine Learning to detect anomalies (e.g., cryptocurrency mining, unauthorized access from unusual locations).</li>
+<li><strong>Amazon Inspector:</strong> An automated vulnerability management service. It installs an agent on EC2 instances to scan for software vulnerabilities (CVEs) and unintended network exposure.</li>
+</ul>
+<h3>Data Protection</h3>
+<ul>
+<li><strong>Amazon Macie:</strong> Uses Machine Learning to automatically discover, classify, and protect sensitive data (PII like credit card numbers, SSNs) in AWS S3. It helps prevent data leaks.</li>
+<li><strong>AWS Secrets Manager:</strong> Helps protect secrets needed to access applications (database credentials, API keys). It enables automatic rotation of secrets (e.g., changing the RDS password every 30 days automatically).</li>
+</ul>
+<h3>Compliance</h3>
+<ul>
+<li><strong>AWS Artifact:</strong> A self-service portal for on-demand access to AWS’s compliance reports (ISO, PCI-DSS, SOC reports). It is used to prove to auditors that the underlying AWS infrastructure is secure.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT364/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

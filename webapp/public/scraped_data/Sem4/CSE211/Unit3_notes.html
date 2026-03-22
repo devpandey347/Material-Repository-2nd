@@ -1,0 +1,560 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/CSE211">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE211/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE211/Unit3/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE211/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE211/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE211</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Input-Output Organization</h1>
+<h2>1. Peripheral Devices</h2>
+<p>Peripheral devices are electromechanical or electromagnetic devices connected to the computer to allow communication with the outside world. They are not part of the central processing unit (CPU) or the primary memory but are essential for system functionality.</p>
+<h3>Classification of Peripherals</h3>
+<p>Peripheral devices are classified based on their function:</p>
+<ul>
+<li><strong>Input Devices:</strong> Convert user data into binary information for the computer (e.g., Keyboard, Mouse, Digitizer, Scanner, Microphone).</li>
+<li><strong>Output Devices:</strong> Convert binary data from the computer into a human-readable form (e.g., Printer, Monitor, Plotter, Speaker).</li>
+<li><strong>Storage Devices (Mass Memory):</strong> Provide auxiliary storage for data (e.g., Magnetic Disks, Tapes, Optical Discs like CD/DVD).</li>
+</ul>
+<h3>The ASCII Standard</h3>
+<p>Most peripherals communicate using alphanumeric characters. The standard binary code for these characters is ASCII (American Standard Code for Information Interchange). It uses 7 bits to represent 128 characters (0–127), often extended to 8 bits to include an error-detection bit (parity) or extended characters.</p>
+<hr/>
+<h2>2. Input-Output Interface</h2>
+<p>The Input-Output (I/O) Interface provides a method for transferring information between internal storage (RAM) and external I/O devices. Peripherals cannot be connected directly to the system bus due to several differences:</p>
+<ol>
+<li><strong>Signal Mismatch:</strong> Peripherals are often electromechanical, while the CPU is electronic.</li>
+<li><strong>Speed Mismatch:</strong> Peripherals are significantly slower than the CPU/Memory.</li>
+<li><strong>Data Format:</strong> Peripherals may use different data formats (e.g., serial vs. parallel).</li>
+<li><strong>Operating Modes:</strong> Peripherals operate autonomously and need synchronization mechanisms.</li>
+</ol>
+<p><figure class="image-figure"><img alt="A block diagram illustrating the Input-Output Interface connection. On the left, a large block label..." src="/notes-images/Sem4/CSE211/images/CSE211_Unit3_img1_aafc5dd1.jpg"><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></img></figure></p>
+<h3>Functions of the Interface</h3>
+<ul>
+<li><strong>Data Buffering:</strong> holding data temporarily to smooth out speed differences.</li>
+<li><strong>Control and Timing:</strong> coordinating the traffic between CPU and device.</li>
+<li><strong>Status Reporting:</strong> indicating if the device is ready, busy, or has an error.</li>
+<li><strong>Address Decoding:</strong> identifying which device the CPU is trying to access.</li>
+</ul>
+<h3>I/O Bus and Interface Modules</h3>
+<ul>
+<li><strong>Data Bus:</strong> Carries data in and out.</li>
+<li><strong>Address Bus:</strong> Selects the specific I/O interface and register within it.</li>
+<li><strong>Control Bus:</strong> Carries commands like I/O Read, I/O Write.</li>
+</ul>
+<hr/>
+<h2>3. Modes of Data Transfer</h2>
+<p>Data transfer between the computer and an I/O device can be handled in three primary modes:</p>
+<h3>A. Programmed I/O</h3>
+<p>The CPU stays in a program loop until the I/O unit indicates that it is ready for data transfer. This is a time-consuming process as the CPU is busy checking the status (polling) and cannot execute other instructions.</p>
+<ul>
+<li><strong>Mechanism:</strong> CPU reads a status register repeatedly -&gt; If Ready -&gt; Transfer Data.</li>
+<li><strong>Drawback:</strong> "Busy-waiting" wastes CPU cycles.</li>
+</ul>
+<h3>B. Interrupt-Initiated I/O</h3>
+<p>To resolve the busy-waiting issue, the CPU issues an I/O command and proceeds to execute other tasks. When the interface is ready, it sends an <strong>interrupt signal</strong> to the CPU. The CPU stops its current task, saves its state, services the I/O transfer via an Interrupt Service Routine (ISR), and then resumes normal execution.</p>
+<h3>C. Direct Memory Access (DMA)</h3>
+<p>Used for large blocks of data. The interface transfers data directly to/from memory without CPU intervention. (Detailed in Section 5).</p>
+<hr/>
+<h2>4. Priority Interrupt</h2>
+<p>When multiple devices issue interrupts simultaneously, the system must decide which to service first. This is handled via <strong>Priority Interrupt</strong> logic.</p>
+<h3>Polling (Software Method)</h3>
+<p>The CPU executes a routine that checks each device sequentially (via software) to see which one generated the interrupt.</p>
+<ul>
+<li><strong>Pros:</strong> Simple hardware.</li>
+<li><strong>Cons:</strong> Slow response time due to sequential checking.</li>
+</ul>
+<h3>Daisy Chaining (Hardware Method)</h3>
+<p>A hardware mechanism where devices are connected in a serial chain.</p>
+<ul>
+<li><strong>Mechanism:</strong> The CPU sends an <strong>INTACK (Interrupt Acknowledge)</strong> signal.</li>
+<li><strong>Flow:</strong> The signal enters the highest priority device first. If that device initiated the interrupt, it blocks the signal and places its vector address on the data bus. If not, it passes the signal to the next device.</li>
+<li><strong>Hierarchy:</strong> Priority is determined by the physical position in the chain.</li>
+</ul>
+<p><figure class="image-figure"><img alt='A detailed logic diagram showing the Daisy Chain Priority Interrupt system. Show a "CPU" block on th...' src="/notes-images/Sem4/CSE211/images/CSE211_Unit3_img2_9067a3ed.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>Parallel Priority Interrupt</h3>
+<p>Uses a priority encoder hardware to determine the highest priority interrupt instantly, bypassing the serial delay of daisy chaining.</p>
+<hr/>
+<h2>5. Direct Memory Access (DMA) Transfer</h2>
+<p>DMA is a hardware feature that allows I/O devices to access the main system memory independently of the CPU. This is crucial for high-speed devices like hard drives or network cards.</p>
+<h3>DMA Controller (DMAC)</h3>
+<p>The DMAC takes control of the system bus to transfer data.</p>
+<ol>
+<li><strong>Bus Request (BR):</strong> DMAC asks CPU for control of the bus.</li>
+<li><strong>Bus Grant (BG):</strong> CPU finishes current bus cycle, releases control, and signals DMAC.</li>
+<li><strong>Transfer:</strong> DMAC manages the address and data lines to move data between Memory and I/O.</li>
+<li><strong>Completion:</strong> DMAC releases the bus and interrupts the CPU to signal completion.</li>
+</ol>
+<p><figure class="image-figure"><img alt="A system architecture diagram representing Direct Memory Access (DMA) organization. Central componen..." src="/notes-images/Sem4/CSE211/images/CSE211_Unit3_img3_f938c23f.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>Modes of DMA Transfer</h3>
+<ol>
+<li><strong>Burst Mode:</strong> The DMA controller keeps control of the bus until the <em>entire block</em> of data is transferred. The CPU is idle for a longer duration.</li>
+<li><strong>Cycle Stealing:</strong> The DMA controller takes control of the bus for <em>one memory cycle</em> to transfer one word/byte, then returns control to the CPU. It "steals" cycles from the CPU, slowing down instruction execution slightly but preventing long CPU blockage.</li>
+</ol>
+<hr/>
+<h2>6. Input/Output Processor (IOP)</h2>
+<p>As systems became complex, DMA was not enough. The IOP is a dedicated processor with direct memory access capability that communicates with I/O devices.</p>
+<h3>Difference between DMA and IOP</h3>
+<ul>
+<li><strong>DMA:</strong> A hardware controller that transfers data. It needs CPU initialization for every block.</li>
+<li><strong>IOP:</strong> A processor with its own instruction set (I/O instructions). It can execute a sequence of I/O operations (an I/O program) stored in memory without CPU intervention.</li>
+</ul>
+<h3>System Architecture with IOP</h3>
+<p>The CPU acts as the "Master" processor, handling processing tasks. The IOP acts as a "Slave" processor, handling all input/output details.</p>
+<ul>
+<li><strong>Step 1:</strong> CPU sends a command to test the IOP path.</li>
+<li><strong>Step 2:</strong> CPU sends the memory address of the I/O program to the IOP.</li>
+<li><strong>Step 3:</strong> CPU continues with other work.</li>
+<li><strong>Step 4:</strong> IOP executes the I/O program (fetching data, formatting, transferring).</li>
+<li><strong>Step 5:</strong> IOP interrupts the CPU when finished.</li>
+</ul>
+<hr/>
+<h2>7. UART (Universal Asynchronous Receiver-Transmitter)</h2>
+<p>UART is a hardware component responsible for serial communication. It translates data between parallel (used by the CPU/Bus) and serial (used by the communication line) forms.</p>
+<h3>Asynchronous Communication</h3>
+<p>Data is transferred one character at a time without a shared clock signal between sender and receiver. Synchronization is achieved using framing bits.</p>
+<h3>The Data Frame Format</h3>
+<p>A typical 10-bit or 11-bit character frame includes:</p>
+<ol>
+<li><strong>Start Bit:</strong> Always 0 (Space). Signals the receiver that a character is starting. The line goes from High (Idle) to Low.</li>
+<li><strong>Data Bits:</strong> Usually 5 to 8 bits representing the character (LSB first).</li>
+<li><strong>Parity Bit:</strong> Optional bit for error detection (Odd or Even parity).</li>
+<li><strong>Stop Bit(s):</strong> Always 1 (Mark). Signals the end of the character and returns the line to the Idle state.</li>
+</ol>
+<p><figure class="image-figure"><img alt="A timing diagram visualizing the UART data transmission format (Asynchronous Serial Transmission). S..." src="/notes-images/Sem4/CSE211/images/CSE211_Unit3_img4_18132795.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>UART Registers</h3>
+<ul>
+<li><strong>Transmit Hold Register:</strong> Holds data waiting to be sent.</li>
+<li><strong>Shift Register:</strong> Converts parallel data to serial stream.</li>
+<li><strong>Receiver Buffer Register:</strong> Holds received parallel data.</li>
+<li><strong>Status Register:</strong> Flags for Parity Error, Framing Error, or Overrun Error.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/CSE211/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/CSE211/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

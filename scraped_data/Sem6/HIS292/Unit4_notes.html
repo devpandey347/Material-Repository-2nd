@@ -1,0 +1,696 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/HIS292">HIS292</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 4</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/HIS292">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/HIS292/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/HIS292/Unit4/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/HIS292/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/HIS292/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>HIS292</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            9 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: The Mughal Empire</h1>
+<h2>1. Sources for the Study of the Mughal Empire</h2>
+<p>The history of the Mughal Empire is reconstructed through a vast array of sources, primarily written in Persian (the court language), complemented by vernacular literature, foreign accounts, and archaeological evidence.</p>
+<h3>A. Literary Sources (Chronicles and Biographies)</h3>
+<p>The Mughals fostered a strong tradition of historiography.</p>
+<ol>
+<li>
+<p><strong>Autobiographies (Memoirs):</strong></p>
+<ul>
+<li><strong>Tuzuk-i-Baburi (Baburnama):</strong> Written by Babur in Chagatai Turkish (later translated to Persian). It provides a candid account of the flora, fauna, political condition of India, and his military campaigns.</li>
+<li><strong>Tuzuk-i-Jahangiri:</strong> Written by Jahangir. It details his daily life, justice system, observations on nature, and court politics.</li>
+</ul>
+</li>
+<li>
+<p><strong>Court Chronicles (Official Histories):</strong></p>
+<ul>
+<li><strong>Akbarnama:</strong> Authored by Abul Fazl. A monumental work in three volumes; the third volume is the <strong>Ain-i-Akbari</strong>, which serves as a gazetteer of administration, statistics, and culture under Akbar.</li>
+<li><strong>Padshahnama (or Badshahnama):</strong> Authored by Abdul Hamid Lahori. It is the primary source for the reign of Shah Jahan.</li>
+<li><strong>Alamgirnama:</strong> Authored by Mirza Muhammad Kazim. Covers the first ten years of Aurangzeb’s reign.</li>
+</ul>
+</li>
+<li>
+<p><strong>Other Literary Works:</strong></p>
+<ul>
+<li><strong>Humayun-nama:</strong> Written by Gulbadan Begum (Humayun’s sister). It offers insight into the domestic world of the Mughals.</li>
+<li><strong>Muntakhab-ut-Tawarikh:</strong> Written by Badauni. A critical (often hostile) account of Akbar’s reign, providing a counter-narrative to Abul Fazl’s eulogies.</li>
+</ul>
+</li>
+</ol>
+<h3>B. Foreign Accounts</h3>
+<p>European travelers provided valuable observations on trade, socio-economic conditions, and the military.</p>
+<ul>
+<li><strong>Ralph Fitch (England):</strong> Visited during Akbar’s reign; described Agra and Fatehpur Sikri.</li>
+<li><strong>William Hawkins &amp; Sir Thomas Roe:</strong> Ambassadors to Jahangir’s court; documented court etiquette and trade negotiations.</li>
+<li><strong>Francois Bernier (France):</strong> A physician associated with Dara Shikoh and Aurangzeb; wrote <em>Travels in the Mughal Empire</em>, discussing the "War of Succession" and land ownership.</li>
+<li><strong>Niccolao Manucci (Italy):</strong> Wrote <em>Storia do Mogor</em>, a detailed account of Aurangzeb’s court.</li>
+</ul>
+<h3>C. Archaeological and Numismatic Sources</h3>
+<ul>
+<li><strong>Monuments:</strong> Architecture reflects the synthesis of Persian and Indian styles (e.g., Humayun’s Tomb, Taj Mahal, Red Fort, Fatehpur Sikri).</li>
+<li><strong>Numismatics:</strong> Mughal coins were of high quality. They provide data on chronology, extent of empire, and economic stability.</li>
+<li><strong>Farmans:</strong> Royal decrees issued by the emperors are crucial for understanding administrative orders and land grants.</li>
+</ul>
+<hr/>
+<h2>2. Babur’s Conquest of Northern India</h2>
+<p>Zahir-ud-din Muhammad Babur (1483–1530), a descendant of Timur and Genghis Khan, founded the Mughal Empire in India.</p>
+<h3>A. Background and Context</h3>
+<ul>
+<li>Babur was originally the ruler of Ferghana (Central Asia) but lost his kingdom. He established himself in Kabul in 1504.</li>
+<li><strong>Political Condition of India:</strong> North India was fragmented. The Delhi Sultanate under Ibrahim Lodi was weak and unpopular. Regional powers like the Rajputs (Rana Sanga) were asserting independence.</li>
+<li><strong>Invitation:</strong> Daulat Khan Lodi (Governor of Punjab) and Rana Sanga invited Babur to invade India to displace Ibrahim Lodi.</li>
+</ul>
+<h3>B. Major Battles and Conquests</h3>
+<h4>1. First Battle of Panipat (21 April 1526)</h4>
+<ul>
+<li><strong>Combatants:</strong> Babur vs. Ibrahim Lodi.</li>
+<li><strong>Strategy:</strong> Babur utilized the <strong>Tulughma</strong> strategy (flanking movement) and the <strong>Rumi</strong> (Ottoman) device (lashing carts together to protect matchlockmen and cannons).</li>
+<li><strong>Outcome:</strong> Despite having a smaller army, Babur’s use of artillery (gunpowder) devastated Lodi’s forces. Ibrahim Lodi was killed.</li>
+<li><strong>Significance:</strong> Marked the end of the Delhi Sultanate and the foundation of Mughal rule.</li>
+</ul>
+<h4>2. Battle of Khanwa (1527)</h4>
+<ul>
+<li><strong>Combatants:</strong> Babur vs. Rana Sanga (Mewar) and a coalition of Rajput chiefs/Afghan nobles.</li>
+<li><strong>Context:</strong> Rana Sanga realized Babur intended to stay in India, not just loot and leave.</li>
+<li><strong>Babur’s Tactics:</strong> To boost morale, Babur declared the war a <em>Jihad</em> (Holy War) and renounced wine. He used the same artillery tactics as Panipat.</li>
+<li><strong>Outcome:</strong> Decisive Mughal victory.</li>
+<li><strong>Significance:</strong> Destroyed the possibility of a Rajput resurgence and secured Mughal rule in the Gangetic plains.</li>
+</ul>
+<h4>3. Battle of Chanderi (1528)</h4>
+<ul>
+<li>Babur defeated Medini Rai, a Rajput chief of Malwa, capturing the strategic fort of Chanderi.</li>
+</ul>
+<h4>4. Battle of Ghagra (1529)</h4>
+<ul>
+<li>Babur defeated the combined forces of the Afghans (led by Mahmud Lodi) and the Sultan of Bengal.</li>
+<li><strong>Significance:</strong> This was the first battle fought on both land and water.</li>
+</ul>
+<h3>C. Conclusion on Babur</h3>
+<p>Babur died in 1530. He did not live long enough to consolidate the administration, leaving a somewhat loose empire to his son Humayun. However, he broke the power of the Lodis and the Rajputs, establishing the Mughals as the paramount power.</p>
+<hr/>
+<h2>3. Expansion and Consolidation under Akbar (1556–1605)</h2>
+<p>After the interregnum of the Sur Empire (Sher Shah Suri) and Humayun's brief return, Akbar ascended the throne at age 13.</p>
+<h3>A. Early Challenges and Regency</h3>
+<ul>
+<li><strong>Second Battle of Panipat (1556):</strong> Akbar’s forces, led by his regent Bairam Khan, defeated Hemu (Hemchandra Vikramaditya), who had seized Delhi.</li>
+<li><strong>Bairam Khan's Regency (1556–1560):</strong> Bairam Khan consolidated power but was eventually dismissed by Akbar.</li>
+</ul>
+<h3>B. Imperial Expansion</h3>
+<p>Akbar followed a policy of aggressive imperialism.</p>
+<ol>
+<li><strong>Central India:</strong> Annexation of Gwalior, Jaunpur, and Malwa (defeated Baz Bahadur). Conquest of Gondwana (defeated Rani Durgavati).</li>
+<li><strong>Rajputana:</strong>
+<ul>
+<li><strong>Conciliation:</strong> Used matrimonial alliances (married the daughter of Raja Bharmal of Amber/Jaipur).</li>
+<li><strong>Force:</strong> Captured strategic forts of <strong>Chittor</strong> (1568) and <strong>Ranthambore</strong> (1569).</li>
+<li><strong>Battle of Haldighati (1576):</strong> Fought against Maharana Pratap of Mewar. While Mughals held the field, Pratap escaped and continued guerilla warfare.</li>
+</ul></li>
+<li><strong>Gujarat (1572):</strong> Critical for trade routes to the Arabian Sea. To commemorate this victory, Akbar built the <strong>Buland Darwaza</strong> at Fatehpur Sikri.</li>
+<li><strong>Bengal and Bihar (1574–1576):</strong> Defeated Daud Khan, ending the last Afghan resistance in the East.</li>
+<li><strong>North-West Frontier:</strong> Annexed Kabul (1581), Kashmir (1586), Sindh (1591), and Baluchistan (1595).</li>
+<li><strong>Deccan:</strong> Initiated expansion into the Deccan; annexed Khandesh, Berar, and parts of Ahmednagar.</li>
+</ol>
+<h3>C. Administrative Consolidation</h3>
+<h4>1. Mansabdari System</h4>
+<ul>
+<li>The steel frame of Mughal civil and military administration.</li>
+<li>Every official was given a rank (<strong>Mansab</strong>).</li>
+<li><strong>Zat:</strong> Determined personal status and salary.</li>
+<li><strong>Sawar:</strong> Determined the number of cavalrymen the officer had to maintain.</li>
+<li>Mansabdars were paid either in cash (<em>Naqdi</em>) or through land revenue assignments (<em>Jagir</em>).</li>
+</ul>
+<h4>2. Land Revenue System (Zabti or Bandobast System)</h4>
+<ul>
+<li>Architect: <strong>Raja Todar Mal</strong>.</li>
+<li><strong>Dahsala System (1580):</strong> Revenue was fixed based on the average produce and average prices of the last 10 years.</li>
+<li>Land classification: <em>Polaj</em> (cultivated annually), <em>Parauti</em> (fallow), <em>Chachar</em>, and <em>Banjar</em>.</li>
+</ul>
+<h3>D. Religious Policy</h3>
+<ul>
+<li>Abolished the <strong>Pilgrimage Tax</strong> (1563) and <strong>Jizya</strong> (1564).</li>
+<li><strong>Ibadat Khana (1575):</strong> House of Worship at Fatehpur Sikri for discussions with scholars of all religions (Islam, Hinduism, Christianity, Zoroastrianism).</li>
+<li><strong>Sulh-i-kul:</strong> The policy of "Universal Peace" or religious tolerance.</li>
+<li><strong>Din-i-Ilahi (Tauhid-i-Ilahi):</strong> A syncretic spiritual code propounded by Akbar in 1582, emphasizing monotheism and loyalty to the emperor.</li>
+</ul>
+<hr/>
+<h2>4. Expansion and Consolidation under Jahangir and Shah Jahan</h2>
+<h3>A. Jahangir (1605–1627)</h3>
+<p>Jahangir (Salim) largely maintained the administrative structure established by Akbar but focused more on culture and justice.</p>
+<ol>
+<li>
+<p><strong>Consolidation and Challenges:</strong></p>
+<ul>
+<li><strong>Rebellion of Khusrau:</strong> His son Khusrau rebelled. Jahangir defeated him and executed the 5th Sikh Guru, <strong>Guru Arjan Dev</strong>, for blessing Khusrau, initiating Mughal-Sikh conflict.</li>
+<li><strong>Twelve Ordinances:</strong> Issued upon accession to ensure justice and welfare.</li>
+<li><strong>Chain of Justice (Zanjir-i-Adal):</strong> Installed at Agra Fort for seekers of justice to bypass bureaucracy.</li>
+</ul>
+</li>
+<li>
+<p><strong>Military Achievements:</strong></p>
+<ul>
+<li><strong>Submission of Mewar (1615):</strong> Prince Khurram (later Shah Jahan) forced Rana Amar Singh to sign a peace treaty, ending the long conflict. The Rana was exempted from personal attendance at court.</li>
+<li><strong>Deccan:</strong> Malik Ambar (Ahmednagar) offered stiff resistance using guerilla tactics. Mughals had limited success.</li>
+<li><strong>Kangra:</strong> Conquered in 1620.</li>
+<li><strong>Loss of Kandahar (1622):</strong> Lost to the Persians; a major blow to prestige and trade security.</li>
+</ul>
+</li>
+<li>
+<p><strong>The Nur Jahan Junta:</strong></p>
+<ul>
+<li>Jahangir married Mehr-un-Nisa (Nur Jahan) in 1611. She, along with her father (Itimad-ud-Daulah) and brother (Asaf Khan), dominated court politics during Jahangir’s later years.</li>
+</ul>
+</li>
+</ol>
+<h3>B. Shah Jahan (1628–1658)</h3>
+<p>Known as the "Engineer King," his reign is often called the Golden Age of Mughal Architecture.</p>
+<ol>
+<li>
+<p><strong>Deccan Policy (Aggressive Expansion):</strong></p>
+<ul>
+<li><strong>Annexation of Ahmednagar (1633):</strong> Completely absorbed into the empire.</li>
+<li><strong>Treaties with Bijapur and Golconda (1636):</strong> Forced them to accept Mughal suzerainty and pay tribute. Aurangzeb was appointed Viceroy of the Deccan.</li>
+</ul>
+</li>
+<li>
+<p><strong>North-West and Central Asian Policy:</strong></p>
+<ul>
+<li><strong>Kandahar:</strong> Recovered briefly (1638) but lost permanently to Persia in 1649 despite three major campaigns.</li>
+<li><strong>Balkh and Badakhshan:</strong> Launched a campaign to reclaim ancestral Timurid lands in Central Asia. It was a catastrophic failure in terms of men and money.</li>
+</ul>
+</li>
+<li>
+<p><strong>Administration:</strong></p>
+<ul>
+<li>The empire was at its financial peak.</li>
+<li>Administrative centralization increased.</li>
+<li>Arts and culture flourished (Taj Mahal, Peacock Throne).</li>
+</ul>
+</li>
+<li>
+<p><strong>War of Succession (1657–1658):</strong></p>
+<ul>
+<li>Fought among his four sons: Dara Shikoh, Shuja, Aurangzeb, and Murad.</li>
+<li>Aurangzeb emerged victorious, imprisoned Shah Jahan in Agra Fort, and crowned himself emperor.</li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h2>5. Expansion and Consolidation under Aurangzeb (1658–1707)</h2>
+<p>Aurangzeb (Alamgir) ruled for nearly 50 years. His reign saw the empire reach its greatest territorial extent but also the beginning of its collapse.</p>
+<h3>A. Phase I: North India (1658–1681)</h3>
+<ol>
+<li>
+<p><strong>Eastern Frontier:</strong></p>
+<ul>
+<li>Mir Jumla (Governor of Bengal) invaded Ahoms (Assam) and forced a treaty in 1663. However, Ahoms later regained independence.</li>
+<li>Capture of Chittagong from Arakanese pirates (1666).</li>
+</ul>
+</li>
+<li>
+<p><strong>North-West Frontier:</strong></p>
+<ul>
+<li>Suppressed revolts by Yusufzai and other Pathan tribes.</li>
+</ul>
+</li>
+<li>
+<p><strong>Religious Policy and Rebellions:</strong></p>
+<ul>
+<li>Aurangzeb was an orthodox Sunni. He appointed <strong>Muhtasibs</strong> (censors of public morals).</li>
+<li><strong>1669:</strong> Order to demolish temples (e.g., Kashi Vishwanath, Mathura).</li>
+<li><strong>1679:</strong> Re-imposition of <strong>Jizya</strong> tax on non-Muslims.</li>
+<li><strong>Rebellions:</strong>
+<ul>
+<li><strong>Jats (1669):</strong> Led by Gokula, later Rajaram and Churaman.</li>
+<li><strong>Satnamis (1672):</strong> Agrarian revolt in Narnaul.</li>
+<li><strong>Sikhs:</strong> Execution of the 9th Guru, <strong>Guru Tegh Bahadur</strong> (1675), for refusing to convert. This led the 10th Guru, Gobind Singh, to militarize the Sikhs (Khalsa Panth).</li>
+<li><strong>Rajputs:</strong> The death of Jaswant Singh of Marwar led to a succession dispute. Aurangzeb’s intervention alienated the Rathores (led by Durgadas Rathore) and Sisodias of Mewar.</li>
+</ul></li>
+</ul>
+</li>
+</ol>
+<h3>B. Phase II: The Deccan (1681–1707)</h3>
+<p>Aurangzeb moved his capital to the Deccan to crush the Marathas and the Shia Sultanates.</p>
+<ol>
+<li>
+<p><strong>Conflict with Marathas:</strong></p>
+<ul>
+<li><strong>Shivaji:</strong> Had established an independent kingdom. Treaty of Purandar (1665) was signed with Jai Singh, but peace was temporary.</li>
+<li>After Shivaji’s death (1680), Aurangzeb executed his son <strong>Sambhaji</strong> (1689).</li>
+<li>This backfired, turning the Maratha resistance into a "People's War" that the Mughals could not win.</li>
+</ul>
+</li>
+<li>
+<p><strong>Annexation of Deccan Sultanates:</strong></p>
+<ul>
+<li><strong>Bijapur:</strong> Annexed in 1686 (Sikandar Adil Shah surrendered).</li>
+<li><strong>Golconda:</strong> Annexed in 1687 (Abul Hasan Qutb Shah defeated).</li>
+<li><strong>Result:</strong> While the empire extended to the deep south, the administrative burden became too heavy. The destruction of these Sultanates removed the local buffer against the Marathas.</li>
+</ul>
+</li>
+</ol>
+<h3>C. Decline</h3>
+<p>By the time of Aurangzeb’s death in 1707:</p>
+<ul>
+<li><strong>Jagirdari Crisis:</strong> Too many nobles (Mansabdars) waiting for too few Jagirs (land grants).</li>
+<li><strong>Financial Drain:</strong> The Deccan wars emptied the treasury.</li>
+<li><strong>Administrative Breakdown:</strong> The emperor’s long absence from Delhi weakened control over the North.</li>
+<li><strong>Agrarian Crisis:</strong> Peasant oppression led to revolts.</li>
+</ul>
+<h3>Summary</h3>
+<p>The Mughal Empire consolidated under Akbar through inclusion and administrative genius. It reached cultural heights under Shah Jahan. Under Aurangzeb, it reached its maximum size, but rigid policies and over-expansion sowed the seeds of rapid disintegration in the 18th century.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem6/HIS292/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/HIS292/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

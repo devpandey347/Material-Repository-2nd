@@ -34,31 +34,16 @@ A comprehensive web-based educational material repository designed to help stude
 
 ```
 Material-Repository/
-├── index.html              # Main landing page
-├── style.css               # Main stylesheet
-├── script.js               # Main JavaScript logic
-├── subject-style.css       # Subject page styling
-├── subject-script.js       # Subject page interactions
-├── files/                  # All educational materials
-│   ├── MTH166/            # Differential Equations & Vector Calculus
-│   ├── CSE121/            # Computer Science Fundamentals
-│   ├── CSE320/            # Course Materials & Notes
-│   ├── INT306/            # Database Management Systems
-│   ├── PHY110/            # Engineering Physics
-│   ├── ECE249/            # Basic Electrical & Electronics
-│   ├── ECE279/            # ECE Lab Experiments
-│   ├── MEC136/            # Engineering Graphics & Drawing
-│   ├── CHE110/            # Environmental Chemistry
-│   ├── PEL121-125/        # Professional English Language
-│   └── Books/             # C & Python Programming Handbooks
-├── subjects/               # Subject-specific HTML pages
-│   ├── MTH166.html
-│   ├── CSE121.html
-│   ├── CSE320.html
-│   ├── INT306.html
-│   └── ...
-├── generate-subjects.ps1   # PowerShell script to generate subject pages
-└── regenerate-manual.ps1   # Manual regeneration script
+├── index.html                   # Root redirect to React app
+├── files/                       # Downloadable files for file-based subjects
+├── scraped_data/                # Notes + MCQ HTML content
+├── generate-file-manifest.ps1   # Builds data/file-manifest.json
+├── generate-notes-catalog.ps1   # Builds data/notes-catalog.json
+└── webapp/
+	├── public/
+	│   ├── data/                # Runtime catalogs consumed by React
+	│   └── scraped_data/        # Junction to ../scraped_data for local serving
+	└── src/                     # React application source
 ```
 
 ---

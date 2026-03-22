@@ -1,0 +1,784 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT252">INT252</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 4</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT252">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT252/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT252/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT252/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT252</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            5 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Working with Forms</h1>
+<p>In modern single-page applications (SPAs), forms are the primary mechanism for user interaction and data collection. Unlike traditional HTML forms, React introduces a specific paradigm for managing form data, focusing on state management and event handling to create dynamic, interactive user interfaces.</p>
+<hr/>
+<h2>1. Adding Forms in React</h2>
+<p>While React forms use standard HTML elements (<code>&lt;form&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;label&gt;</code>, <code>&lt;button&gt;</code>), the syntax requires JSX compliance.</p>
+<h3>Key Syntax Differences from HTML</h3>
+<ul>
+<li><strong><code>htmlFor</code> instead of <code>for</code>:</strong> To associate a label with an input, use <code>htmlFor</code> (since <code>for</code> is a reserved JavaScript keyword).</li>
+<li><strong>Self-Closing Tags:</strong> All input tags must be self-closed (e.g., <code>&lt;input /&gt;</code> not <code>&lt;input&gt;</code>).</li>
+<li><strong>CamelCase Attributes:</strong> Attributes usually follow camelCase (e.g., <code>tabIndex</code>, <code>autoComplete</code>).</li>
+</ul>
+<h3>Basic Structure</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">function SimpleForm() {
+  return (
+    &lt;form&gt;
+      &lt;label htmlFor="username"&gt;Username:&lt;/label&gt;
+      &lt;input type="text" id="username" name="username" /&gt;
+      
+      &lt;button type="submit"&gt;Register&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre></div></p>
+<hr/>
+<h2>2. Controlled vs. Uncontrolled Components</h2>
+<p>React offers two distinct approaches to handling form data. Understanding the distinction is critical for architectural decisions.</p>
+<h3>A. Controlled Components (The Recommended Way)</h3>
+<p>In a controlled component, React state (<code>useState</code>) is the <strong>"single source of truth."</strong></p>
+<ol>
+<li>The input's value is set by the React state.</li>
+<li>Changes to the input trigger an event handler that updates the state.</li>
+</ol>
+<p><strong>Flow of Data:</strong><br/>
+User types → <code>onChange</code> fires → <code>setState</code> updates state → Component re-renders → Input shows new state value.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">import React, { useState } from 'react';
+
+function ControlledInput() {
+  const [email, setEmail] = useState('');
+
+  const handleChange = (e) =&gt; {
+    setEmail(e.target.value); // Update state immediately
+  };
+
+  return (
+    &lt;input 
+      type="text" 
+      value={email}       // Controlled by state
+      onChange={handleChange} // Triggers state update
+    /&gt;
+  );
+}
+</code></pre></div></p>
+<h3>B. Uncontrolled Components</h3>
+<p>Uncontrolled components act like traditional HTML forms. The <strong>DOM</strong> handles the data, not React state. React accesses the values only when necessary (usually on submit) using <strong>Refs</strong>.</p>
+<p><strong>Mechanism:</strong></p>
+<ul>
+<li>Use the <code>useRef</code> hook to create a reference to the DOM node.</li>
+<li>Access <code>ref.current.value</code> to get the data.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">import React, { useRef } from 'react';
+
+function UncontrolledInput() {
+  const nameInputRef = useRef(null);
+
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault();
+    alert('Name: ' + nameInputRef.current.value);
+  };
+
+  return (
+    &lt;form onSubmit={handleSubmit}&gt;
+      &lt;input type="text" ref={nameInputRef} /&gt;
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre></div></p>
+<h3>Comparison Table</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Controlled Component</th>
+<th style="text-align: left;">Uncontrolled Component</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Source of Truth</strong></td>
+<td style="text-align: left;">React State</td>
+<td style="text-align: left;">The DOM</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Data Access</strong></td>
+<td style="text-align: left;">Available at all times (real-time)</td>
+<td style="text-align: left;">Available only on query/submit</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Validation</strong></td>
+<td style="text-align: left;">Instant validation possible</td>
+<td style="text-align: left;">Validation typically on submit</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Code Volume</strong></td>
+<td style="text-align: left;">Higher (requires handlers)</td>
+<td style="text-align: left;">Lower (closer to HTML)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Use Case</strong></td>
+<td style="text-align: left;">Complex forms, instant feedback, dynamic inputs</td>
+<td style="text-align: left;">Simple forms, file uploads, integrating non-React libs</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>3. Handling Forms (Managing Multiple Inputs)</h2>
+<p>Handling multiple inputs individually with separate <code>useState</code> hooks is inefficient. The standard pattern involves using a <strong>single state object</strong> and a generic change handler.</p>
+<h3>The Computed Property Name Syntax</h3>
+<p>We use <code>[e.target.name]</code> to dynamically update the specific key in the state object corresponding to the input's <code>name</code> attribute.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">import React, { useState } from 'react';
+
+function MultiInputForm() {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    role: 'user'
+  });
+
+  const handleChange = (e) =&gt; {
+    const { name, value } = e.target;
+    
+    setFormData(prevData =&gt; ({
+      ...prevData,       // Spread existing state to preserve other fields
+      [name]: value      // Dynamic key assignment
+    }));
+  };
+
+  return (
+    &lt;form&gt;
+      &lt;input 
+        name="username" 
+        value={formData.username} 
+        onChange={handleChange} 
+        placeholder="Username"
+      /&gt;
+      &lt;input 
+        name="email" 
+        value={formData.email} 
+        onChange={handleChange} 
+        placeholder="Email"
+      /&gt;
+      &lt;select name="role" value={formData.role} onChange={handleChange}&gt;
+        &lt;option value="user"&gt;User&lt;/option&gt;
+        &lt;option value="admin"&gt;Admin&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre></div></p>
+<hr/>
+<h2>4. Submitting Forms</h2>
+<p>Submitting a form in React involves intercepting the browser's default behavior and processing the data (usually sending it to an API).</p>
+<h3>Key Steps:</h3>
+<ol>
+<li>Attach an <code>onSubmit</code> handler to the <code>&lt;form&gt;</code> element (not the button).</li>
+<li><strong>Prevent Default:</strong> Use <code>event.preventDefault()</code> to stop the browser from reloading the page (standard HTML behavior).</li>
+<li>Process data or call an API.</li>
+</ol>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">const handleSubmit = async (e) =&gt; {
+  e.preventDefault(); // Crucial step
+  
+  try {
+    // Simulation of API call
+    console.log("Submitting data:", formData);
+    await submitToAPI(formData); 
+    
+    // Optional: Reset form after success
+    setFormData({ username: '', email: '' });
+  } catch (error) {
+    console.error("Submission failed");
+  }
+};
+
+// In JSX:
+// &lt;form onSubmit={handleSubmit}&gt; ...
+</code></pre></div></p>
+<hr/>
+<h2>5. Form Validation</h2>
+<p>Validation ensures the data collected is clean, secure, and usable. Validation usually happens in two places:</p>
+<ol>
+<li><strong>Client-side (React):</strong> For user experience (instant feedback).</li>
+<li><strong>Server-side:</strong> For security (never trust the client).</li>
+</ol>
+<p>We focus here on Client-side validation.</p>
+<h3>Validation Logic</h3>
+<p>Create a function that checks the <code>formData</code> against rules (regex, length checks, required fields) and returns an object containing error messages.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const validate = (values) =&gt; {
+  const errors = {};
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i; // Simple email regex
+
+  if (!values.username) {
+    errors.username = "Username is required!";
+  }
+  if (!values.email) {
+    errors.email = "Email is required!";
+  } else if (!regex.test(values.email)) {
+    errors.email = "This is not a valid email format!";
+  }
+  if (values.password.length &lt; 4) {
+    errors.password = "Password must be more than 4 characters";
+  }
+  
+  return errors;
+};
+</code></pre></div></p>
+<hr/>
+<h2>6. Error Checking and Displaying Errors</h2>
+<p>Displaying errors involves managing an <code>errors</code> state object and conditionally rendering messages in the UI.</p>
+<h3>Implementation Steps</h3>
+<ol>
+<li><strong>State for Errors:</strong> Create a state variable <code>const [formErrors, setFormErrors] = useState({})</code>.</li>
+<li><strong>Trigger Validation:</strong> Run validation inside <code>handleSubmit</code> or <code>useEffect</code> dependent on <code>formData</code>.</li>
+<li><strong>Blocking Submission:</strong> If <code>Object.keys(errors).length &gt; 0</code>, do not submit.</li>
+<li><strong>Conditional Rendering:</strong> Display the error message next to the input field.</li>
+</ol>
+<h3>Comprehensive Example: Full Flow</h3>
+<p>Below is a complete example integrating Handling, Validation, Error Display, and Submission.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">import React, { useState, useEffect } from "react";
+
+function RegistrationForm() {
+  const initialValues = { username: "", email: "", password: "" };
+  const [formValues, setFormValues] = useState(initialValues);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
+
+  // 1. Handle Input Change
+  const handleChange = (e) =&gt; {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  // 2. Handle Submission
+  const handleSubmit = (e) =&gt; {
+    e.preventDefault();
+    const errors = validate(formValues);
+    setFormErrors(errors);
+    setIsSubmit(true);
+  };
+
+  // 3. Submit only if no errors
+  useEffect(() =&gt; {
+    if (Object.keys(formErrors).length === 0 &amp;&amp; isSubmit) {
+      console.log("Form Submitted Successfully:", formValues);
+      // API Call would go here
+    }
+  }, [formErrors, isSubmit, formValues]);
+
+  // 4. Validation Logic
+  const validate = (values) =&gt; {
+    const errors = {};
+    if (!values.username) {
+      errors.username = "Username is required";
+    }
+    if (!values.email) {
+      errors.email = "Email is required";
+    } else if (!values.email.includes("@")) {
+      errors.email = "Invalid email address";
+    }
+    if (!values.password) {
+      errors.password = "Password is required";
+    } else if (values.password.length &lt; 6) {
+      errors.password = "Password must be 6 characters or more";
+    }
+    return errors;
+  };
+
+  return (
+    &lt;div className="container"&gt;
+      &lt;h1&gt;Login Form&lt;/h1&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        {/* Username Field */}
+        &lt;div className="form-group"&gt;
+          &lt;label&gt;Username&lt;/label&gt;
+          &lt;input
+            type="text"
+            name="username"
+            value={formValues.username}
+            onChange={handleChange}
+            // Add red border class if error exists
+            className={formErrors.username ? "input-error" : ""}
+          /&gt;
+          {/* 5. Display Error */}
+          &lt;p className="error-text"&gt;{formErrors.username}&lt;/p&gt;
+        &lt;/div&gt;
+
+        {/* Email Field */}
+        &lt;div className="form-group"&gt;
+          &lt;label&gt;Email&lt;/label&gt;
+          &lt;input
+            type="text"
+            name="email"
+            value={formValues.email}
+            onChange={handleChange}
+            className={formErrors.email ? "input-error" : ""}
+          /&gt;
+          &lt;p className="error-text"&gt;{formErrors.email}&lt;/p&gt;
+        &lt;/div&gt;
+
+        {/* Password Field */}
+        &lt;div className="form-group"&gt;
+          &lt;label&gt;Password&lt;/label&gt;
+          &lt;input
+            type="password"
+            name="password"
+            value={formValues.password}
+            onChange={handleChange}
+            className={formErrors.password ? "input-error" : ""}
+          /&gt;
+          &lt;p className="error-text"&gt;{formErrors.password}&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;button type="submit"&gt;Submit&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default RegistrationForm;
+</code></pre></div></p>
+<h3>Specific Input Nuances</h3>
+<ul>
+<li><strong>Textarea:</strong> In HTML, <code>&lt;textarea&gt;Value&lt;/textarea&gt;</code>. In React, it uses a <code>value</code> attribute: <code>&lt;textarea value={state} /&gt;</code>.</li>
+<li><strong>Select:</strong> Instead of putting <code>selected</code> on an <code>&lt;option&gt;</code>, React puts a <code>value</code> on the root <code>&lt;select&gt;</code> tag.</li>
+<li><strong>Checkbox:</strong> Uses <code>checked</code> attribute (boolean) instead of <code>value</code>. When handling changes, access <code>e.target.checked</code> instead of <code>e.target.value</code>.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">// Checkbox Example
+&lt;input 
+  type="checkbox" 
+  checked={isSubscribed} 
+  onChange={(e) =&gt; setIsSubscribed(e.target.checked)} 
+/&gt;
+</code></pre></div></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT252/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT252/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,577 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/INT428">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT428/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT428/Unit6/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT428/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT428</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Data Analysis &amp; Visualization / AI Model Environments &amp; Lifecycle Basics</h1>
+<h2>1. Data Analysis and Visualization Using AI Tools</h2>
+<p>Modern data analysis has shifted from manual spreadsheet manipulation to AI-assisted exploration and automated visualization. This section explores how Large Language Models (LLMs) and specialized BI tools leverage AI.</p>
+<h3>ChatGPT Advanced Data Analysis (formerly Code Interpreter)</h3>
+<p>This feature allows the AI to write and execute Python code in a sandboxed environment to perform data analysis.</p>
+<ul>
+<li><strong>Capabilities:</strong>
+<ul>
+<li><strong>Data Cleaning:</strong> Automatically identifies missing values, duplicates, and inconsistent formatting.</li>
+<li><strong>Descriptive Statistics:</strong> Generates mean, median, mode, standard deviation, and correlation matrices instantly.</li>
+<li><strong>Visualization:</strong> Uses Python libraries (Matplotlib, Seaborn) to create heatmaps, scatter plots, bar charts, and histograms based on natural language prompts.</li>
+<li><strong>File Conversion:</strong> Can convert file formats (e.g., CSV to Excel, PDF to Image).</li>
+</ul></li>
+<li><strong>Workflow:</strong> User uploads a dataset <span class="katex-inline" data-math="\rightarrow"></span> User prompts (e.g., "Show me sales trends over time") <span class="katex-inline" data-math="\rightarrow"></span> AI generates and runs Python code <span class="katex-inline" data-math="\rightarrow"></span> AI displays the chart and interprets the results.</li>
+</ul>
+<h3>Tableau (AI-Driven Analytics)</h3>
+<p>Tableau integrates AI features (often called "Tableau AI" or "Einstein Discovery") to enhance business intelligence.</p>
+<ul>
+<li><strong>Ask Data:</strong> Uses Natural Language Processing (NLP) allowing users to type questions like "What was the profit ratio by region in 2023?" to generate visualizations instantly.</li>
+<li><strong>Explain Data:</strong> Uses statistical models to analyze a specific data point and provide explanations for outliers or trends (e.g., "Profit is low here because shipping costs increased by 40%").</li>
+<li><strong>Predictive Modeling:</strong> Built-in forecasting tools that project future trends based on historical data without requiring complex coding.</li>
+</ul>
+<hr/>
+<h2>2. Working with Structured and Unstructured Data</h2>
+<p>AI systems must handle various data formats. Understanding the distinction is crucial for selecting the right model and pipeline.</p>
+<h3>Structured Data</h3>
+<p>Data that adheres to a pre-defined data model and is therefore straightforward to analyze.</p>
+<ul>
+<li><strong>Format:</strong> Rows and columns (Relational Databases, CSV, Excel).</li>
+<li><strong>Examples:</strong> Customer records, financial transactions, sensor logs, inventory lists.</li>
+<li><strong>AI Processing:</strong> Processed using Machine Learning algorithms (Regression, Decision Trees, Random Forests) and queried via SQL.</li>
+</ul>
+<h3>Unstructured Data</h3>
+<p>Information that either does not have a pre-defined data model or is not organized in a pre-defined manner. It accounts for ~80% of enterprise data.</p>
+<ul>
+<li><strong>Format:</strong> Text, images, audio, video.</li>
+<li><strong>Examples:</strong> Emails, social media posts, satellite imagery, call center recordings.</li>
+<li><strong>AI Processing:</strong> Requires Deep Learning:
+<ul>
+<li><strong>NLP:</strong> For text (Sentiment analysis, summarization).</li>
+<li><strong>Computer Vision:</strong> For images/video (Object detection).</li>
+<li><strong>Speech-to-Text:</strong> For audio processing.</li>
+</ul></li>
+</ul>
+<p><figure class="image-figure"><img alt='A split-screen diagram comparing Structured vs. Unstructured Data. The left side is labeled "Structu...' src="/notes-images/Sem4/INT428/images/INT428_Unit6_img1_6c5641c8.jpg"><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></img></figure></p>
+<h3>Data Pipelines and Automation</h3>
+<p>A data pipeline is a set of actions that ingest raw data from disparate sources and move the data to a destination for storage and analysis.</p>
+<ul>
+<li><strong>ETL (Extract, Transform, Load):</strong>
+<ol>
+<li><strong>Extract:</strong> Pull data from APIs, databases, or file systems.</li>
+<li><strong>Transform:</strong> Clean, normalize, and format the data (often where AI automation applies).</li>
+<li><strong>Load:</strong> Store in a Data Warehouse (e.g., Snowflake, Redshift).</li>
+</ol></li>
+<li><strong>Pipeline Automation:</strong> Using tools like Apache Airflow or Prefect to schedule these tasks. AI can monitor pipelines to predict failures or optimize resource allocation based on data volume.</li>
+</ul>
+<hr/>
+<h2>3. AI Model Environments: Cloud Services vs. Edge Deployment</h2>
+<p>Where an AI model "lives" and executes its logic is a critical architectural decision involving trade-offs between speed, cost, and privacy.</p>
+<h3>Cloud Services (Centralized AI)</h3>
+<p>The model runs on remote servers owned by providers like AWS, Google Cloud Platform (GCP), or Microsoft Azure.</p>
+<ul>
+<li><strong>Pros:</strong>
+<ul>
+<li><strong>Infinite Scalability:</strong> Can handle massive workloads by adding more servers.</li>
+<li><strong>Power:</strong> Access to high-end GPUs (e.g., NVIDIA H100s) for complex model training and inference.</li>
+<li><strong>Ease of Management:</strong> Centralized updates and maintenance.</li>
+</ul></li>
+<li><strong>Cons:</strong>
+<ul>
+<li><strong>Latency:</strong> Data must travel to the server and back (lag).</li>
+<li><strong>Internet Dependency:</strong> Requires constant connectivity.</li>
+<li><strong>Privacy:</strong> Sensitive data leaves the user's device.</li>
+</ul></li>
+</ul>
+<h3>Edge Deployment (Decentralized AI)</h3>
+<p>The model runs locally on the user's device (IoT sensors, smartphones, autonomous vehicles, cameras).</p>
+<ul>
+<li><strong>Pros:</strong>
+<ul>
+<li><strong>Low Latency:</strong> Real-time processing (crucial for self-driving cars).</li>
+<li><strong>Privacy:</strong> Data stays on the device.</li>
+<li><strong>Bandwidth Efficiency:</strong> No need to upload massive video/audio streams to the cloud.</li>
+</ul></li>
+<li><strong>Cons:</strong>
+<ul>
+<li><strong>Resource Constraints:</strong> Limited battery, memory, and processing power.</li>
+<li><strong>Model Compression:</strong> Requires techniques like <strong>Quantization</strong> (reducing precision) or <strong>Pruning</strong> (removing unnecessary connections) to fit models on small chips.</li>
+</ul></li>
+</ul>
+<p><figure class="image-figure"><img alt='A comparison diagram illustrating Cloud AI vs. Edge AI. The left side shows a "Cloud AI" setup: seve...' src="/notes-images/Sem4/INT428/images/INT428_Unit6_img2_e669a156.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<hr/>
+<h2>4. Error Identification and Troubleshooting</h2>
+<p>AI systems fail differently than traditional software. Errors are often probabilistic rather than deterministic.</p>
+<h3>Types of Errors</h3>
+<ol>
+<li><strong>Data Errors (The "Garbage In, Garbage Out" problem):</strong>
+<ul>
+<li><strong>Bias:</strong> The training data does not represent the real world (e.g., facial recognition training only on light skin tones).</li>
+<li><strong>Outliers:</strong> Anomalous data points skewing predictions.</li>
+<li><strong>Missing Labels:</strong> Unsupervised data mixed into supervised tasks.</li>
+</ul></li>
+<li><strong>Model Errors:</strong>
+<ul>
+<li><strong>Overfitting:</strong> The model memorizes the training data (including noise) and performs poorly on new data. <em>Symptom: High accuracy on training set, low accuracy on test set.</em></li>
+<li><strong>Underfitting:</strong> The model is too simple to capture the underlying pattern. <em>Symptom: Low accuracy on both training and test sets.</em></li>
+</ul></li>
+<li><strong>Infrastructure Errors:</strong>
+<ul>
+<li>API timeouts, version conflicts (e.g., PyTorch version mismatch), or CUDA (GPU) out-of-memory errors.</li>
+</ul></li>
+</ol>
+<h3>Troubleshooting Strategies</h3>
+<ul>
+<li><strong>Confusion Matrix:</strong> A table used to define the performance of a classification algorithm (True Positives, False Positives, True Negatives, False Negatives).</li>
+<li><strong>Ablation Studies:</strong> Removing parts of the model or features to see which contributes most to performance.</li>
+<li><strong>Human-in-the-loop (HITL):</strong> Sending low-confidence predictions to a human for manual review to retrain the model.</li>
+</ul>
+<hr/>
+<h2>5. AI Process Automation and MLOps</h2>
+<h3>AI Process Automation (Intelligent Automation)</h3>
+<p>Combining <strong>RPA (Robotic Process Automation)</strong> with AI.</p>
+<ul>
+<li><strong>Traditional RPA:</strong> "Click here, copy this, paste there." (Rule-based).</li>
+<li><strong>AI + RPA:</strong> "Read this invoice, understand the context, extract the total, and decide which department approves it." (Cognitive).</li>
+<li><strong>Benefits:</strong> Reduces manual labor, minimizes human error in repetitive tasks, operates 24/7.</li>
+</ul>
+<h3>Introduction to MLOps (Machine Learning Operations)</h3>
+<p>MLOps is the application of DevOps principles to Machine Learning systems. It aims to unify ML system development (Dev) and ML system deployment (Ops).</p>
+<h4>The MLOps Lifecycle</h4>
+<ol>
+<li><strong>Scoping:</strong> Defining the business problem.</li>
+<li><strong>Data Engineering:</strong> Collection, cleaning, labeling.</li>
+<li><strong>Modeling:</strong> Training, validation, hyperparameter tuning.</li>
+<li><strong>Deployment:</strong> Packaging the model (using Docker/Kubernetes) and serving it via API.</li>
+<li><strong>Monitoring:</strong> The most critical ongoing phase.</li>
+</ol>
+<h4>Lifecycle Management &amp; Monitoring</h4>
+<p>Unlike standard software code, ML models degrade over time without changing a single line of code. This is due to <strong>Drift</strong>.</p>
+<ul>
+<li><strong>Data Drift:</strong> The input data distribution changes (e.g., user demographics shift).</li>
+<li><strong>Concept Drift:</strong> The relationship between input and output changes (e.g., a "spam" email definition changes over time as scammers get smarter).</li>
+</ul>
+<p><strong>MLOps ensures:</strong></p>
+<ul>
+<li><strong>Reproducibility:</strong> Ability to recreate a specific model version using versioned data and code.</li>
+<li><strong>CI/CD for ML:</strong> Continuous Integration / Continuous Deployment pipelines specifically for retraining models automatically.</li>
+</ul>
+<p><figure class="image-figure"><img alt="A circular infinity-loop diagram representing the MLOps Lifecycle. The loop is divided into two main..." src="/notes-images/Sem4/INT428/images/INT428_Unit6_img3_823e83db.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/INT428/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

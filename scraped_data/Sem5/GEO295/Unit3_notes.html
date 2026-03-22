@@ -1,0 +1,732 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">GEO295</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/GEO295/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>GEO295</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Climatology</h1>
+<h2>1. Heat Budget of the Earth</h2>
+<p>The heat budget is the equilibrium between the amount of solar radiation (insolation) received by the Earth and the amount of heat lost by the Earth through terrestrial radiation.</p>
+<h3>A. The Incoming Solar Radiation (Insolation)</h3>
+<p>Assume the total incoming radiation at the top of the atmosphere is <strong>100 units</strong>.</p>
+<ul>
+<li><strong>Reflected (Albedo):</strong> 35 units are reflected back into space before reaching the surface.
+<ul>
+<li>27 units reflected by clouds.</li>
+<li>2 units reflected by snow and ice fields.</li>
+<li>6 units scattered by atmospheric particles.</li>
+<li><em>Earth's Albedo is approx. 35%.</em></li>
+</ul></li>
+<li><strong>Absorbed:</strong> 65 units enter the system.
+<ul>
+<li><strong>14 units</strong> absorbed by the atmosphere (water vapor, dust, ozone).</li>
+<li><strong>51 units</strong> absorbed by the Earth's surface.</li>
+</ul></li>
+</ul>
+<h3>B. The Outgoing Terrestrial Radiation</h3>
+<p>The 51 units absorbed by the surface must be radiated back to maintain thermal equilibrium. This occurs via long-wave radiation.</p>
+<ul>
+<li><strong>Radiation from Surface:</strong>
+<ul>
+<li>17 units radiated directly to space.</li>
+<li>34 units absorbed by the atmosphere (greenhouse effect).</li>
+</ul></li>
+<li><strong>Atmospheric Heat Balance:</strong>
+<ul>
+<li>Input: 14 units (from insolation) + 34 units (from terrestrial radiation) + latent heat/convection transfers = <strong>48 units</strong>.</li>
+<li>Output: The atmosphere radiates these 48 units back into space.</li>
+</ul></li>
+</ul>
+<p><strong>Net Balance:</strong> 17 (surface direct) + 48 (atmosphere) + 35 (reflected) = 100 units outgoing.</p>
+<h3>C. Latitudinal Heat Balance</h3>
+<ul>
+<li><strong>Surplus Zone:</strong> Between 40° N and 40° S, insolation exceeds outgoing radiation.</li>
+<li><strong>Deficit Zone:</strong> Poleward of 40°, outgoing radiation exceeds insolation.</li>
+<li><em>Note:</em> The atmosphere and ocean currents transfer heat from surplus to deficit zones, preventing the tropics from overheating and poles from freezing completely.</li>
+</ul>
+<hr/>
+<h2>2. Temperature and Pressure Belts of the World</h2>
+<h3>A. Horizontal Distribution of Temperature</h3>
+<ul>
+<li><strong>Isotherms:</strong> Lines connecting points of equal temperature. They generally run parallel to latitudes but deviate due to land-water contrasts.</li>
+<li><strong>Factors Affecting Temperature:</strong> Latitude (angle of incidence), Altitude (lapse rate), Distance from sea (continentality), Ocean currents, Prevailing winds.</li>
+</ul>
+<h3>B. Pressure Belts</h3>
+<p>Atmospheric pressure is the weight of the air column. There are seven distinct pressure belts.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Pressure Belt</th>
+<th style="text-align: left;">Latitude</th>
+<th style="text-align: left;">Nature</th>
+<th style="text-align: left;">Formation Cause</th>
+<th style="text-align: left;">Characteristics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Equatorial Low</strong></td>
+<td style="text-align: left;">0°–5° N/S</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;"><strong>Thermally Induced</strong></td>
+<td style="text-align: left;">Intense heating; vertical air currents; known as the <em>Doldrums</em> or ITCZ (Inter-Tropical Convergence Zone).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sub-Tropical High</strong></td>
+<td style="text-align: left;">30°–35° N/S</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;"><strong>Dynamically Induced</strong></td>
+<td style="text-align: left;">Sinking air from Hadley cell; clear skies; known as <em>Horse Latitudes</em>; location of major hot deserts.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sub-Polar Low</strong></td>
+<td style="text-align: left;">60°–65° N/S</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;"><strong>Dynamically Induced</strong></td>
+<td style="text-align: left;">Convergence of warm Westerlies and cold Polar Easterlies; cyclonic activity.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Polar High</strong></td>
+<td style="text-align: left;">90° N/S</td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;"><strong>Thermally Induced</strong></td>
+<td style="text-align: left;">Extreme cold causes air to subside and become dense.</td>
+</tr>
+</tbody>
+</table>
+<h3>C. Shifting of Belts</h3>
+<p>The pressure belts shift north and south with the apparent movement of the sun (Solstices).</p>
+<ul>
+<li><strong>June:</strong> Belts shift North.</li>
+<li><strong>December:</strong> Belts shift South.</li>
+<li>This shift influences climatic regions, such as the Mediterranean climate (winter rain).</li>
+</ul>
+<hr/>
+<h2>3. Atmospheric Circulation: Winds</h2>
+<h3>A. Planetary (Permanent) Winds</h3>
+<p>These blow constantly throughout the year in a particular direction.</p>
+<ol>
+<li><strong>Trade Winds (Easterlies):</strong>
+<ul>
+<li>Blow from Sub-Tropical Highs to Equatorial Low.</li>
+<li>NE Trades in Northern Hemisphere; SE Trades in Southern Hemisphere.</li>
+<li>Steady and regular.</li>
+</ul></li>
+<li><strong>Westerlies:</strong>
+<ul>
+<li>Blow from Sub-Tropical Highs to Sub-Polar Lows.</li>
+<li>Direction: SW to NE (Northern Hemisphere); NW to SE (Southern Hemisphere).</li>
+<li>Stronger in the Southern Hemisphere (Roaring Forties, Furious Fifties) due to lack of landmass friction.</li>
+</ul></li>
+<li><strong>Polar Easterlies:</strong>
+<ul>
+<li>Blow from Polar Highs to Sub-Polar Lows.</li>
+<li>Cold, dry, and variable.</li>
+</ul></li>
+</ol>
+<h3>B. Local Winds</h3>
+<p>Winds driven by local thermal or topographic differences.</p>
+<ul>
+<li><strong>Land and Sea Breezes:</strong> Diurnal cycle due to differential heating of land and water.
+<ul>
+<li><em>Sea Breeze:</em> Day (Sea to Land).</li>
+<li><em>Land Breeze:</em> Night (Land to Sea).</li>
+</ul></li>
+<li><strong>Mountain and Valley Breezes:</strong>
+<ul>
+<li><em>Valley Breeze (Anabatic):</em> Day. Warm air rises up slopes.</li>
+<li><em>Mountain Breeze (Katabatic):</em> Night. Cold dense air flows down slopes.</li>
+</ul></li>
+<li><strong>Specific Local Winds:</strong>
+<ul>
+<li><em>Chinook/Foehn:</em> Warm, dry wind flowing down the leeward side of mountains (Rockies/Alps); "Snow eater."</li>
+<li><em>Mistral/Bora:</em> Cold, violent winds blowing from highlands to coasts (France/Italy).</li>
+<li><em>Loo:</em> Hot, dry wind in N. India (Summer).</li>
+<li><em>Harmattan:</em> Dry, dusty wind in West Africa ("The Doctor").</li>
+</ul></li>
+</ul>
+<h3>C. Monsoons</h3>
+<p>Periodic seasonal winds that reverse direction.</p>
+<ul>
+<li><strong>Mechanism:</strong>
+<ul>
+<li><em>Thermal Concept (Halley):</em> Differential heating of land/sea. Summer: Low pressure over land = Sea to Land wind. Winter: High pressure over land = Land to Sea wind.</li>
+<li><em>Dynamic Concept (Flohn):</em> Seasonal shift of the ITCZ.</li>
+</ul></li>
+<li><strong>Asian Monsoon:</strong>
+<ul>
+<li><strong>SW Monsoon (Summer):</strong> ITCZ shifts north over the Gangetic plain. High pressure in the Indian Ocean. Winds blow SW to NE, bringing heavy rain.</li>
+<li><strong>NE Monsoon (Winter):</strong> High pressure over Siberia/Land. Winds blow NE to SW (dry, except for Coromandel Coast).</li>
+</ul></li>
+</ul>
+<h3>D. Jet Streams</h3>
+<p>Narrow bands of strong winds in the upper troposphere (High Altitude).</p>
+<ul>
+<li><strong>Sub-Tropical Jet Stream (STJ):</strong> Located at 30° lat. Influences winter weather and western disturbances in India.</li>
+<li><strong>Polar Front Jet Stream (PFJ):</strong> Located at 60° lat. Associated with the boundary between polar and tropical air (Polar Front).</li>
+<li><strong>Significance:</strong> They steer cyclones and anticyclones; essential for aviation.</li>
+</ul>
+<hr/>
+<h2>4. Air Masses and Frontogenesis</h2>
+<h3>A. Air Masses</h3>
+<p>A large body of air having relatively uniform temperature and moisture characteristics horizontally.</p>
+<ul>
+<li><strong>Source Regions:</strong> Must be extensive and uniform (e.g., deserts, oceans, ice caps).</li>
+<li><strong>Classification:</strong>
+<ul>
+<li><strong>Latitude:</strong> Tropical (T - warm) vs. Polar (P - cold).</li>
+<li><strong>Surface:</strong> Maritime (m - moist) vs. Continental (c - dry).</li>
+<li><em>Major Types:</em> cP (Continental Polar), mP (Maritime Polar), cT (Continental Tropical), mT (Maritime Tropical).</li>
+</ul></li>
+</ul>
+<h3>B. Frontogenesis</h3>
+<p>The process of formation of a front (the boundary between two contrasting air masses).</p>
+<ul>
+<li><strong>Cold Front:</strong> Cold air mass advances against warm air. Steep slope. Causes rapid uplift, cumulonimbus clouds, and thunderstorms. Represented by blue triangles on maps.</li>
+<li><strong>Warm Front:</strong> Warm air mass moves over cold air. Gentle slope. Causes stratus clouds and steady, continuous rain. Represented by red semicircles.</li>
+<li><strong>Occluded Front:</strong> When a cold front overtakes a warm front, lifting the warm sector completely off the ground.</li>
+<li><strong>Stationary Front:</strong> Two air masses stall; neither is strong enough to replace the other.</li>
+</ul>
+<hr/>
+<h2>5. Cyclones: Temperate and Tropical</h2>
+<h3>A. Temperate Cyclones (Extratropical / Wave Cyclones)</h3>
+<ul>
+<li><strong>Origin:</strong> Form along the Polar Front (60° latitude) due to the interaction of warm westerlies and cold polar easterlies.</li>
+<li><strong>Mechanism:</strong> Polar Front Theory (Bjerknes).
+<ol>
+<li>Stationary front stage.</li>
+<li>Wave formation (kink).</li>
+<li>Mature stage (distinct warm and cold sectors).</li>
+<li>Occlusion (dissipation).</li>
+</ol></li>
+<li><strong>Characteristics:</strong>
+<ul>
+<li>Move West to East (steered by Westerlies).</li>
+<li>Covers large areas (thousands of km).</li>
+<li>Precipitation is gradual and long-lasting.</li>
+<li>Occurs in both winter and summer.</li>
+</ul></li>
+</ul>
+<h3>B. Tropical Cyclones</h3>
+<ul>
+<li><strong>Origin:</strong> Thermal origin over warm tropical oceans (SST &gt; 27°C).</li>
+<li><strong>Location:</strong> 5° to 20° N/S latitudes (Coriolis force is zero at the equator, so they do not form there).</li>
+<li><strong>Mechanism:</strong> Intense low pressure induces rapid inflow of air. Air rises spirally, cools, condenses, releasing <strong>Latent Heat of Condensation</strong> (the energy source).</li>
+<li><strong>Structure:</strong>
+<ul>
+<li><strong>Eye:</strong> Center. Calm, subsiding air, clear skies.</li>
+<li><strong>Eye Wall:</strong> Ring of tallest cumulonimbus clouds. Highest wind speed and rainfall.</li>
+<li><strong>Spiral Bands:</strong> Rainbands extending outward.</li>
+</ul></li>
+<li><strong>Characteristics:</strong>
+<ul>
+<li>Move East to West (steered by Trade Winds).</li>
+<li>Smaller area but much higher intensity/destruction.</li>
+<li>Dissipate rapidly upon landfall (cutoff from moisture source).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>6. Types and Distribution of Precipitation</h2>
+<h3>A. Types of Precipitation (Based on Lifting Mechanism)</h3>
+<ol>
+<li><strong>Convectional Rainfall:</strong>
+<ul>
+<li>Caused by intense surface heating.</li>
+<li>Air expands, rises, cools adiabatically to dew point.</li>
+<li>Associated with Cumulonimbus clouds, thunder, and lightning.</li>
+<li><em>Region:</em> Equatorial regions (daily afternoon showers), interior of continents in summer.</li>
+</ul></li>
+<li><strong>Orographic (Relief) Rainfall:</strong>
+<ul>
+<li>Moist air is forced to ascend a mountain barrier.</li>
+<li><strong>Windward Side:</strong> Heavy rainfall.</li>
+<li><strong>Leeward Side (Rain Shadow):</strong> Air descends, warms, and humidity drops. Minimal rain (e.g., Patagonian Desert, Deccan Plateau).</li>
+</ul></li>
+<li><strong>Cyclonic (Frontal) Rainfall:</strong>
+<ul>
+<li>Caused by the convergence of air masses (Temperate) or intense convection in low pressure (Tropical).</li>
+<li>Warm air rises over cold air (frontal wedging).</li>
+</ul></li>
+</ol>
+<h3>B. Global Distribution of Precipitation</h3>
+<ul>
+<li><strong>Heavy Rainfall (&gt;200 cm):</strong> Equatorial belt, windward slopes of coastal mountains, monsoon regions (SE Asia).</li>
+<li><strong>Moderate Rainfall (100–200 cm):</strong> Coastal regions of Trade winds, coastal areas in Westerlies zone.</li>
+<li><strong>Low Rainfall (&lt;50 cm):</strong>
+<ul>
+<li>Sub-tropical high-pressure belts (Deserts like Sahara, Atacama, Australian).</li>
+<li>Interiors of large continents (distance from sea).</li>
+<li>Polar regions (air is too cold to hold moisture).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>7. Global Climatic Change</h2>
+<p>Climate change refers to significant and lasting changes in the statistical distribution of weather patterns.</p>
+<h3>A. Evidence of Climate Change</h3>
+<ul>
+<li><strong>Geological records:</strong> Ice cores, tree rings (dendrochronology), pollen analysis.</li>
+<li><strong>Modern metrics:</strong> Rising global average temperatures, retreating glaciers, rising sea levels, ocean acidification, shrinking ice sheets.</li>
+</ul>
+<h3>B. Causes of Climate Change</h3>
+<p><strong>1. Natural Causes:</strong></p>
+<ul>
+<li><strong>Milankovitch Cycles:</strong> Variations in Earth's orbit (eccentricity), tilt (obliquity), and wobble (precession) affecting insolation.</li>
+<li><strong>Solar Output:</strong> Sunspot cycles (11-year cycle) and solar irradiance variations.</li>
+<li><strong>Volcanism:</strong> Ash and sulfur dioxide block sunlight, causing short-term cooling (e.g., Mt. Pinatubo).</li>
+</ul>
+<p><strong>2. Anthropogenic (Human) Causes:</strong></p>
+<ul>
+<li><strong>Greenhouse Gases (GHGs):</strong> Burning fossil fuels (CO2), agriculture/livestock (Methane - CH4), industrial processes (Nitrous Oxide).</li>
+<li><strong>Greenhouse Effect:</strong> GHGs trap outgoing long-wave terrestrial radiation, warming the lower atmosphere.</li>
+<li><strong>Deforestation:</strong> Reduces carbon sinks.</li>
+<li><strong>Aerosols:</strong> Industrial smog can cause localized cooling (global dimming) but alters rain patterns.</li>
+</ul>
+<h3>C. Consequences</h3>
+<ul>
+<li><strong>Weather Extremes:</strong> Increased frequency of heatwaves, intense hurricanes, droughts, and floods.</li>
+<li><strong>Cryosphere:</strong> Melting permafrost (releasing methane), loss of Arctic sea ice.</li>
+<li><strong>Hydrosphere:</strong> Sea level rise (thermal expansion + meltwater), threatening coastal cities and islands (e.g., Maldives).</li>
+<li><strong>Biosphere:</strong> Shifts in biome boundaries, species extinction, coral bleaching.</li>
+<li><strong>Agriculture:</strong> Changing growing seasons, crop failure risks.</li>
+</ul>
+<h3>D. Urban Heat Island (UHI)</h3>
+<ul>
+<li>A micro-climatic phenomenon where urban areas are significantly warmer than surrounding rural areas.</li>
+<li><strong>Causes:</strong> Concrete/asphalt absorb heat (high thermal mass), lack of vegetation (evapotranspiration), waste heat from vehicles/ACs.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/GEO295/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/GEO295/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

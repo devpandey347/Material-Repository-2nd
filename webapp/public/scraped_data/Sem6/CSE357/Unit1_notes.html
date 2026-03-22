@@ -1,0 +1,678 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/CSE357">CSE357</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/CSE357">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/CSE357/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/CSE357/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/CSE357/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE357</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Operating System Basics</h1>
+<h2>1. Foundations of Operating Systems</h2>
+<h3>1.1 Definition and Purpose</h3>
+<p>An <strong>Operating System (OS)</strong> is system software that acts as an intermediary between the computer hardware and the computer user. It manages the computer's resources and provides a convenient environment for the execution of programs.</p>
+<ul>
+<li><strong>Primary Goal:</strong> Convenience (User ease of use).</li>
+<li><strong>Secondary Goal:</strong> Efficiency (Optimal resource utilization).</li>
+</ul>
+<h3>1.2 Core Components</h3>
+<ol>
+<li><strong>Kernel:</strong> The core component of the OS that resides in the main memory. It has complete control over everything in the system and handles low-level tasks like disk management, memory management, and task management.</li>
+<li><strong>Shell:</strong> An interface that allows users to interact with the kernel (e.g., Bash in Linux, PowerShell in Windows).</li>
+<li><strong>System Calls:</strong> The programmatic interface between a running application and the OS.</li>
+</ol>
+<h3>1.3 Key Functions</h3>
+<ul>
+<li><strong>Process Management:</strong> Creating, scheduling, and terminating processes.</li>
+<li><strong>Memory Management:</strong> Allocating and deallocating memory space.</li>
+<li><strong>File Management:</strong> Creating, deleting, and organizing files and directories.</li>
+<li><strong>I/O Management:</strong> Managing communication between hardware devices and applications.</li>
+<li><strong>Security &amp; Protection:</strong> Preventing unauthorized access to data and resources.</li>
+</ul>
+<h3>1.4 User Mode vs. Kernel Mode</h3>
+<p>To ensure system stability, modern processors operate in two modes:</p>
+<ul>
+<li><strong>User Mode (Mode 1):</strong> Applications run here with restricted access to hardware. If an app crashes, the OS survives.</li>
+<li><strong>Kernel Mode (Mode 0):</strong> The OS runs here with unrestricted access to all hardware instructions.</li>
+<li><strong>Mode Switch:</strong> Occurs via a system call, interrupt, or trap.</li>
+</ul>
+<hr/>
+<h2>2. Types of Operating Systems</h2>
+<h3>2.1 Batch Operating Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Jobs with similar needs are batched together and executed sequentially without user interaction.</li>
+<li><strong>Mechanism:</strong> Users submit jobs (on punch cards historically) to an operator.</li>
+<li><strong>Pros:</strong> Shifts CPU time between jobs automatically.</li>
+<li><strong>Cons:</strong> Hard to debug; CPU is often idle during I/O operations.</li>
+</ul>
+<h3>2.2 Multiprogramming Operating Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Keeps several jobs in memory simultaneously. When one job waits for I/O, the CPU switches to another job.</li>
+<li><strong>Goal:</strong> Maximize CPU utilization.</li>
+<li><strong>Key Requirement:</strong> Requires memory management to hold multiple programs.</li>
+</ul>
+<h3>2.3 Time-Sharing (Multitasking) Operating Systems</h3>
+<ul>
+<li><strong>Concept:</strong> A logical extension of multiprogramming. The CPU switches jobs so frequently that users can interact with each program while it is running.</li>
+<li><strong>Mechanism:</strong> Uses <strong>Time Quantums</strong> (slices).</li>
+<li><strong>Goal:</strong> Minimize response time.</li>
+</ul>
+<h3>2.4 Real-Time Operating Systems (RTOS)</h3>
+<p>Designed for applications where timing is critical.</p>
+<ul>
+<li><strong>Hard RTOS:</strong> Time constraints are strict. Missing a deadline results in total system failure (e.g., Airbag systems, Missile guidance).</li>
+<li><strong>Soft RTOS:</strong> Time constraints are prioritized but missing a deadline only degrades performance (e.g., Video streaming).</li>
+</ul>
+<h3>2.5 Distributed Operating Systems</h3>
+<ul>
+<li><strong>Concept:</strong> Loosely coupled systems that communicate via a network.</li>
+<li><strong>Function:</strong> Several independent computers appear as a single system to the user.</li>
+<li><strong>Pros:</strong> Resource sharing, load balancing, reliability.</li>
+</ul>
+<hr/>
+<h2>3. Memory Management</h2>
+<p>Memory management is the functionality of an OS which handles or manages primary memory and moves processes back and forth between main memory and disk during execution.</p>
+<h3>3.1 Logical vs. Physical Address Space</h3>
+<ul>
+<li><strong>Logical Address (Virtual Address):</strong> Generated by the CPU.</li>
+<li><strong>Physical Address:</strong> The actual address in the memory unit (RAM).</li>
+<li><strong>MMU (Memory Management Unit):</strong> Hardware device that maps virtual to physical addresses at runtime.</li>
+</ul>
+<h3>3.2 Memory Allocation Techniques</h3>
+<ol>
+<li>
+<p><strong>Contiguous Allocation:</strong></p>
+<ul>
+<li><strong>Fixed Partitioning:</strong> Memory is divided into fixed-size partitions. Suffering from <strong>Internal Fragmentation</strong> (wasted space inside a partition).</li>
+<li><strong>Dynamic Partitioning:</strong> Partitions are created dynamically to fit the process size. Suffers from <strong>External Fragmentation</strong> (total free space is enough, but not contiguous).</li>
+</ul>
+</li>
+<li>
+<p><strong>Paging (Non-contiguous):</strong></p>
+<ul>
+<li>Physical memory is divided into fixed-size blocks called <strong>Frames</strong>.</li>
+<li>Logical memory is divided into blocks of the same size called <strong>Pages</strong>.</li>
+<li><strong>Page Table:</strong> A data structure used to map Page Numbers to Frame Numbers.</li>
+<li><em>Solves External Fragmentation.</em></li>
+</ul>
+</li>
+<li>
+<p><strong>Segmentation:</strong></p>
+<ul>
+<li>Memory is viewed as a collection of variable-sized segments (e.g., Code segment, Stack segment, Heap segment).</li>
+<li>Logical address = <code>&lt;segment-number, offset&gt;</code>.</li>
+</ul>
+</li>
+</ol>
+<h3>3.3 Virtual Memory</h3>
+<p>Allows the execution of processes that are not completely in memory.</p>
+<ul>
+<li><strong>Demand Paging:</strong> Pages are loaded into memory only when they are needed.</li>
+<li><strong>Page Fault:</strong> Occurs when a program tries to access a page not currently in RAM. The OS must swap it in from the disk (backing store).</li>
+</ul>
+<h3>3.4 Page Replacement Algorithms</h3>
+<p>When memory is full and a page fault occurs, a victim page must be swapped out.</p>
+<ol>
+<li><strong>FIFO (First-In-First-Out):</strong> Replaces the oldest page. Suffers from Belady’s Anomaly (more frames can sometimes lead to more faults).</li>
+<li><strong>LRU (Least Recently Used):</strong> Replaces the page that has not been used for the longest time. Good approximation of optimal.</li>
+<li><strong>Optimal:</strong> Replaces the page that will not be used for the longest period of time (theoretical, requires future knowledge).</li>
+</ol>
+<hr/>
+<h2>4. Processor Scheduling Algorithms</h2>
+<p>The process scheduler selects an available process for program execution on the CPU.</p>
+<h3>4.1 Process States</h3>
+<ul>
+<li><strong>New:</strong> Process is being created.</li>
+<li><strong>Ready:</strong> Waiting to be assigned to a processor.</li>
+<li><strong>Running:</strong> Instructions are being executed.</li>
+<li><strong>Waiting (Blocked):</strong> Waiting for some event (like I/O) to occur.</li>
+<li><strong>Terminated:</strong> Finished execution.</li>
+</ul>
+<h3>4.2 Scheduling Criteria</h3>
+<ul>
+<li><strong>CPU Utilization:</strong> Keep CPU as busy as possible.</li>
+<li><strong>Throughput:</strong> Number of processes completing execution per time unit.</li>
+<li><strong>Turnaround Time:</strong> Time from submission to completion.</li>
+<li><strong>Waiting Time:</strong> Total time spending in the ready queue.</li>
+<li><strong>Response Time:</strong> Time from submission to first response.</li>
+</ul>
+<h3>4.3 Algorithms</h3>
+<h4>A. First-Come, First-Served (FCFS)</h4>
+<ul>
+<li><strong>Logic:</strong> The process that requests the CPU first gets it first.</li>
+<li><strong>Type:</strong> Non-preemptive.</li>
+<li><strong>Issue:</strong> <strong>Convoy Effect</strong> (short processes wait behind a long process).</li>
+</ul>
+<h4>B. Shortest Job First (SJF)</h4>
+<ul>
+<li><strong>Logic:</strong> Assign CPU to the process with the smallest next CPU burst.</li>
+<li><strong>Type:</strong> Can be Preemptive (Shortest Remaining Time First) or Non-preemptive.</li>
+<li><strong>Pros:</strong> Gives minimum average waiting time.</li>
+<li><strong>Cons:</strong> Requires prediction of next burst; risk of <strong>Starvation</strong> for long processes.</li>
+</ul>
+<h4>C. Priority Scheduling</h4>
+<ul>
+<li><strong>Logic:</strong> CPU assigned to process with highest priority.</li>
+<li><strong>Issue:</strong> Starvation (low priority jobs never execute).</li>
+<li><strong>Solution:</strong> <strong>Aging</strong> (gradually increasing priority of waiting processes).</li>
+</ul>
+<h4>D. Round Robin (RR)</h4>
+<ul>
+<li><strong>Logic:</strong> Each process gets a small unit of CPU time (Time Quantum), usually 10-100 milliseconds. After this time, the process is preempted and added to the end of the ready queue.</li>
+<li><strong>Type:</strong> Preemptive.</li>
+<li><strong>Best for:</strong> Time-sharing systems.</li>
+</ul>
+<h4>E. Multilevel Queue Scheduling</h4>
+<ul>
+<li><strong>Logic:</strong> Partitions the ready queue into several separate queues (e.g., foreground interactive queue, background batch queue). Each queue has its own scheduling algorithm.</li>
+</ul>
+<hr/>
+<h2>5. Process Synchronization</h2>
+<h3>5.1 The Critical Section Problem</h3>
+<p>When multiple processes access and manipulate shared data concurrently, the outcome depends on the order of access (Race Condition). To prevent this, we identify <strong>Critical Sections</strong> (code segments accessing shared data).</p>
+<p><strong>Solution Requirements:</strong></p>
+<ol>
+<li><strong>Mutual Exclusion:</strong> If process <span class="katex-inline" data-math="P_i"></span> is executing in its critical section, no other processes can be executing in their critical sections.</li>
+<li><strong>Progress:</strong> If no process is in the critical section, only those in the "entry section" can decide who enters next (decision cannot be postponed indefinitely).</li>
+<li><strong>Bounded Waiting:</strong> There must be a limit on the number of times other processes are allowed to enter their critical sections after a process has made a request to enter its own.</li>
+</ol>
+<h3>5.2 Synchronization Tools</h3>
+<h4>A. Mutex Locks</h4>
+<p>A boolean variable indicating if the lock is available or not.</p>
+<ul>
+<li><code>acquire()</code>: Wait until available, then set to unavailable.</li>
+<li><code>release()</code>: Set to available.</li>
+<li>Requires <strong>Busy Waiting</strong> (spinlock) if not implemented with sleep queues.</li>
+</ul>
+<h4>B. Semaphores</h4>
+<p>An integer variable accessed only through two atomic operations: <code>wait()</code> (or P) and <code>signal()</code> (or V).</p>
+<ul>
+<li><strong>Binary Semaphore:</strong> Value 0 or 1 (same as Mutex).</li>
+<li><strong>Counting Semaphore:</strong> Value ranges over an unrestricted domain (used for resource management).</li>
+</ul>
+<p><strong>Pseudo-code for Semaphore:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">wait(S) {
+    while (S &lt;= 0); // busy wait
+    S--;
+}
+
+signal(S) {
+    S++;
+}
+</code></pre></div></p>
+<h3>5.3 Deadlocks</h3>
+<p>A situation where a set of processes are blocked because each process is holding a resource and waiting for another resource acquired by some other process.</p>
+<p><strong>Four Necessary Conditions (Coffman Conditions):</strong></p>
+<ol>
+<li><strong>Mutual Exclusion:</strong> Resources cannot be shared.</li>
+<li><strong>Hold and Wait:</strong> Process holding at least one resource is waiting for others.</li>
+<li><strong>No Preemption:</strong> Resources cannot be taken away forcibly.</li>
+<li><strong>Circular Wait:</strong> <span class="katex-inline" data-math="P_0"></span> waits for <span class="katex-inline" data-math="P_1"></span>, <span class="katex-inline" data-math="P_1"></span> waits for <span class="katex-inline" data-math="P_2"></span> ... <span class="katex-inline" data-math="P_n"></span> waits for <span class="katex-inline" data-math="P_0"></span>.</li>
+</ol>
+<p><strong>Deadlock Handling:</strong></p>
+<ul>
+<li><strong>Prevention:</strong> Invalidate one of the 4 conditions.</li>
+<li><strong>Avoidance:</strong> OS checks allocation state to ensure circular wait never happens (e.g., <strong>Banker's Algorithm</strong>).</li>
+<li><strong>Detection &amp; Recovery:</strong> Let deadlock occur, detect it via a resource graph, and terminate a process to break the cycle.</li>
+</ul>
+<hr/>
+<h2>6. Inter-process Communication (IPC)</h2>
+<p>Processes executing concurrently may be independent or cooperating. Cooperating processes require IPC.</p>
+<h3>6.1 Why IPC?</h3>
+<ul>
+<li>Information sharing.</li>
+<li>Computation speedup (parallelism).</li>
+<li>Modularity.</li>
+</ul>
+<h3>6.2 IPC Models</h3>
+<h4>A. Shared Memory</h4>
+<ul>
+<li><strong>Mechanism:</strong> A region of memory that is shared by cooperating processes is established. Processes can then read and write data to this region.</li>
+<li><strong>Speed:</strong> Faster (memory access speed).</li>
+<li><strong>Complexity:</strong> Requires synchronization mechanisms (like semaphores) to manage concurrent access.</li>
+</ul>
+<h4>B. Message Passing</h4>
+<ul>
+<li><strong>Mechanism:</strong> Communication takes place by means of exchanging messages between cooperating processes.</li>
+<li><strong>Operations:</strong> <code>send(message)</code> and <code>receive(message)</code>.</li>
+<li><strong>Speed:</strong> Slower (requires Kernel intervention/System calls).</li>
+<li><strong>Benefit:</strong> Easier to implement for distributed systems; no conflicts (OS handles synchronization).</li>
+</ul>
+<h3>6.3 Specific IPC Mechanisms (UNIX/Linux context)</h3>
+<ol>
+<li><strong>Pipes:</strong>
+<ul>
+<li><strong>Anonymous Pipe:</strong> Unidirectional, used between parent and child processes (e.g., <code>ls | grep txt</code>).</li>
+<li><strong>Named Pipe (FIFO):</strong> Bidirectional, exists in the filesystem, unrelated processes can communicate.</li>
+</ul></li>
+<li><strong>Message Queues:</strong> Linked list of messages stored within the kernel.</li>
+<li><strong>Sockets:</strong> Endpoints for communication. Can be used between processes on the same machine or different machines over a network (TCP/UDP).</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/CSE357/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

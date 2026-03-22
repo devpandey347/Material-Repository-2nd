@@ -1,0 +1,663 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/CSE322">CSE322</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/CSE322">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/CSE322/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/CSE322/Unit3/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/CSE322/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/CSE322/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE322</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: FORMAL LANGUAGES</h1>
+<h2>1. Definition of a Grammar</h2>
+<p>A <strong>Grammar</strong> is a mathematical model used to define the structure of a language. It is a set of rules (productions) used to generate valid strings in that language.</p>
+<p>Formally, a grammar <span class="katex-inline" data-math="G"></span> is defined as a 4-tuple:<br/>
+<span class="math-display" data-math="G = (V, T, P, S)"></span></p>
+<p>Where:</p>
+<ul>
+<li><strong><span class="katex-inline" data-math="V"></span> (Variables / Non-terminals):</strong> A finite set of symbols that denote syntactic categories. These are typically represented by uppercase letters (e.g., <span class="katex-inline" data-math="A, B, S"></span>).</li>
+<li><strong><span class="katex-inline" data-math="T"></span> (Terminals):</strong> A finite set of symbols that form the strings of the language. These are typically represented by lowercase letters, numbers, or special symbols (e.g., <span class="katex-inline" data-math="a, b, 0, 1"></span>). Note that <span class="katex-inline" data-math="V \cap T = \emptyset"></span>.</li>
+<li><strong><span class="katex-inline" data-math="P"></span> (Production Rules):</strong> A finite set of relations of the form <span class="katex-inline" data-math="\alpha \rightarrow \beta"></span>, where <span class="katex-inline" data-math="\alpha"></span> represents a string comprising variables and terminals with at least one variable, and <span class="katex-inline" data-math="\beta"></span> represents a string of variables and terminals.</li>
+<li><strong><span class="katex-inline" data-math="S"></span> (Start Symbol):</strong> A special variable (<span class="katex-inline" data-math="S \in V"></span>) from which the generation of strings begins.</li>
+</ul>
+<hr/>
+<h2>2. Derivations and the Language Generated by a Grammar</h2>
+<h3>Derivations</h3>
+<p>A derivation is the process of generating a string from the start symbol <span class="katex-inline" data-math="S"></span> by applying production rules.</p>
+<ul>
+<li><strong>Direct Derivation (<span class="katex-inline" data-math="\Rightarrow"></span>):</strong> If <span class="katex-inline" data-math="\alpha \rightarrow \beta"></span> is a production rule, and we have a string <span class="katex-inline" data-math="\gamma\alpha\delta"></span>, we can replace <span class="katex-inline" data-math="\alpha"></span> with <span class="katex-inline" data-math="\beta"></span> to get <span class="katex-inline" data-math="\gamma\beta\delta"></span>. We write this as:<br/>
+<span class="math-display" data-math="\gamma\alpha\delta \Rightarrow \gamma\beta\delta"></span></li>
+<li><strong>Derivation in zero or more steps (<span class="katex-inline" data-math="\Rightarrow^*"></span>):</strong> If a string <span class="katex-inline" data-math="w"></span> can be derived from <span class="katex-inline" data-math="u"></span> in zero or more steps, we write <span class="katex-inline" data-math="u \Rightarrow^* w"></span>.</li>
+</ul>
+<p><strong>Types of Derivations:</strong></p>
+<ol>
+<li><strong>Leftmost Derivation (LMD):</strong> At every step, the leftmost variable (non-terminal) in the string is replaced.</li>
+<li><strong>Rightmost Derivation (RMD):</strong> At every step, the rightmost variable (non-terminal) in the string is replaced.</li>
+</ol>
+<h3>Language Generated by a Grammar <span class="katex-inline" data-math="L(G)"></span></h3>
+<p>The language generated by a grammar <span class="katex-inline" data-math="G"></span>, denoted by <span class="katex-inline" data-math="L(G)"></span>, is the set of all strings consisting only of terminals that can be derived from the start symbol <span class="katex-inline" data-math="S"></span>.</p>
+<p><span class="math-display" data-math="L(G) = \{ w \in T^* \mid S \Rightarrow^* w \}"></span></p>
+<p><strong>Note:</strong></p>
+<ul>
+<li>A string <span class="katex-inline" data-math="w"></span> is in <span class="katex-inline" data-math="L(G)"></span> if and only if it consists solely of terminals and can be derived from <span class="katex-inline" data-math="S"></span>.</li>
+<li>Strings containing variables are <em>sentential forms</em>, not sentences of the language.</li>
+</ul>
+<hr/>
+<h2>3. Chomsky Classification of Languages (Chomsky Hierarchy)</h2>
+<p>Noam Chomsky classified grammars into four types based on the restrictions applied to their production rules (<span class="katex-inline" data-math="\alpha \rightarrow \beta"></span>).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Grammar Name</th>
+<th style="text-align: left;">Language Accepted</th>
+<th style="text-align: left;">Automaton</th>
+<th style="text-align: left;">Production Restrictions (<span class="katex-inline" data-math="\alpha \rightarrow \beta"></span>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Type 0</strong></td>
+<td style="text-align: left;">Unrestricted Grammar</td>
+<td style="text-align: left;">Recursively Enumerable</td>
+<td style="text-align: left;">Turing Machine</td>
+<td style="text-align: left;">No restrictions. <span class="katex-inline" data-math="\alpha \in (V \cup T)^+"></span> containing at least one variable.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Type 1</strong></td>
+<td style="text-align: left;">Context-Sensitive Grammar (CSG)</td>
+<td style="text-align: left;">Context-Sensitive</td>
+<td style="text-align: left;">Linear Bounded Automaton</td>
+<td style="text-align: left;"><span class="katex-inline" data-math="|\alpha| \leq |\beta|"></span> (Length of LHS <span class="katex-inline" data-math="\leq"></span> Length of RHS). Exception: <span class="katex-inline" data-math="S \rightarrow \epsilon"></span> is allowed if <span class="katex-inline" data-math="S"></span> doesn't appear on RHS.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Type 2</strong></td>
+<td style="text-align: left;">Context-Free Grammar (CFG)</td>
+<td style="text-align: left;">Context-Free</td>
+<td style="text-align: left;">Pushdown Automaton</td>
+<td style="text-align: left;"><span class="katex-inline" data-math="A \rightarrow \gamma"></span>, where <span class="katex-inline" data-math="A \in V"></span> and <span class="katex-inline" data-math="\gamma \in (V \cup T)^*"></span>. (LHS must be a single variable).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Type 3</strong></td>
+<td style="text-align: left;">Regular Grammar (RG)</td>
+<td style="text-align: left;">Regular Language</td>
+<td style="text-align: left;">Finite Automaton</td>
+<td style="text-align: left;"><span class="katex-inline" data-math="A \rightarrow aB"></span> or <span class="katex-inline" data-math="A \rightarrow a"></span> (Right Linear) <br/> OR <br/> <span class="katex-inline" data-math="A \rightarrow Ba"></span> or <span class="katex-inline" data-math="A \rightarrow a"></span> (Left Linear).</td>
+</tr>
+</tbody>
+</table>
+<h3>Languages and their Relation</h3>
+<p>The languages form a strict hierarchy (subset relationship):<br>
+<span class="math-display" data-math="\text{Regular} \subset \text{Context-Free} \subset \text{Context-Sensitive} \subset \text{Recursively Enumerable}"></span></br></p>
+<ul>
+<li>Every Regular language is Context-Free.</li>
+<li>Every Context-Free language is Context-Sensitive.</li>
+<li>Every Context-Sensitive language is Recursively Enumerable.</li>
+</ul>
+<hr/>
+<h2>4. Recursive and Recursively Enumerable Sets</h2>
+<p>These concepts relate to <strong>Type 0</strong> languages and Turing Machines.</p>
+<h3>Recursively Enumerable (R.E.) Sets</h3>
+<p>A language <span class="katex-inline" data-math="L"></span> is <strong>Recursively Enumerable</strong> if there exists a Turing Machine <span class="katex-inline" data-math="M"></span> that <strong>recognizes</strong> <span class="katex-inline" data-math="L"></span>.</p>
+<ul>
+<li>If input <span class="katex-inline" data-math="w \in L"></span>, <span class="katex-inline" data-math="M"></span> halts and accepts.</li>
+<li>If input <span class="katex-inline" data-math="w \notin L"></span>, <span class="katex-inline" data-math="M"></span> may halt and reject <strong>OR</strong> loop forever.</li>
+<li><em>Key Concept:</em> We can enumerate (list) the elements of the set, but we might not know if a specific element is <em>not</em> in the set (due to looping).</li>
+</ul>
+<h3>Recursive Sets (Decidable)</h3>
+<p>A language <span class="katex-inline" data-math="L"></span> is <strong>Recursive</strong> if there exists a Turing Machine <span class="katex-inline" data-math="M"></span> that <strong>decides</strong> <span class="katex-inline" data-math="L"></span>.</p>
+<ul>
+<li>If input <span class="katex-inline" data-math="w \in L"></span>, <span class="katex-inline" data-math="M"></span> halts and accepts.</li>
+<li>If input <span class="katex-inline" data-math="w \notin L"></span>, <span class="katex-inline" data-math="M"></span> halts and rejects.</li>
+<li><em>Key Concept:</em> The machine is guaranteed to halt (Total Turing Machine).</li>
+</ul>
+<p><strong>Relationship:</strong><br>
+<span class="math-display" data-math="\text{Recursive Sets} \subset \text{Recursively Enumerable Sets}"></span></br></p>
+<ul>
+<li>All Recursive sets are R.E., but not all R.E. sets are Recursive (this is related to the Halting Problem).</li>
+</ul>
+<hr/>
+<h2>5. Languages and Automata</h2>
+<p>There is a direct one-to-one correspondence between classes of languages (generated by grammars) and classes of automata (machines that recognize them).</p>
+<ol>
+<li><strong>Regular Languages:</strong> Recognized by <strong>Finite Automata (DFA/NFA)</strong>. Memory is limited to states; no external stack.</li>
+<li><strong>Context-Free Languages:</strong> Recognized by <strong>Pushdown Automata (PDA)</strong>. Finite Automaton + one infinite Stack (Last-In-First-Out memory).</li>
+<li><strong>Context-Sensitive Languages:</strong> Recognized by <strong>Linear Bounded Automata (LBA)</strong>. A Turing Machine with a tape bounded by the length of the input.</li>
+<li><strong>Recursively Enumerable Languages:</strong> Recognized by <strong>Turing Machines (TM)</strong>. Infinite tape, random access memory.</li>
+</ol>
+<hr/>
+<h2>6. Regular Sets and Regular Grammars</h2>
+<h3>Regular Sets</h3>
+<p>A Regular Set is a language that can be described by a <strong>Regular Expression</strong> or accepted by a <strong>Finite Automaton</strong>. Examples include:</p>
+<ul>
+<li>Strings ending in '00'.</li>
+<li>Strings with an even number of 'a's.</li>
+<li>Finite sets of strings.</li>
+</ul>
+<h3>Regular Grammars</h3>
+<p>A Regular Grammar is a Type 3 grammar. It must be either <strong>Left Linear</strong> or <strong>Right Linear</strong>.</p>
+<h4>Right Linear Regular Grammar (RLRG)</h4>
+<p>All productions are of the form:<br/>
+<span class="math-display" data-math="A \rightarrow xB \quad \text{or} \quad A \rightarrow x"></span><br/>
+Where <span class="katex-inline" data-math="A, B \in V"></span> and <span class="katex-inline" data-math="x \in T^*"></span>.</p>
+<ul>
+<li>The variable (if present) is always the <strong>rightmost</strong> symbol on the RHS.</li>
+</ul>
+<h4>Left Linear Regular Grammar (LLRG)</h4>
+<p>All productions are of the form:<br/>
+<span class="math-display" data-math="A \rightarrow Bx \quad \text{or} \quad A \rightarrow x"></span><br/>
+Where <span class="katex-inline" data-math="A, B \in V"></span> and <span class="katex-inline" data-math="x \in T^*"></span>.</p>
+<ul>
+<li>The variable (if present) is always the <strong>leftmost</strong> symbol on the RHS.</li>
+</ul>
+<p><strong>Important:</strong> A grammar cannot mix Left Linear and Right Linear rules and remain a Regular Grammar.</p>
+<hr/>
+<h2>7. Converting Regular Expressions to Regular Grammars</h2>
+<p>To convert a Regular Expression (RE) to a Regular Grammar, it is often easiest to construct a Finite Automaton (DFA/NFA) first, and then convert that FA to a grammar.</p>
+<p><strong>Method (via DFA):</strong></p>
+<ol>
+<li>Construct a DFA/NFA for the given Regular Expression.</li>
+<li>Let states of the DFA be the variables (<span class="katex-inline" data-math="V"></span>) of the grammar.</li>
+<li>Let the start state <span class="katex-inline" data-math="q_0"></span> be the start symbol <span class="katex-inline" data-math="S"></span>.</li>
+<li>For every transition <span class="katex-inline" data-math="\delta(A, a) = B"></span> (transition from state A to B on input 'a'):
+<ul>
+<li>Add production: <span class="katex-inline" data-math="A \rightarrow aB"></span></li>
+</ul></li>
+<li>If <span class="katex-inline" data-math="B"></span> is a final state:
+<ul>
+<li>Add production: <span class="katex-inline" data-math="A \rightarrow a"></span> (in addition to <span class="katex-inline" data-math="A \rightarrow aB"></span>)</li>
+<li>Alternatively, standard practice often uses <span class="katex-inline" data-math="B \rightarrow \epsilon"></span> if <span class="katex-inline" data-math="B"></span> is a final state.</li>
+</ul></li>
+</ol>
+<p><strong>Example:</strong> RE = <span class="katex-inline" data-math="a^*b"></span></p>
+<ol>
+<li>DFA States: <span class="katex-inline" data-math="q_0"></span> (loops on <span class="katex-inline" data-math="a"></span>, goes to <span class="katex-inline" data-math="q_1"></span> on <span class="katex-inline" data-math="b"></span>), <span class="katex-inline" data-math="q_1"></span> (final state).</li>
+<li>Transitions:
+<ul>
+<li><span class="katex-inline" data-math="\delta(q_0, a) = q_0 \implies q_0 \rightarrow aq_0"></span></li>
+<li><span class="katex-inline" data-math="\delta(q_0, b) = q_1 \implies q_0 \rightarrow bq_1"></span></li>
+</ul></li>
+<li>Final State Handling (<span class="katex-inline" data-math="q_1"></span> is final):
+<ul>
+<li><span class="katex-inline" data-math="q_1 \rightarrow \epsilon"></span></li>
+</ul></li>
+<li>Resulting Grammar (Right Linear):
+<ul>
+<li><span class="katex-inline" data-math="S \rightarrow aS \mid bA"></span></li>
+<li><span class="katex-inline" data-math="A \rightarrow \epsilon"></span></li>
+</ul></li>
+</ol>
+<hr/>
+<h2>8. Converting Regular Grammars to Regular Expressions</h2>
+<p>To convert a Regular Grammar (specifically Right Linear) to a Regular Expression, we can solve the system of linear language equations, often using <strong>Arden's Theorem</strong>.</p>
+<h3>Arden's Theorem</h3>
+<p>If <span class="katex-inline" data-math="P"></span> and <span class="katex-inline" data-math="Q"></span> are two regular expressions over <span class="katex-inline" data-math="\Sigma"></span>, and <span class="katex-inline" data-math="P"></span> does not contain <span class="katex-inline" data-math="\epsilon"></span>, then the equation:<br/>
+<span class="math-display" data-math="R = Q + RP"></span><br/>
+Has a unique solution:<br/>
+<span class="math-display" data-math="R = QP^*"></span></p>
+<h3>Conversion Steps:</h3>
+<ol>
+<li>Write the equations for the grammar. For every variable <span class="katex-inline" data-math="A"></span>, write an equation where <span class="katex-inline" data-math="A"></span> equals the sum (union) of its derivation options.
+<ul>
+<li>If <span class="katex-inline" data-math="A \rightarrow aB"></span>, term is <span class="katex-inline" data-math="aB"></span>.</li>
+<li>If <span class="katex-inline" data-math="A \rightarrow a"></span>, term is <span class="katex-inline" data-math="a"></span>.</li>
+</ul></li>
+<li>Express the equations in the form <span class="katex-inline" data-math="A = \alpha B + \beta C + \dots + \text{terminals}"></span>.</li>
+<li>Substitute variables into one another to eliminate them until you have an equation for the Start Symbol <span class="katex-inline" data-math="S"></span> strictly in terms of terminals.</li>
+<li>Apply Arden's Theorem (<span class="katex-inline" data-math="X = \alpha X + \beta \Rightarrow X = \alpha^*\beta"></span>) or (<span class="katex-inline" data-math="X = X\alpha + \beta \Rightarrow X = \beta\alpha^*"></span>) to resolve self-loops (recursion).</li>
+</ol>
+<p><strong>Example:</strong><br/>
+Grammar:</p>
+<ol>
+<li><span class="katex-inline" data-math="S \rightarrow 0S \mid 1A"></span></li>
+<li><span class="katex-inline" data-math="A \rightarrow 0A \mid 1"></span></li>
+</ol>
+<p><strong>Solution:</strong><br/>
+From (2): <span class="katex-inline" data-math="A = 0A + 1"></span>.<br/>
+Applying Arden's theorem (<span class="katex-inline" data-math="R=A, Q=1, P=0"></span>):<br/>
+<span class="math-display" data-math="A = 1(0)^* = 10^*"></span></p>
+<p>Substitute <span class="katex-inline" data-math="A"></span> into (1):<br/>
+<span class="math-display" data-math="S = 0S + 1(10^*)"></span><br/>
+<span class="math-display" data-math="S = 0S + 110^*"></span></p>
+<p>Apply Arden's theorem (<span class="katex-inline" data-math="R=S, P=0, Q=110^*"></span>):<br/>
+<span class="math-display" data-math="S = (110^*) (0)^* \quad \text{(Note: Standard form } R=QP^* \text{ implies } S=110^*0^* \text{ is incorrect application order, usually } S = 0^*110^* \text{)}"></span></p>
+<p><em>Correction on Arden Application:</em><br/>
+Equation: <span class="katex-inline" data-math="S = 0S + 110^*"></span> matches <span class="katex-inline" data-math="R = PR + Q"></span> (where <span class="katex-inline" data-math="P=0"></span>). Solution is <span class="katex-inline" data-math="R = P^*Q"></span>.<br/>
+<span class="math-display" data-math="S = 0^* (110^*) = 0^*110^*"></span></p>
+<p><strong>Regular Expression:</strong> <span class="katex-inline" data-math="0^*110^*"></span></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/CSE322/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/CSE322/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

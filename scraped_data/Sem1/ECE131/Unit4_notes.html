@@ -1,0 +1,760 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem1/ECE131">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem1/ECE131/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/ECE131/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/ECE131/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ECE131</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            9 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Fundamentals of semiconductor devices and digital circuits</h1>
+<h2>1. Digital Abstraction</h2>
+<p>The digital abstraction allows engineers to ignore the complex physics of analog semiconductor devices by treating signals as discrete values (0 and 1).</p>
+<h3>Voltage Levels and Logic States</h3>
+<p>In a digital system, information is represented by voltage levels.</p>
+<ul>
+<li><strong>Logic 0 (LOW):</strong> Represents 'False'. Usually associated with Ground (0V).</li>
+<li><strong>Logic 1 (HIGH):</strong> Represents 'True'. Usually associated with the Supply Voltage (<span class="katex-inline" data-math="V_{CC}"></span> or <span class="katex-inline" data-math="V_{DD}"></span>, e.g., 5V or 3.3V).</li>
+</ul>
+<p>However, real-world signals are not perfect 0V or 5V. Therefore, ranges of voltages are defined:</p>
+<ul>
+<li><strong><span class="katex-inline" data-math="V_{IL}"></span> (Input Low Voltage):</strong> The maximum voltage that the input of a logic gate will recognize as a Logic 0.</li>
+<li><strong><span class="katex-inline" data-math="V_{IH}"></span> (Input High Voltage):</strong> The minimum voltage that the input of a logic gate will recognize as a Logic 1.</li>
+<li><strong><span class="katex-inline" data-math="V_{OL}"></span> (Output Low Voltage):</strong> The maximum voltage an output will produce when driving a Logic 0.</li>
+<li><strong><span class="katex-inline" data-math="V_{OH}"></span> (Output High Voltage):</strong> The minimum voltage an output will produce when driving a Logic 1.</li>
+</ul>
+<h3>The Static Discipline</h3>
+<p>The Static Discipline is a contract between the sender (output of a gate) and the receiver (input of the next gate). It guarantees robust digital operation.</p>
+<p><strong>The Rule:</strong><br/>
+A digital system follows the static discipline if, given valid inputs (voltages within logic thresholds), it generates valid outputs.</p>
+<ol>
+<li>If Input <span class="katex-inline" data-math="&lt; V_{IL}"></span>, then Output must be <span class="katex-inline" data-math="&lt; V_{OL}"></span> (for a buffer) or <span class="katex-inline" data-math="&gt; V_{OH}"></span> (for an inverter).</li>
+<li>If Input <span class="katex-inline" data-math="&gt; V_{IH}"></span>, then Output must be <span class="katex-inline" data-math="&gt; V_{OH}"></span> (for a buffer) or <span class="katex-inline" data-math="&lt; V_{OL}"></span> (for an inverter).</li>
+<li><strong>Forbidden Zone:</strong> The voltage range between <span class="katex-inline" data-math="V_{IL}"></span> and <span class="katex-inline" data-math="V_{IH}"></span> is undefined. Signals must transition through this region quickly and never stay there.</li>
+</ol>
+<hr/>
+<h2>2. Boolean Logic and Combinational Gates</h2>
+<p>Boolean logic deals with variables that take on two discrete values. Combinational logic circuits have outputs that depend solely on the current state of the inputs (no memory).</p>
+<h3>Basic Logic Gates</h3>
+<h4>1. NOT Gate (Inverter)</h4>
+<ul>
+<li><strong>Operation:</strong> Inverts the input.</li>
+<li><strong>Boolean Expression:</strong> <span class="katex-inline" data-math="Y = \bar{A}"></span></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Input (A)</th>
+<th style="text-align: center;">Output (Y)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<h4>2. AND Gate</h4>
+<ul>
+<li><strong>Operation:</strong> Output is HIGH only if all inputs are HIGH.</li>
+<li><strong>Boolean Expression:</strong> <span class="katex-inline" data-math="Y = A \cdot B"></span></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">A</th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<h4>3. OR Gate</h4>
+<ul>
+<li><strong>Operation:</strong> Output is HIGH if at least one input is HIGH.</li>
+<li><strong>Boolean Expression:</strong> <span class="katex-inline" data-math="Y = A + B"></span></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">A</th>
+<th style="text-align: center;">B</th>
+<th style="text-align: center;">Y</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<h4>4. Universal Gates (NAND / NOR)</h4>
+<ul>
+<li><strong>NAND (Not AND):</strong> Output is LOW only if all inputs are HIGH. (<span class="katex-inline" data-math="Y = \overline{A \cdot B}"></span>)</li>
+<li><strong>NOR (Not OR):</strong> Output is HIGH only if all inputs are LOW. (<span class="katex-inline" data-math="Y = \overline{A + B}"></span>)</li>
+<li><strong>Significance:</strong> Any Boolean function can be implemented using <em>only</em> NAND gates or <em>only</em> NOR gates.</li>
+</ul>
+<h4>5. Exclusive Gates (XOR / XNOR)</h4>
+<ul>
+<li><strong>XOR (Exclusive OR):</strong> Output is HIGH if inputs are different. (<span class="katex-inline" data-math="Y = A \oplus B"></span>)</li>
+<li><strong>XNOR:</strong> Output is HIGH if inputs are the same. (<span class="katex-inline" data-math="Y = \overline{A \oplus B}"></span>)</li>
+</ul>
+<hr/>
+<h2>3. Electrical Characteristics of Gates</h2>
+<h3>Fan-in and Fan-out</h3>
+<p>These parameters define the connection limits of logic gates.</p>
+<h4>Fan-in</h4>
+<ul>
+<li><strong>Definition:</strong> The number of inputs a logic gate is designed to handle.</li>
+<li><strong>Physical Limitation:</strong> As fan-in increases, the internal capacitance increases, which increases the propagation delay (makes the gate slower). In CMOS technology, high fan-in gates (e.g., 4-input NAND) are often avoided by cascading smaller gates due to resistance accumulation.</li>
+</ul>
+<h4>Fan-out</h4>
+<ul>
+<li><strong>Definition:</strong> The maximum number of standard logic inputs (load gates) that the output of a single logic gate can drive reliably.</li>
+<li><strong>Constraints:</strong>
+<ul>
+<li><strong>DC Constraint (Current):</strong> The driving gate must be able to source or sink enough current to switch all attached load gates. If exceeded, voltage levels (<span class="katex-inline" data-math="V_{OH}, V_{OL}"></span>) may degrade into the forbidden zone.</li>
+<li><strong>AC Constraint (Timing):</strong> Each load adds capacitance. High fan-out increases the rise/fall times of the signal, potentially violating timing constraints.</li>
+</ul></li>
+</ul>
+<h3>Noise Margin</h3>
+<p>Noise margin is a measure of a digital circuit's immunity to noise (electromagnetic interference). It represents the amount of noise voltage that can be superimposed on a signal without causing a logic error.</p>
+<p>There are two noise margins:</p>
+<ol>
+<li>
+<p><strong>Noise Margin High (<span class="katex-inline" data-math="NM_H"></span>):</strong><br/>
+<span class="math-display" data-math="NM_H = V_{OH(min)} - V_{IH(min)}"></span></p>
+<ul>
+<li>This ensures that even if the Logic 1 output drops slightly due to noise, it is still recognized as a Logic 1 by the receiver.</li>
+</ul>
+</li>
+<li>
+<p><strong>Noise Margin Low (<span class="katex-inline" data-math="NM_L"></span>):</strong><br/>
+<span class="math-display" data-math="NM_L = V_{IL(max)} - V_{OL(max)}"></span></p>
+<ul>
+<li>This ensures that even if the Logic 0 output rises slightly due to noise, it is still recognized as a Logic 0 by the receiver.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Analysis:</strong></p>
+<ul>
+<li><span class="katex-inline" data-math="NM_H"></span> and <span class="katex-inline" data-math="NM_L"></span> must be positive numbers.</li>
+<li>The larger the noise margin, the more robust the circuit is against interference.</li>
+</ul>
+<hr/>
+<h2>4. PN Junction and Zener Diode</h2>
+<h3>PN Junction Diode</h3>
+<p>Formed by joining P-type semiconductor (rich in holes) and N-type semiconductor (rich in electrons).</p>
+<h4>Characteristics</h4>
+<ol>
+<li><strong>Unbiased:</strong> A depletion region forms at the junction, creating a potential barrier (approx. 0.7V for Silicon, 0.3V for Germanium).</li>
+<li><strong>Forward Bias (Anode +, Cathode -):</strong>
+<ul>
+<li>External field opposes the internal barrier.</li>
+<li>Once voltage exceeds the <strong>Knee Voltage (<span class="katex-inline" data-math="V_k"></span>)</strong>, the depletion region narrows, and heavy current flows (Diffusion current).</li>
+<li>Acts as a closed switch (on).</li>
+</ul></li>
+<li><strong>Reverse Bias (Anode -, Cathode +):</strong>
+<ul>
+<li>External field aids the internal barrier.</li>
+<li>Depletion region widens.</li>
+<li>Only a tiny <strong>Reverse Saturation Current (<span class="katex-inline" data-math="I_s"></span>)</strong> flows (due to minority carriers).</li>
+<li>Acts as an open switch (off).</li>
+</ul></li>
+</ol>
+<h4>Analysis Models</h4>
+<ul>
+<li><strong>Ideal Model:</strong> Short circuit when forward biased (<span class="katex-inline" data-math="V_D=0"></span>); Open circuit when reverse biased.</li>
+<li><strong>Constant Voltage Drop Model (Practical):</strong> When ON, replaced by a voltage source of 0.7V (Si).</li>
+</ul>
+<h3>Zener Diode</h3>
+<p>A heavily doped PN junction diode designed to operate in the <strong>reverse breakdown</strong> region.</p>
+<h4>Characteristics</h4>
+<ul>
+<li><strong>Forward Bias:</strong> Acts like a normal diode.</li>
+<li><strong>Reverse Bias:</strong>
+<ul>
+<li>Initially conducts negligible current.</li>
+<li>At a specific voltage called <strong>Zener Voltage (<span class="katex-inline" data-math="V_Z"></span>)</strong>, the current increases sharply while the voltage remains constant.</li>
+</ul></li>
+<li><strong>Mechanisms:</strong>
+<ul>
+<li><em>Zener Effect (<span class="katex-inline" data-math="&lt;6V"></span>):</em> Electric field rips electrons from covalent bonds.</li>
+<li><em>Avalanche Effect (<span class="katex-inline" data-math="&gt;6V"></span>):</em> Accelerated carriers collide with atoms, dislodging more carriers (chain reaction).</li>
+</ul></li>
+</ul>
+<h4>Applications</h4>
+<ol>
+<li><strong>Voltage Regulator:</strong> Maintains a constant voltage across a load despite variations in input voltage or load current.</li>
+<li><strong>Reference Element:</strong> Provides precise reference voltages in circuits.</li>
+<li><strong>Protection:</strong> Used to clamp voltage spikes.</li>
+</ol>
+<h3>Testing of Diodes</h3>
+<p>Using a Digital Multimeter (DMM) in "Diode Test" mode:</p>
+<ul>
+<li><strong>Good Diode:</strong>
+<ul>
+<li>Forward Bias: Reads approx 0.5V to 0.7V.</li>
+<li>Reverse Bias: Reads "OL" (Over Limit/Open).</li>
+</ul></li>
+<li><strong>Short Diode:</strong> Reads ~0V in both directions (beep sound).</li>
+<li><strong>Open Diode:</strong> Reads "OL" in both directions.</li>
+</ul>
+<h3>Diode Applications (General)</h3>
+<ul>
+<li><strong>Rectifiers:</strong> Converting AC to pulsating DC (Half-wave and Full-wave Bridge).</li>
+<li><strong>Clippers:</strong> Removing parts of a signal waveform (limiting voltage).</li>
+<li><strong>Clampers:</strong> Shifting the DC level of a signal.</li>
+</ul>
+<hr/>
+<h2>5. Bipolar Junction Transistor (BJT)</h2>
+<p>A three-terminal current-controlled device. The terminals are Emitter (E), Base (B), and Collector (C).</p>
+<h3>Structure and Types</h3>
+<ul>
+<li><strong>NPN:</strong> A P-type layer sandwiched between two N-type layers. (Current flows C to E).</li>
+<li><strong>PNP:</strong> An N-type layer sandwiched between two P-type layers. (Current flows E to C).</li>
+<li><strong>Doping Profile:</strong> Emitter is heavily doped, Base is lightly doped and very thin, Collector is moderately doped and physically large (for heat dissipation).</li>
+</ul>
+<h3>Basic Operation (NPN Focus)</h3>
+<p>Current flow is controlled by the Base-Emitter current (<span class="katex-inline" data-math="I_B"></span>).<br/>
+<span class="math-display" data-math="I_E = I_B + I_C"></span><br/>
+<span class="math-display" data-math="I_C = \beta I_B"></span> (where <span class="katex-inline" data-math="\beta"></span> is the current gain, typically 50-300).</p>
+<h4>Operating Regions</h4>
+<ol>
+<li><strong>Cutoff:</strong> BE junction Reverse Biased, BC junction Reverse Biased. <span class="katex-inline" data-math="I_C \approx 0"></span>. Switch is <strong>OFF</strong>.</li>
+<li><strong>Active Region:</strong> BE junction Forward Biased, BC junction Reverse Biased. Used for <strong>Amplification</strong>. Output is linear amplification of input.</li>
+<li><strong>Saturation:</strong> BE junction Forward Biased, BC junction Forward Biased. <span class="katex-inline" data-math="I_C"></span> is maxed out. Switch is <strong>ON</strong> (Closed). <span class="katex-inline" data-math="V_{CE(sat)} \approx 0.2V"></span>.</li>
+</ol>
+<h3>Testing of BJT</h3>
+<p>A BJT can be modeled as two back-to-back diodes for testing purposes.</p>
+<ul>
+<li><strong>NPN Test:</strong>
+<ul>
+<li>Base(+) to Emitter(-): 0.7V drop.</li>
+<li>Base(+) to Collector(-): 0.7V drop.</li>
+<li>Collector to Emitter: OL (Open).</li>
+</ul></li>
+<li><strong>Any other combination:</strong> OL.</li>
+<li>If continuity (0V) is found between C and E, the transistor is shorted.</li>
+</ul>
+<hr/>
+<h2>6. MOSFET (Metal-Oxide-Semiconductor Field-Effect Transistor)</h2>
+<p>A voltage-controlled device. It has very high input impedance because the Gate is insulated from the channel by silicon dioxide (<span class="katex-inline" data-math="SiO_2"></span>).</p>
+<h3>Representation and Structure</h3>
+<p>Terminals: Gate (G), Drain (D), Source (S), Body (B).</p>
+<ul>
+<li><strong>N-Channel (NMOS):</strong> Conduction via electrons. Positive voltage at Gate attracts electrons to form a channel.</li>
+<li><strong>P-Channel (PMOS):</strong> Conduction via holes. Negative voltage at Gate attracts holes.</li>
+</ul>
+<p><strong>Circuit Symbols:</strong></p>
+<ul>
+<li><em>Enhancement Mode:</em> Broken line between Source and Drain (normally off).</li>
+<li><em>Depletion Mode:</em> Solid line between Source and Drain (normally on).</li>
+<li>arrow on Source indicates direction of conventional current (Out for NMOS, In for PMOS).</li>
+</ul>
+<h3>Characteristics (Enhancement NMOS)</h3>
+<ol>
+<li>
+<p><strong>Transfer Characteristics (<span class="katex-inline" data-math="I_D"></span> vs <span class="katex-inline" data-math="V_{GS}"></span>):</strong></p>
+<ul>
+<li><strong>Threshold Voltage (<span class="katex-inline" data-math="V_{TH}"></span>):</strong> Minimum Gate-Source voltage required to create the inversion layer (channel).</li>
+<li>If <span class="katex-inline" data-math="V_{GS} &lt; V_{TH}"></span>, <span class="katex-inline" data-math="I_D = 0"></span> (Cutoff).</li>
+<li>If <span class="katex-inline" data-math="V_{GS} &gt; V_{TH}"></span>, current flows.</li>
+</ul>
+</li>
+<li>
+<p><strong>Output Characteristics (<span class="katex-inline" data-math="I_D"></span> vs <span class="katex-inline" data-math="V_{DS}"></span>):</strong></p>
+<ul>
+<li><strong>Cutoff Region:</strong> Switch OFF.</li>
+<li><strong>Ohmic / Linear / Triode Region:</strong> (<span class="katex-inline" data-math="V_{DS}"></span> is small). The MOSFET acts as a voltage-controlled resistor. <span class="katex-inline" data-math="I_D"></span> increases linearly with <span class="katex-inline" data-math="V_{DS}"></span>.</li>
+<li><strong>Saturation Region:</strong> (<span class="katex-inline" data-math="V_{DS} &gt; V_{GS} - V_{TH}"></span>). The channel "pinches off" at the drain end. Current <span class="katex-inline" data-math="I_D"></span> becomes constant regardless of <span class="katex-inline" data-math="V_{DS}"></span>. Used for amplification.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Note:</strong> In Digital Logic (CMOS), MOSFETs switch between Cutoff (OFF) and Triode (ON), skipping saturation mostly.</p>
+<hr/>
+<h2>7. Handling of Integrated Circuits - ESD Phenomena</h2>
+<h3>Electrostatic Discharge (ESD)</h3>
+<p>ESD is the sudden flow of electricity between two electrically charged objects caused by contact, an electrical short, or dielectric breakdown.</p>
+<h3>ESD Mechanism in Semiconductors</h3>
+<ul>
+<li><strong>Gate Oxide Breakdown:</strong> MOSFETs (and CMOS ICs) have a very thin oxide layer at the Gate. Static electricity (which can reach thousands of volts, e.g., walking on carpet can generate &gt;10,000V) can easily puncture this layer.</li>
+<li><strong>Effect:</strong> A puncture causes a short circuit between the Gate and Channel, permanently destroying the device.</li>
+<li><strong>Latent Defects:</strong> Sometimes ESD weakens the device without killing it immediately, leading to failure later in operation (unreliable).</li>
+</ul>
+<h3>Protection and Handling Rules</h3>
+<ol>
+<li><strong>Antistatic Wrist Straps:</strong> Engineers must wear grounded wrist straps to drain charge from their body before touching ICs.</li>
+<li><strong>Antistatic Mats:</strong> Workbenches should have conductive mats connected to the ground.</li>
+<li><strong>ESD Safe Packaging:</strong> ICs are stored in antistatic bags (silver/grey shielding bags) or conductive foam.</li>
+<li><strong>Humidity Control:</strong> Dry air promotes static buildup; maintaining humidity helps dissipate charge.</li>
+<li><strong>Handling Technique:</strong> Hold PCBs by the edges; avoid touching the pins/leads of the ICs directly.</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem1/ECE131/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem1/ECE131/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,716 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/INT255">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT255/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT255/Unit4/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT255/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT255/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT255</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            3 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Optimization Techniques for Machine Learning</h1>
+<h2>1. Optimization Problem Formulation in Machine Learning</h2>
+<p>At its core, training a machine learning model is an optimization problem. We aim to find the set of model parameters (or weights) that minimizes a specific objective function, often called the <strong>loss function</strong> or <strong>cost function</strong>.</p>
+<h3>General Formulation</h3>
+<p>A standard optimization problem is expressed as:</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">minimize  f(θ)
+subject to θ ∈ S
+</code></pre></div></p>
+<ul>
+<li><strong><code>f(θ)</code></strong>: The <strong>objective function</strong> we want to minimize. In ML, this is the loss function that measures the discrepancy between the model's predictions and the true labels.</li>
+<li><strong><code>θ</code></strong>: The set of parameters (or weights and biases) of the model. These are the variables we are tuning. For a neural network, <code>θ</code> can be a vector containing millions or even billions of values.</li>
+<li><strong><code>S</code></strong>: The feasible set or constraint set. In many ML problems, this is unconstrained (i.e., <code>θ</code> can be any real-valued vector), but constraints can be added, for instance, through regularization.</li>
+</ul>
+<h3>Empirical Risk Minimization (ERM)</h3>
+<p>The primary framework for formulating the objective function in supervised learning is <strong>Empirical Risk Minimization</strong>. The "risk" is the expected loss over the true data distribution, which is unknown. We approximate this by minimizing the "empirical risk," which is the average loss over our training dataset.</p>
+<p>Given a training dataset of <code>N</code> samples <code>{(x₁, y₁), (x₂, y₂), ..., (xₙ, yₙ)}</code>:</p>
+<ul>
+<li><strong>Model Prediction</strong>: <code>ŷᵢ = h(xᵢ; θ)</code>, where <code>h</code> is our model (e.g., a neural network).</li>
+<li><strong>Loss Function per sample</strong>: <code>L(ŷᵢ, yᵢ)</code> measures the error for a single sample.</li>
+<li><strong>Objective Function <code>J(θ)</code></strong>: The average loss over the entire training set.</li>
+</ul>
+<p><code>J(θ) = (1/N) * Σᵢ&lt;binary data, 13 bytes&gt;₁ⁿ L(h(xᵢ; θ), yᵢ)</code></p>
+<p><strong>Common Loss Functions <code>L</code>:</strong></p>
+<ul>
+<li><strong>Mean Squared Error (MSE)</strong> for Regression: <code>L(ŷ, y) = (ŷ - y)²</code></li>
+<li><strong>Cross-Entropy Loss</strong> for Classification: <code>L(ŷ, y) = -[y * log(ŷ) + (1-y) * log(1-ŷ)]</code> (for binary classification).</li>
+</ul>
+<h3>Regularization</h3>
+<p>To prevent overfitting, where the model learns the training data too well and fails to generalize to new data, a <strong>regularization term</strong> <code>R(θ)</code> is often added to the objective function. This term penalizes complex models (e.g., models with large parameter values).</p>
+<p>The new objective function becomes:</p>
+<p><code>J(θ) = (1/N) * Σᵢ&lt;binary data, 13 bytes&gt;₁ⁿ L(h(xᵢ; θ), yᵢ) + λ * R(θ)</code></p>
+<ul>
+<li><strong><code>λ</code></strong>: The regularization hyperparameter, which controls the strength of the penalty.</li>
+</ul>
+<p><strong>Common Regularization Terms <code>R(θ)</code>:</strong></p>
+<ul>
+<li><strong>L2 Regularization (Ridge)</strong>: <code>R(θ) = ||θ||₂² = Σⱼ θⱼ²</code>. It penalizes the squared magnitude of the parameters, encouraging smaller, more diffuse weights.</li>
+<li><strong>L1 Regularization (Lasso)</strong>: <code>R(θ) = ||θ||₁ = Σⱼ |θⱼ|</code>. It penalizes the absolute value of the parameters, which can lead to sparse models (many parameters become exactly zero).</li>
+</ul>
+<h2>2. Convex Sets and Convex Functions</h2>
+<p>Convexity is a fundamental concept in optimization. If a problem is convex, we can usually guarantee that a local minimum is also a global minimum, which makes finding the optimal solution much simpler.</p>
+<h3>Convex Sets</h3>
+<p>A set <code>S</code> is <strong>convex</strong> if for any two points <code>x₁, x₂ ∈ S</code>, the entire line segment connecting them is also contained within <code>S</code>.</p>
+<ul>
+<li><strong>Formal Definition</strong>: For any <code>x₁, x₂ ∈ S</code> and any <code>α</code> with <code>0 ≤ α ≤ 1</code>, the point <code>αx₁ + (1-α)x₂</code> is also in <code>S</code>.</li>
+<li><strong>Examples</strong>: A circle, a square, a plane are convex. A star shape or a donut shape are non-convex.</li>
+</ul>
+<h3>Convex Functions</h3>
+<p>A function <code>f(x)</code> is <strong>convex</strong> if its domain is a convex set and the line segment connecting any two points on its graph lies on or above the graph.</p>
+<ul>
+<li><strong>Formal Definition</strong>: For any <code>x₁, x₂</code> in its domain and any <code>α</code> with <code>0 ≤ α ≤ 1</code>:<br/>
+<code>f(αx₁ + (1-α)x₂) ≤ αf(x₁) + (1-α)f(x₂)</code></li>
+<li><strong>Strictly Convex</strong>: The inequality is strict (<code>&lt;</code>), which guarantees a <em>unique</em> global minimum.</li>
+<li><strong>Second-Order Condition</strong>: For a twice-differentiable function, it is convex if and only if its Hessian matrix (the matrix of second partial derivatives) is positive semi-definite for all <code>x</code>.</li>
+<li><strong>Examples</strong>:
+<ul>
+<li>Convex: <code>f(x) = x²</code>, <code>f(x) = e^x</code>.</li>
+<li>Non-Convex: <code>f(x) = sin(x)</code>, <code>f(x) = -x²</code>.</li>
+</ul></li>
+</ul>
+<h3>Implications for Machine Learning</h3>
+<ul>
+<li><strong>Convex Problems</strong>: Linear Regression with MSE loss, Logistic Regression, and Support Vector Machines are convex optimization problems. For these, gradient descent is guaranteed to find the global minimum.</li>
+<li><strong>Non-Convex Problems</strong>: The loss landscapes of deep neural networks are highly <strong>non-convex</strong>. They contain many local minima, plateaus, and saddle points. Our goal is not necessarily to find the global minimum (which is computationally intractable) but to find a "good" local minimum that generalizes well.</li>
+</ul>
+<h2>3. Gradients and Directional Derivatives</h2>
+<p>Gradients are the primary tool used by optimization algorithms to decide which way to move in the parameter space.</p>
+<h3>Directional Derivative</h3>
+<p>The directional derivative <code>D_v f(x)</code> measures the instantaneous rate of change of a function <code>f</code> at a point <code>x</code> as you move in the direction of a unit vector <code>v</code>.</p>
+<ul>
+<li><strong>Definition</strong>: <code>D_v f(x) = lim (h→0⁺) [f(x + hv) - f(x)] / h</code></li>
+<li><strong>Relationship with Gradient</strong>: It can be computed as the dot product of the gradient and the direction vector:<br/>
+<code>D_v f(x) = ∇f(x)ᵀ ⋅ v</code></li>
+</ul>
+<h3>Gradient (∇)</h3>
+<p>The gradient of a multivariate function <code>f(θ)</code> is a vector containing all of its partial derivatives. For <code>θ = (θ₁, θ₂, ..., θₙ)</code>:</p>
+<p><code>∇f(θ) = [ ∂f/∂θ₁, ∂f/∂θ₂, ..., ∂f/∂θₙ ]</code></p>
+<p><strong>Key Properties:</strong></p>
+<ol>
+<li><strong>Direction of Steepest Ascent</strong>: The gradient vector <code>∇f(θ)</code> at a point <code>θ</code> points in the direction of the greatest rate of increase of the function.</li>
+<li><strong>Direction of Steepest Descent</strong>: The negative gradient, <code>-∇f(θ)</code>, points in the direction of the greatest rate of <em>decrease</em>. This is the core principle behind gradient descent.</li>
+<li><strong>Magnitude</strong>: The magnitude <code>||∇f(θ)||</code> represents the steepness of the ascent in that direction.</li>
+<li><strong>Orthogonality</strong>: The gradient is always orthogonal (perpendicular) to the level curves (or contour lines) of the function.</li>
+<li><strong>Critical Points</strong>: At a local minimum, local maximum, or saddle point, the gradient is the zero vector: <code>∇f(θ) = 0</code>.</li>
+</ol>
+<h2>4. Gradient Descent and Variants</h2>
+<p>Gradient Descent is an iterative first-order optimization algorithm for finding a local minimum of a differentiable function.</p>
+<h3>The Core Algorithm</h3>
+<p>The algorithm starts with an initial guess for the parameters <code>θ</code> and repeatedly updates them by taking a step in the direction of the negative gradient.</p>
+<p><strong>Update Rule:</strong><br/>
+<code>θ_{t+1} = θ_t - η * ∇J(θ_t)</code></p>
+<ul>
+<li><code>θ_t</code>: The parameters at iteration <code>t</code>.</li>
+<li><code>η</code> (eta): The <strong>learning rate</strong>, a small positive scalar that determines the size of each step.</li>
+<li><code>∇J(θ_t)</code>: The gradient of the loss function with respect to the parameters at <code>θ_t</code>.</li>
+</ul>
+<p><strong>The Learning Rate <code>η</code> is a critical hyperparameter:</strong></p>
+<ul>
+<li><strong>Too small</strong>: The algorithm will converge very slowly.</li>
+<li><strong>Too large</strong>: The algorithm may overshoot the minimum and diverge, with the loss increasing at each step.</li>
+</ul>
+<h3>Variants of Gradient Descent</h3>
+<p>The variants differ in how much data is used to compute the gradient at each step.</p>
+<h4>1. Batch Gradient Descent (BGD)</h4>
+<ul>
+<li><strong>How it works</strong>: Calculates the gradient of the loss function using the <strong>entire training dataset</strong> for each parameter update.</li>
+<li><code>∇J(θ) = (1/N) * Σᵢ&lt;binary data, 13 bytes&gt;₁ⁿ ∇L(h(xᵢ; θ), yᵢ)</code></li>
+<li><strong>Pros</strong>:
+<ul>
+<li>Produces a stable, direct path towards the minimum.</li>
+<li>Guaranteed to converge to the global minimum for convex problems.</li>
+</ul></li>
+<li><strong>Cons</strong>:
+<ul>
+<li>Extremely slow and computationally expensive for large datasets.</li>
+<li>Requires the entire dataset to be loaded into memory.</li>
+<li>Not suitable for online learning where data arrives sequentially.</li>
+</ul></li>
+</ul>
+<h4>2. Stochastic Gradient Descent (SGD)</h4>
+<ul>
+<li><strong>How it works</strong>: Updates the parameters using the gradient calculated from <strong>a single, randomly chosen training sample</strong> at each step.</li>
+<li><code>∇J(θ) ≈ ∇L(h(xᵢ; θ), yᵢ)</code> for a randomly selected <code>i</code>.</li>
+<li><strong>Pros</strong>:
+<ul>
+<li>Much faster updates, leading to quicker initial progress.</li>
+<li>Low memory requirement.</li>
+<li>The noisy updates can help the algorithm escape from shallow local minima.</li>
+</ul></li>
+<li><strong>Cons</strong>:
+<ul>
+<li>High variance in updates leads to a noisy convergence path (the loss function fluctuates significantly).</li>
+<li>It never truly "converges" but oscillates around a minimum. The learning rate must be slowly decreased to approach the minimum.</li>
+</ul></li>
+</ul>
+<h4>3. Mini-Batch Gradient Descent</h4>
+<ul>
+<li><strong>How it works</strong>: A compromise between BGD and SGD. It updates the parameters using the gradient calculated on a small, random subset of the training data called a <strong>mini-batch</strong>.</li>
+<li><code>∇J(θ) ≈ (1/B) * Σ_{i ∈ batch} ∇L(h(xᵢ; θ), yᵢ)</code> where <code>B</code> is the batch size (typically 32, 64, 128, etc.).</li>
+<li><strong>Pros</strong>:
+<ul>
+<li>Reduces the variance of SGD, leading to more stable convergence.</li>
+<li>Allows for efficient computation by leveraging vectorized operations on GPUs.</li>
+</ul></li>
+<li><strong>Cons</strong>:
+<ul>
+<li>Introduces a new hyperparameter (batch size).</li>
+</ul></li>
+<li><strong>This is the most common variant used in modern deep learning.</strong></li>
+</ul>
+<h2>5. Momentum-based Optimization</h2>
+<p>Standard gradient descent can struggle in certain scenarios, such as navigating long, narrow valleys (ravines) in the loss landscape, where it tends to oscillate back and forth. Momentum-based methods help accelerate convergence in these situations.</p>
+<h3>Gradient Descent with Momentum</h3>
+<ul>
+<li><strong>Intuition</strong>: Adds "inertia" to the parameter updates. Imagine a heavy ball rolling down a hill. It accumulates momentum, allowing it to roll past small bumps (local minima) and speed up in consistent downhill directions.</li>
+<li>It maintains a <strong>velocity vector</strong> <code>v</code>, which is an exponentially decaying moving average of past gradients.</li>
+</ul>
+<p><strong>Update Rules:</strong></p>
+<ol>
+<li><code>v_t = β * v_{t-1} + η * ∇J(θ_{t-1})</code></li>
+<li><code>θ_t = θ_{t-1} - v_t</code></li>
+</ol>
+<ul>
+<li><code>β</code>: The momentum coefficient, typically set to a value like 0.9. It controls how much of the past velocity is carried over.</li>
+</ul>
+<h3>Nesterov Accelerated Gradient (NAG)</h3>
+<ul>
+<li><strong>Intuition</strong>: A "smarter" momentum that "looks ahead." Instead of computing the gradient at the current position, it first takes a step in the direction of the previous velocity, and then computes the gradient from that "look-ahead" position to make a correction.</li>
+<li>This anticipatory step prevents the algorithm from overshooting the minimum too much.</li>
+</ul>
+<p><strong>Update Rules:</strong></p>
+<ol>
+<li><code>θ_lookahead = θ_{t-1} - β * v_{t-1}</code> (Look ahead)</li>
+<li><code>v_t = β * v_{t-1} + η * ∇J(θ_lookahead)</code> (Compute gradient at look-ahead position)</li>
+<li><code>θ_t = θ_{t-1} - v_t</code> (Update using the new velocity)</li>
+</ol>
+<p>NAG often converges faster than standard momentum in practice.</p>
+<h2>6. RMSProp and Adam (Adaptive Learning Rate Methods)</h2>
+<p>A fixed learning rate <code>η</code> may not be optimal. Some parameters may require large updates, while others need very small updates. Adaptive methods automatically adjust the learning rate for each parameter individually during training.</p>
+<h3>RMSProp (Root Mean Square Propagation)</h3>
+<ul>
+<li><strong>Idea</strong>: Maintain a moving average of the <em>squared</em> gradients for each parameter. The learning rate for a parameter is then divided by the square root of this average.</li>
+<li><strong>Effect</strong>: It dampens oscillations for parameters with high-gradient dimensions and accelerates progress for parameters with small-gradient dimensions.</li>
+</ul>
+<p><strong>Update Rules:</strong></p>
+<ol>
+<li><code>S_t = γ * S_{t-1} + (1-γ) * [∇J(θ_{t-1})]²</code> (Element-wise square of gradient)</li>
+<li><code>θ_t = θ_{t-1} - (η / sqrt(S_t + ε)) * ∇J(θ_{t-1})</code></li>
+</ol>
+<ul>
+<li><code>γ</code>: The decay rate, often set to 0.9.</li>
+<li><code>ε</code> (epsilon): A small constant (e.g., <code>10⁻⁸</code>) to prevent division by zero.</li>
+</ul>
+<h3>Adam (Adaptive Moment Estimation)</h3>
+<ul>
+<li><strong>Idea</strong>: The most popular and often default optimization algorithm. It combines the ideas of <strong>Momentum</strong> (first moment estimation) and <strong>RMSProp</strong> (second moment estimation).</li>
+<li>It keeps track of two moving averages for each parameter:
+<ol>
+<li><code>m</code>: The average of the gradients (like momentum).</li>
+<li><code>v</code>: The average of the squared gradients (like RMSProp).</li>
+</ol></li>
+</ul>
+<p><strong>Update Rules:</strong><br/>
+Let <code>g_t = ∇J(θ_{t-1})</code></p>
+<ol>
+<li><strong>Update biased first moment estimate:</strong><br/>
+<code>m_t = β₁ * m_{t-1} + (1-β₁) * g_t</code></li>
+<li><strong>Update biased second moment estimate:</strong><br/>
+<code>v_t = β₂ * v_{t-1} + (1-β₂) * g_t²</code></li>
+<li><strong>Compute bias-corrected estimates:</strong> (Crucial for the first few iterations when <code>m</code> and <code>v</code> are biased towards zero)<br/>
+<code>m̂_t = m_t / (1 - β₁^t)</code><br/>
+<code>v̂_t = v_t / (1 - β₂^t)</code></li>
+<li><strong>Update parameters:</strong><br/>
+<code>θ_t = θ_{t-1} - (η / sqrt(v̂_t + ε)) * m̂_t</code></li>
+</ol>
+<ul>
+<li><strong>Default Hyperparameters</strong>: <code>η</code>=0.001, <code>β₁</code>=0.9, <code>β₂</code>=0.999, <code>ε</code>=10⁻⁸. Adam is generally robust to the choice of these hyperparameters.</li>
+</ul>
+<h2>7. Optimization Considerations in Large-Scale ML Systems</h2>
+<p>Training state-of-the-art models on massive datasets introduces unique challenges that require specialized techniques.</p>
+<h3>Challenges</h3>
+<ul>
+<li><strong>Massive Datasets</strong>: Datasets can be terabytes or petabytes in size, too large to fit into the memory of a single machine.</li>
+<li><strong>Enormous Models</strong>: Models like large language models (e.g., GPT-3) have billions of parameters, which may not fit into the memory of a single GPU.</li>
+<li><strong>Computational Expense</strong>: Training can require thousands of GPU-hours, taking days or even weeks.</li>
+</ul>
+<h3>Techniques and Strategies</h3>
+<h4>1. Distributed Training</h4>
+<p>Distributing the training workload across multiple processors or machines is essential.</p>
+<ul>
+<li>
+<p><strong>Data Parallelism</strong>: The most common approach.</p>
+<ul>
+<li>The model is replicated on each worker (e.g., each GPU).</li>
+<li>The training data is split, and each worker processes a different mini-batch.</li>
+<li>Each worker computes its own gradients.</li>
+<li>The gradients are aggregated (e.g., averaged) across all workers.</li>
+<li>All models are updated with the aggregated gradient, ensuring they stay in sync.</li>
+</ul>
+</li>
+<li>
+<p><strong>Model Parallelism</strong>: Used when the model itself is too large for a single device.</p>
+<ul>
+<li>The model is partitioned, with different layers or parts of layers placed on different workers.</li>
+<li>Data is passed between workers to complete the forward and backward passes.</li>
+<li>This is more complex to implement than data parallelism.</li>
+</ul>
+</li>
+</ul>
+<h4>2. Learning Rate Schedules</h4>
+<p>Instead of a fixed learning rate <code>η</code>, it's often beneficial to adjust it during training. This is called <strong>learning rate scheduling</strong>.</p>
+<ul>
+<li><strong>Step Decay</strong>: Reduce <code>η</code> by a certain factor every <code>k</code> epochs.</li>
+<li><strong>Cosine Annealing</strong>: Smoothly vary the learning rate from a high value to a low value following a cosine curve over the course of training.</li>
+<li><strong>Warm-up</strong>: Start with a very small learning rate for the first few epochs and gradually increase it to the target learning rate. This helps stabilize the model at the beginning of training, especially for very large models.</li>
+</ul>
+<h4>3. Gradient Accumulation</h4>
+<p>This technique allows you to simulate a very large batch size when you are limited by GPU memory.</p>
+<ul>
+<li><strong>How it works</strong>:
+<ol>
+<li>Process a mini-batch (forward and backward pass) to compute gradients.</li>
+<li>Instead of updating the model weights, <em>accumulate</em> the gradients.</li>
+<li>Repeat this for a specified number of "accumulation steps".</li>
+<li>After processing the desired number of mini-batches, average the accumulated gradients and then perform a single weight update.</li>
+</ol></li>
+<li>For example, if your GPU can only handle a batch size of 16, you can use 4 accumulation steps to simulate an effective batch size of 64.</li>
+</ul>
+<h4>4. Second-Order Optimization Methods (Briefly)</h4>
+<ul>
+<li><strong>Newton's Method</strong>: Uses both the gradient (first derivative) and the Hessian matrix (second derivative) to find the minimum.
+<ul>
+<li>Update rule: <code>θ_{t+1} = θ_t - H⁻¹ * ∇J(θ_t)</code></li>
+</ul></li>
+<li><strong>Pros</strong>: Converges much more rapidly (in fewer iterations) than first-order methods.</li>
+<li><strong>Cons</strong>: Computing, storing, and inverting the Hessian matrix (<code>H</code>) is computationally prohibitive for deep learning models. The cost is <code>O(n³)</code> where <code>n</code> is the number of parameters. For a model with millions of parameters, this is impossible.</li>
+<li><strong>Quasi-Newton Methods (e.g., L-BFGS)</strong>: These methods approximate the inverse Hessian, making them more feasible. They are popular in classical ML and scientific computing but are still difficult to scale to the large, stochastic settings of deep learning compared to methods like Adam.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/INT255/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/INT255/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

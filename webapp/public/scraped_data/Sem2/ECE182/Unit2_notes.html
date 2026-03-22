@@ -1,0 +1,643 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem2/ECE182">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE182/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE182/Unit2/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/ECE182/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/ECE182/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ECE182</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            10 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Bipolar Junction Transistors</h1>
+<h2>1. Structure of BJT</h2>
+<p>A Bipolar Junction Transistor (BJT) is a three-terminal, three-layer semiconductor device capable of amplifying or switching electrical signals. It is called "bipolar" because its operation involves both majority and minority charge carriers (electrons and holes).</p>
+<h3>1.1 Layers and Terminals</h3>
+<p>The BJT consists of two back-to-back PN junctions, forming three distinct regions:</p>
+<ul>
+<li><strong>Emitter (E):</strong> Heavily doped to inject a large number of charge carriers into the base. It is moderate in size.</li>
+<li><strong>Base (B):</strong> Very thin and lightly doped to allow most injected carriers to pass through to the collector with minimal recombination.</li>
+<li><strong>Collector (C):</strong> Moderately doped and physically the largest region to dissipate the heat generated during operation. It collects the majority of the carriers injected by the emitter.</li>
+</ul>
+<h3>1.2 Types of BJTs</h3>
+<ul>
+<li><strong>NPN Transistor:</strong> Consists of a P-type base sandwiched between two N-type layers (Emitter and Collector). The majority charge carriers are electrons.</li>
+<li><strong>PNP Transistor:</strong> Consists of an N-type base sandwiched between two P-type layers. The majority charge carriers are holes.</li>
+</ul>
+<hr/>
+<h2>2. Current Components in a BJT</h2>
+<p>In a standard Active mode operation (Emitter-Base junction forward-biased, Collector-Base junction reverse-biased):</p>
+<ol>
+<li><strong>Emitter Current (<span class="katex-inline" data-math="I_E"></span>):</strong> The total current flowing out of (or into) the emitter. It is the sum of the base and collector currents.</li>
+<li><strong>Base Current (<span class="katex-inline" data-math="I_B"></span>):</strong> A very small current (typically in <span class="katex-inline" data-math="\mu A"></span>) caused by the recombination of a small percentage (1-5%) of carriers in the base region.</li>
+<li><strong>Collector Current (<span class="katex-inline" data-math="I_C"></span>):</strong> The majority of the emitter current that crosses the base and reaches the collector (typically in <span class="katex-inline" data-math="mA"></span>).</li>
+</ol>
+<h3>2.1 Fundamental Current Equation</h3>
+<p><span class="math-display" data-math="I_E = I_B + I_C"></span></p>
+<h3>2.2 Amplification Factors</h3>
+<ul>
+<li><strong>Common-Base Current Gain (<span class="katex-inline" data-math="\alpha"></span>):</strong> The ratio of collector current to emitter current.<br/>
+<span class="math-display" data-math="\alpha = \frac{I_C}{I_E}"></span><br/>
+<em>(Typical values: 0.95 to 0.998)</em></li>
+<li><strong>Common-Emitter Current Gain (<span class="katex-inline" data-math="\beta"></span> or <span class="katex-inline" data-math="h_{FE}"></span>):</strong> The ratio of collector current to base current.<br/>
+<span class="math-display" data-math="\beta = \frac{I_C}{I_B}"></span><br/>
+<em>(Typical values: 50 to 400)</em></li>
+<li><strong>Relationship between <span class="katex-inline" data-math="\alpha"></span> and <span class="katex-inline" data-math="\beta"></span>:</strong><br/>
+<span class="math-display" data-math="\beta = \frac{\alpha}{1 - \alpha} \quad \text{and} \quad \alpha = \frac{\beta}{\beta + 1}"></span></li>
+</ul>
+<hr/>
+<h2>3. Transistor Configurations</h2>
+<p>Depending on which terminal is common to both the input and output circuits, BJTs can be connected in three configurations.</p>
+<h3>3.1 Common Base (CB) Configuration</h3>
+<ul>
+<li><strong>Common Terminal:</strong> Base is grounded/common to both input and output.</li>
+<li><strong>Input:</strong> Emitter</li>
+<li><strong>Output:</strong> Collector</li>
+<li><strong>Characteristics:</strong> Low input impedance, high output impedance, current gain <span class="katex-inline" data-math="\approx 1"></span> (<span class="katex-inline" data-math="\alpha"></span>), high voltage gain. Good for high-frequency applications.</li>
+</ul>
+<h3>3.2 Common Emitter (CE) Configuration</h3>
+<ul>
+<li><strong>Common Terminal:</strong> Emitter is grounded.</li>
+<li><strong>Input:</strong> Base</li>
+<li><strong>Output:</strong> Collector</li>
+<li><strong>Characteristics:</strong> Moderate input and output impedance, high current gain (<span class="katex-inline" data-math="\beta"></span>), high voltage gain, and high power gain. Produces a <span class="katex-inline" data-math="180^\circ"></span> phase shift between input and output. <strong>Most widely used configuration.</strong></li>
+</ul>
+<h3>3.3 Common Collector (CC) Configuration (Emitter Follower)</h3>
+<ul>
+<li><strong>Common Terminal:</strong> Collector is grounded (often tied to <span class="katex-inline" data-math="V_{CC}"></span> for AC).</li>
+<li><strong>Input:</strong> Base</li>
+<li><strong>Output:</strong> Emitter</li>
+<li><strong>Characteristics:</strong> Very high input impedance, very low output impedance, voltage gain <span class="katex-inline" data-math="\approx 1"></span>, high current gain. No phase shift. Primarily used for impedance matching.</li>
+</ul>
+<hr/>
+<h2>4. Characteristics (Input and Output)</h2>
+<p>Transistor characteristics are graphical representations of the relationship between voltages and currents. We focus primarily on the <strong>CE Configuration</strong> as it is the most prevalent.</p>
+<h3>4.1 Common Emitter Input Characteristics</h3>
+<p>A plot of Base Current (<span class="katex-inline" data-math="I_B"></span>) versus Base-Emitter Voltage (<span class="katex-inline" data-math="V_{BE}"></span>) at a constant Collector-Emitter Voltage (<span class="katex-inline" data-math="V_{CE}"></span>).</p>
+<ul>
+<li><strong>Behavior:</strong> Resembles the forward-bias characteristic of a standard PN junction diode.</li>
+<li><strong>Cut-in Voltage:</strong> The current <span class="katex-inline" data-math="I_B"></span> remains close to zero until <span class="katex-inline" data-math="V_{BE}"></span> exceeds <span class="katex-inline" data-math="\approx 0.7V"></span> for Silicon (<span class="katex-inline" data-math="\approx 0.3V"></span> for Germanium).</li>
+<li><strong>Effect of <span class="katex-inline" data-math="V_{CE}"></span>:</strong> As <span class="katex-inline" data-math="V_{CE}"></span> increases, the effective base width decreases (Early Effect), slightly reducing <span class="katex-inline" data-math="I_B"></span> for a given <span class="katex-inline" data-math="V_{BE}"></span>.</li>
+</ul>
+<h3>4.2 Common Emitter Output Characteristics</h3>
+<p>A plot of Collector Current (<span class="katex-inline" data-math="I_C"></span>) versus Collector-Emitter Voltage (<span class="katex-inline" data-math="V_{CE}"></span>) for various constant values of Base Current (<span class="katex-inline" data-math="I_B"></span>). The graph is divided into three distinct regions:</p>
+<ol>
+<li><strong>Active Region:</strong>
+<ul>
+<li>EB junction is forward-biased, CB junction is reverse-biased.</li>
+<li><span class="katex-inline" data-math="I_C"></span> increases almost linearly with <span class="katex-inline" data-math="I_B"></span> (<span class="katex-inline" data-math="I_C = \beta I_B"></span>).</li>
+<li>Curves are nearly horizontal. Used for linear amplification.</li>
+</ul></li>
+<li><strong>Saturation Region:</strong>
+<ul>
+<li>Both EB and CB junctions are forward-biased.</li>
+<li>Occurs at very low <span class="katex-inline" data-math="V_{CE}"></span> (typically <span class="katex-inline" data-math="&lt; 0.2V"></span>).</li>
+<li><span class="katex-inline" data-math="I_C"></span> is maximum and largely independent of <span class="katex-inline" data-math="I_B"></span>. The transistor acts as a closed switch.</li>
+</ul></li>
+<li><strong>Cut-off Region:</strong>
+<ul>
+<li>Both EB and CB junctions are reverse-biased.</li>
+<li><span class="katex-inline" data-math="I_B = 0"></span>, <span class="katex-inline" data-math="I_C"></span> is nearly zero (only a tiny leakage current, <span class="katex-inline" data-math="I_{CEO}"></span>, flows).</li>
+<li>The transistor acts as an open switch.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>5. Transistor as an Amplifier</h2>
+<p>To act as an amplifier, the BJT must be biased in the <strong>Active Region</strong>.</p>
+<ul>
+<li><strong>Mechanism:</strong> A small AC signal is applied to the forward-biased input (Base-Emitter). This causes minor fluctuations in the base current (<span class="katex-inline" data-math="I_B"></span>).</li>
+<li>Because <span class="katex-inline" data-math="I_C = \beta I_B"></span>, these small fluctuations in <span class="katex-inline" data-math="I_B"></span> result in large fluctuations in the collector current (<span class="katex-inline" data-math="I_C"></span>).</li>
+<li>When this large alternating <span class="katex-inline" data-math="I_C"></span> flows through an external load resistor (<span class="katex-inline" data-math="R_C"></span>), it produces a large voltage swing across <span class="katex-inline" data-math="R_C"></span>, effectively amplifying the input signal.</li>
+<li><strong>Phase Shift:</strong> In a CE amplifier, an increase in input voltage increases <span class="katex-inline" data-math="I_C"></span>, which increases the voltage drop across <span class="katex-inline" data-math="R_C"></span>. Since <span class="katex-inline" data-math="V_{CE} = V_{CC} - I_C R_C"></span>, the output voltage <span class="katex-inline" data-math="V_{CE}"></span> drops. Therefore, the output is <span class="katex-inline" data-math="180^\circ"></span> out of phase with the input.</li>
+</ul>
+<hr/>
+<h2>6. Transistor as a Switch</h2>
+<p>In digital robotics and logic circuits, the BJT is operated between two extreme regions: Cut-off and Saturation.</p>
+<h3>6.1 OFF State (Cut-off Region)</h3>
+<ul>
+<li><strong>Condition:</strong> Input voltage is <span class="katex-inline" data-math="0V"></span> or less than the threshold (e.g., <span class="katex-inline" data-math="&lt; 0.7V"></span>).</li>
+<li><span class="katex-inline" data-math="I_B = 0 \implies I_C \approx 0"></span>.</li>
+<li>No current flows through the load resistor (<span class="katex-inline" data-math="R_C"></span>).</li>
+<li>Output voltage <span class="katex-inline" data-math="V_{CE} = V_{CC}"></span>.</li>
+<li>The transistor behaves as an <strong>Open Switch</strong>.</li>
+</ul>
+<h3>6.2 ON State (Saturation Region)</h3>
+<ul>
+<li><strong>Condition:</strong> Input voltage is high enough to drive maximum base current.</li>
+<li><span class="katex-inline" data-math="I_B"></span> is large enough that <span class="katex-inline" data-math="I_C"></span> reaches its maximum limit imposed by the external circuit (<span class="katex-inline" data-math="I_{C(sat)} \approx V_{CC} / R_C"></span>).</li>
+<li>Output voltage <span class="katex-inline" data-math="V_{CE} \approx 0V"></span> (specifically <span class="katex-inline" data-math="V_{CE(sat)}"></span>, around <span class="katex-inline" data-math="0.2V"></span>).</li>
+<li>The transistor behaves as a <strong>Closed Switch</strong>.</li>
+</ul>
+<hr/>
+<h2>7. Transistor Biasing</h2>
+<p><strong>Biasing</strong> is the process of applying proper DC voltages to a transistor to establish a desired operating point (Q-point) in the active region, ensuring it can faithfully amplify an AC signal without distortion.</p>
+<h3>7.1 Need for Biasing</h3>
+<ol>
+<li>To keep the Emitter-Base junction forward-biased and the Collector-Base junction reverse-biased.</li>
+<li>To stabilize the Q-point against temperature variations and variations in transistor parameters (like <span class="katex-inline" data-math="\beta"></span>).</li>
+</ol>
+<h3>7.2 Thermal Runaway</h3>
+<p>When temperature increases, minority carrier leakage current (<span class="katex-inline" data-math="I_{CBO}"></span>) increases. Since <span class="katex-inline" data-math="I_C = \beta I_B + (\beta+1)I_{CBO}"></span>, <span class="katex-inline" data-math="I_C"></span> increases. An increase in <span class="katex-inline" data-math="I_C"></span> increases power dissipation at the collector junction (<span class="katex-inline" data-math="P_D = V_{CE} I_C"></span>), raising the temperature further. If unchecked, this self-feeding cycle destroys the transistor. Proper biasing prevents thermal runaway.</p>
+<h3>7.3 Stability Factor (<span class="katex-inline" data-math="S"></span>)</h3>
+<p>A measure of how much the collector current changes with respect to changes in reverse saturation current (<span class="katex-inline" data-math="I_{CBO}"></span>). Lower <span class="katex-inline" data-math="S"></span> indicates better thermal stability.<br/>
+<span class="math-display" data-math="S = \frac{dI_C}{dI_{CBO}}"></span></p>
+<hr/>
+<h2>8. DC Load Line and Operating Point</h2>
+<h3>8.1 DC Load Line</h3>
+<p>Applying Kirchhoff’s Voltage Law (KVL) to the output loop of a CE configuration:<br/>
+<span class="math-display" data-math="V_{CC} - I_C R_C - V_{CE} = 0 \implies I_C = -\frac{1}{R_C}V_{CE} + \frac{V_{CC}}{R_C}"></span><br/>
+This is the equation of a straight line (<span class="katex-inline" data-math="y = mx + c"></span>) plotted on the output characteristics.</p>
+<ul>
+<li><strong>Y-intercept (Saturation Point):</strong> When <span class="katex-inline" data-math="V_{CE} = 0"></span>, maximum <span class="katex-inline" data-math="I_C = V_{CC} / R_C"></span>.</li>
+<li><strong>X-intercept (Cut-off Point):</strong> When <span class="katex-inline" data-math="I_C = 0"></span>, maximum <span class="katex-inline" data-math="V_{CE} = V_{CC}"></span>.<br/>
+Connecting these two points gives the <strong>DC Load Line</strong>.</li>
+</ul>
+<h3>8.2 Operating Point (Q-Point)</h3>
+<p>The Q-Point (Quiescent point) is a specific point on the load line representing the DC <span class="katex-inline" data-math="V_{CE}"></span> and <span class="katex-inline" data-math="I_C"></span> when no AC signal is applied.</p>
+<ul>
+<li>For a linear amplifier, the Q-point is ideally placed exactly in the <strong>center</strong> of the load line. This allows for maximum unclipped swing of the AC output signal in both positive and negative directions.</li>
+</ul>
+<hr/>
+<h2>9. Biasing Circuits</h2>
+<h3>9.1 Fixed Bias (Base Bias) Circuit</h3>
+<ul>
+<li><strong>Structure:</strong> Uses a single DC supply (<span class="katex-inline" data-math="V_{CC}"></span>). A resistor <span class="katex-inline" data-math="R_B"></span> is connected between <span class="katex-inline" data-math="V_{CC}"></span> and the Base. A resistor <span class="katex-inline" data-math="R_C"></span> is connected between <span class="katex-inline" data-math="V_{CC}"></span> and the Collector. Emitter is grounded.</li>
+<li><strong>Analysis:</strong>
+<ul>
+<li>Input Loop (KVL): <span class="katex-inline" data-math="V_{CC} - I_B R_B - V_{BE} = 0 \implies I_B = \frac{V_{CC} - V_{BE}}{R_B}"></span></li>
+<li>Since <span class="katex-inline" data-math="V_{CC}"></span>, <span class="katex-inline" data-math="V_{BE}"></span>, and <span class="katex-inline" data-math="R_B"></span> are constants, <span class="katex-inline" data-math="I_B"></span> is fixed (hence "Fixed Bias").</li>
+<li>Collector Current: <span class="katex-inline" data-math="I_C = \beta I_B"></span></li>
+<li>Output Loop (KVL): <span class="katex-inline" data-math="V_{CE} = V_{CC} - I_C R_C"></span></li>
+</ul></li>
+<li><strong>Advantages:</strong> Simple circuit, requires few components.</li>
+<li><strong>Disadvantages:</strong> Very poor thermal stability. Since <span class="katex-inline" data-math="I_B"></span> is fixed, any change in <span class="katex-inline" data-math="\beta"></span> (due to temperature or replacing the transistor) results in a proportional shift in <span class="katex-inline" data-math="I_C"></span>, drastically shifting the Q-point. <span class="katex-inline" data-math="S \approx 1 + \beta"></span> (which is very high).</li>
+</ul>
+<h3>9.2 Emitter Feedback Bias</h3>
+<ul>
+<li><strong>Structure:</strong> Similar to the fixed bias circuit, but an Emitter Resistor (<span class="katex-inline" data-math="R_E"></span>) is added between the emitter terminal and ground.</li>
+<li><strong>Analysis:</strong>
+<ul>
+<li>Input Loop (KVL): <span class="katex-inline" data-math="V_{CC} - I_B R_B - V_{BE} - I_E R_E = 0"></span></li>
+<li>Since <span class="katex-inline" data-math="I_E \approx I_C"></span>, we can write: <span class="katex-inline" data-math="V_{CC} = I_B R_B + V_{BE} + I_C R_E"></span></li>
+</ul></li>
+<li><strong>Stabilization Mechanism (Negative Feedback):</strong>
+<ul>
+<li>If temperature rises, <span class="katex-inline" data-math="I_C"></span> attempts to increase.</li>
+<li>This increases the voltage drop across the emitter resistor (<span class="katex-inline" data-math="V_E = I_E R_E"></span>).</li>
+<li>Since the base voltage (<span class="katex-inline" data-math="V_B"></span>) is relatively fixed by the input network, the base-emitter voltage <span class="katex-inline" data-math="V_{BE} = V_B - V_E"></span> decreases.</li>
+<li>A lower <span class="katex-inline" data-math="V_{BE}"></span> reduces the base current <span class="katex-inline" data-math="I_B"></span>.</li>
+<li>The reduction in <span class="katex-inline" data-math="I_B"></span> brings the collector current (<span class="katex-inline" data-math="I_C = \beta I_B"></span>) back down, stabilizing the Q-point.</li>
+</ul></li>
+<li><strong>Advantages:</strong> Significantly better thermal stability compared to Fixed Bias.</li>
+<li><strong>Disadvantages:</strong> <span class="katex-inline" data-math="R_E"></span> introduces negative feedback for AC signals as well, reducing the overall AC voltage gain. (This is often mitigated by placing a bypass capacitor, <span class="katex-inline" data-math="C_E"></span>, in parallel with <span class="katex-inline" data-math="R_E"></span>).</li>
+</ul>
+<hr/>
+<h2>10. Data Sheet of Transistor</h2>
+<p>A transistor datasheet provides the essential electrical and physical parameters required by engineers to design robotic circuits safely and efficiently. Key parameters include:</p>
+<h3>10.1 Maximum Ratings (Absolute Limits)</h3>
+<p>Exceeding these values can permanently damage the BJT.</p>
+<ul>
+<li><strong><span class="katex-inline" data-math="V_{CEO}"></span> (Collector-Emitter Voltage, base open):</strong> Maximum voltage permissible between collector and emitter.</li>
+<li><strong><span class="katex-inline" data-math="I_C"></span> (Continuous Collector Current):</strong> Maximum steady current the collector can handle (e.g., 200mA for a 2N3904, up to several Amps for power transistors).</li>
+<li><strong><span class="katex-inline" data-math="P_D"></span> (Total Power Dissipation):</strong> Maximum power (<span class="katex-inline" data-math="V_{CE} \times I_C"></span>) the device can dissipate without exceeding thermal limits.</li>
+</ul>
+<h3>10.2 Thermal Characteristics</h3>
+<ul>
+<li><strong><span class="katex-inline" data-math="T_J"></span> (Junction Temperature):</strong> Maximum operating temperature of the semiconductor die.</li>
+<li><strong>Thermal Resistance (<span class="katex-inline" data-math="\theta_{JA}"></span> or <span class="katex-inline" data-math="\theta_{JC}"></span>):</strong> Indicates how well the package dissipates heat to the ambient air or a heatsink (measured in <span class="katex-inline" data-math="^\circ C/W"></span>).</li>
+</ul>
+<h3>10.3 Electrical Characteristics</h3>
+<ul>
+<li><strong><span class="katex-inline" data-math="h_{FE}"></span> (DC Current Gain / <span class="katex-inline" data-math="\beta"></span>):</strong> The ratio of <span class="katex-inline" data-math="I_C"></span> to <span class="katex-inline" data-math="I_B"></span>. Usually specified as a range (e.g., 100-300) at a specific <span class="katex-inline" data-math="I_C"></span>.</li>
+<li><strong><span class="katex-inline" data-math="V_{CE(sat)}"></span> (Collector-Emitter Saturation Voltage):</strong> The voltage drop across the transistor when it is fully ON (acting as a switch). Crucial for calculating power loss in robotic motor driver circuits.</li>
+<li><strong><span class="katex-inline" data-math="f_T"></span> (Transition Frequency):</strong> The frequency at which the current gain drops to 1. Indicates the maximum switching speed for high-frequency applications.</li>
+</ul>
+<h3>10.4 Physical Packaging</h3>
+<p>Information regarding the physical footprint, dimensions, and pinout (e.g., TO-92 for small signals, TO-220 for power transistors) to aid in PCB design.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem2/ECE182/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem2/ECE182/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

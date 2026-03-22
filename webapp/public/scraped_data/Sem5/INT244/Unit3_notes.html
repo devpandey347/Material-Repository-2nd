@@ -1,0 +1,684 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT244">INT244</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT244">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT244/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT244/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT244/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT244</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Enumeration, System Hacking, Malware</h1>
+<h2>1. Enumeration</h2>
+<p>Enumeration is the phase of the hacking lifecycle that follows footprinting and scanning. While scanning identifies active systems and open ports, enumeration involves actively connecting to the system to acquire more detailed information. It is considered an aggressive step because it involves direct interaction with the target system.</p>
+<p><strong>Goal:</strong> To gather specific data such as:</p>
+<ul>
+<li>Usernames and Group names</li>
+<li>Hostnames</li>
+<li>Network shares and services</li>
+<li>Routing tables</li>
+<li>Application versions and configurations</li>
+</ul>
+<h3>Windows Enumeration</h3>
+<p>Windows environments rely heavily on specific protocols for resource sharing and identification, making them prime targets for enumeration.</p>
+<ul>
+<li>
+<p><strong>NetBIOS (Network Basic Input/Output System):</strong></p>
+<ul>
+<li>Operates on ports 137, 138, and 139.</li>
+<li>Allows applications on different computers to communicate within a LAN.</li>
+<li><strong>NetBIOS Null Session:</strong> An unauthenticated connection (using a null user and password) to the IPC$ (Inter-Process Communication) share. If successful, attackers can list users, shares, and policies.</li>
+<li><strong>Tools:</strong> <code>nbtstat</code>, <code>SuperScan</code>, <code>Hyena</code>.</li>
+<li><strong>Command:</strong> <code>nbtstat -a &lt;IP_Address&gt;</code> (Displays the NetBIOS name table).</li>
+</ul>
+</li>
+<li>
+<p><strong>SMB (Server Message Block):</strong></p>
+<ul>
+<li>Operates on port 445 (over TCP/IP).</li>
+<li>Used for file sharing and printer services.</li>
+<li>Enumeration can reveal shared folders, version information, and access controls.</li>
+</ul>
+</li>
+<li>
+<p><strong>RPC (Remote Procedure Call):</strong></p>
+<ul>
+<li>Operates on port 135.</li>
+<li>Allows a program on one computer to execute code on a remote system.</li>
+</ul>
+</li>
+</ul>
+<h3>Enumeration with SNMP (Simple Network Management Protocol)</h3>
+<p>SNMP is used to manage network devices (routers, switches, servers). If misconfigured, it leaks massive amounts of system information.</p>
+<ul>
+<li>
+<p><strong>Components:</strong></p>
+<ul>
+<li><strong>Manager:</strong> The console used to monitor devices.</li>
+<li><strong>Agent:</strong> The software running on the device being monitored.</li>
+<li><strong>MIB (Management Information Base):</strong> A database containing the information (objects) the device maintains.</li>
+<li><strong>OIDs (Object Identifiers):</strong> Numeric strings that identify specific objects within the MIB.</li>
+</ul>
+</li>
+<li>
+<p><strong>Community Strings:</strong></p>
+<ul>
+<li>SNMP uses "community strings" as a form of password.</li>
+<li><strong>Public:</strong> Read-only access (often the default).</li>
+<li><strong>Private:</strong> Read-write access (allows configuration changes).</li>
+<li><strong>Vulnerability:</strong> Attackers guess default strings ("public", "private", "manager") to read the MIB.</li>
+</ul>
+</li>
+<li>
+<p><strong>Data Extracted:</strong> Network interfaces, ARP tables, routing tables, device uptime, and installed software.</p>
+</li>
+<li>
+<p><strong>Tools:</strong> <code>snmpwalk</code>, <code>OpUtils</code>, <code>SolarWinds</code>.</p>
+</li>
+</ul>
+<h3>LDAP and Directory Service Enumeration</h3>
+<p>Lightweight Directory Access Protocol (LDAP) is used to query directory services like Microsoft Active Directory.</p>
+<ul>
+<li><strong>Ports:</strong> TCP 389 (Standard) and 636 (SSL).</li>
+<li><strong>Structure:</strong> Hierarchical tree structure.
+<ul>
+<li><strong>DN:</strong> Distinguished Name.</li>
+<li><strong>CN:</strong> Common Name.</li>
+<li><strong>DC:</strong> Domain Component.</li>
+</ul></li>
+<li><strong>Enumeration Risk:</strong> An attacker can query the directory to find valid usernames, email addresses, department structures, and group memberships.</li>
+<li><strong>Tools:</strong> <code>Jxplorer</code>, <code>Softerra LDAP Browser</code>, <code>nmap</code> scripts.</li>
+</ul>
+<h3>SMTP Enumeration</h3>
+<p>Simple Mail Transfer Protocol (SMTP) handles email transmission. It often provides built-in commands that confirm the existence of users on a system.</p>
+<ul>
+<li><strong>Port:</strong> TCP 25.</li>
+<li><strong>Key Commands:</strong>
+<ul>
+<li><code>VRFY</code> (Verify): Validates whether a user exists on the mail server.</li>
+<li><code>EXPN</code> (Expand): Reveals the actual delivery address of aliases and mailing lists.</li>
+<li><code>RCPT TO</code> (Recipient To): Defines the recipient; server responses can indicate if the user exists.</li>
+</ul></li>
+<li><strong>Countermeasure:</strong> Administrators typically disable VRFY and EXPN on public-facing mail servers to prevent directory harvesting.</li>
+</ul>
+<hr/>
+<h2>2. System Hacking</h2>
+<p>System hacking is the process of gaining access to a system, escalating privileges, executing applications, and hiding the malicious activity. It typically follows the enumeration phase.</p>
+<h3>The Methodology (CEH Framework)</h3>
+<ol>
+<li><strong>Gaining Access:</strong> Bypassing security controls (password cracking, exploit injection).</li>
+<li><strong>Escalating Privileges:</strong> Moving from a standard user to an Administrator/Root.</li>
+<li><strong>Executing Applications:</strong> Installing malware, backdoors, or tools.</li>
+<li><strong>Hiding Files:</strong> Using steganography or modifying file attributes.</li>
+<li><strong>Covering Tracks:</strong> Deleting logs to avoid detection.</li>
+</ol>
+<h3>Password Cracking</h3>
+<p>The process of recovering passwords from data stored in or transmitted by a computer system.</p>
+<p><strong>Types of Attacks:</strong></p>
+<ol>
+<li><strong>Non-Electronic:</strong> Social engineering, shoulder surfing, dumpster diving.</li>
+<li><strong>Dictionary Attack:</strong> Uses a file containing common words (dictionary) as input.</li>
+<li><strong>Brute Force:</strong> Tries every possible combination of characters. Computationally expensive but theoretically guaranteed to succeed eventually.</li>
+<li><strong>Hybrid Attack:</strong> Combines dictionary words with numbers or symbols (e.g., "Password123").</li>
+<li><strong>Rainbow Tables:</strong> Uses pre-computed hash tables. This drastically reduces the time needed to crack a password (time-memory tradeoff) but requires large storage.</li>
+<li><strong>Rule-Based:</strong> Uses information gathered about the target (birthdays, pet names) to generate guesses.</li>
+</ol>
+<h3>Authentication on Microsoft Platforms</h3>
+<p>Microsoft systems store passwords as hashes, not plaintext.</p>
+<ul>
+<li>
+<p><strong>SAM (Security Account Manager):</strong></p>
+<ul>
+<li>A database file located at <code>%SystemRoot%\System32\config\SAM</code>.</li>
+<li>Stores local user account passwords.</li>
+<li>Access is locked while the OS is running; attackers must dump it from memory or boot from an external drive.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hashing Algorithms:</strong></p>
+<ul>
+<li><strong>LM (LAN Manager):</strong> Legacy, very weak. Passwords are split into 7-character chunks, converted to uppercase, and hashed. Easy to crack.</li>
+<li><strong>NTLM (NT LAN Manager):</strong> The successor to LM.
+<ul>
+<li><strong>NTLMv1:</strong> Uses MD4/DES. Vulnerable to interception.</li>
+<li><strong>NTLMv2:</strong> Current standard for non-Kerberos environments. Adds HMAC-MD5 for better security.</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>Kerberos:</strong></p>
+<ul>
+<li>The default authentication protocol for Active Directory.</li>
+<li>Relies on a trusted third party (Key Distribution Center - KDC).</li>
+<li>Uses <strong>Tickets</strong> (TGT - Ticket Granting Ticket) rather than passing password hashes over the network.</li>
+<li><strong>Vulnerability:</strong> Golden Ticket attacks (forging a TGT to gain unlimited access).</li>
+</ul>
+</li>
+</ul>
+<h3>Executing Applications</h3>
+<p>Once access is gained, the attacker executes malicious applications to maintain control or steal data.</p>
+<ul>
+<li><strong>Remote Execution:</strong> Using tools like <code>PsExec</code> or vulnerabilities to run commands on the target without physical access.</li>
+<li><strong>Keyloggers:</strong> Software or hardware that records keystrokes to steal passwords and sensitive data.</li>
+<li><strong>Spyware:</strong> Gathers information about a person or organization without their knowledge.</li>
+<li><strong>Rootkits:</strong>
+<ul>
+<li>Designed to hide the existence of certain processes or programs from normal methods of detection.</li>
+<li>Can operate at the <strong>User Mode</strong> (Application level) or <strong>Kernel Mode</strong> (OS level—hardest to detect and remove).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>3. Malware (Malicious Software)</h2>
+<p>Malware is an umbrella term for any software designed to cause damage to a computer, server, client, or computer network.</p>
+<h3>Malware and the Law</h3>
+<p>Legal frameworks vary globally, but most jurisdictions have specific laws regarding malware.</p>
+<ul>
+<li><strong>CFAA (Computer Fraud and Abuse Act - USA):</strong> Makes it illegal to access a computer without authorization or in excess of authorization. Distributing malware that causes damage or loss is a felony.</li>
+<li><strong>Intent vs. Research:</strong> Writing malware code is generally not illegal in isolation (educational/research purposes). However, <strong>deploying</strong> it, selling it for malicious use, or using it to damage systems is a crime.</li>
+<li><strong>Damages:</strong> Courts look for financial loss, impairment of medical treatment, or threats to public safety.</li>
+</ul>
+<h3>Categories of Malware</h3>
+<h4>1. Viruses</h4>
+<ul>
+<li><strong>Definition:</strong> A program that replicates by inserting its own code into other programs (host files).</li>
+<li><strong>Mechanism:</strong> Requires user interaction (e.g., clicking a file) to spread.</li>
+<li><strong>Types:</strong>
+<ul>
+<li><em>File Infector:</em> Attaches to .exe or .com files.</li>
+<li><em>Boot Sector Virus:</em> Infects the Master Boot Record (MBR).</li>
+<li><em>Macro Virus:</em> Embedded in documents (Word, Excel) using macro languages like VBA.</li>
+<li><em>Polymorphic Virus:</em> Changes its code signature each time it replicates to evade antivirus detection.</li>
+</ul></li>
+</ul>
+<h4>2. Worms</h4>
+<ul>
+<li><strong>Definition:</strong> A standalone malware computer program that replicates itself in order to spread to other computers.</li>
+<li><strong>Mechanism:</strong> Does <strong>not</strong> need a host file or user interaction. It uses network vulnerabilities (like the EternalBlue exploit) to propagate automatically.</li>
+<li><strong>Impact:</strong> Consumes network bandwidth and creates botnets.</li>
+</ul>
+<h4>3. Trojans (Trojan Horse)</h4>
+<ul>
+<li><strong>Definition:</strong> Malware that misleads users of its true intent. It disguises itself as legitimate software (e.g., a free game or screensaver).</li>
+<li><strong>Mechanism:</strong> Does <strong>not</strong> replicate. It relies on social engineering.</li>
+<li><strong>Payload:</strong> Can create backdoors (RAT - Remote Access Trojan), steal data, or delete files.</li>
+</ul>
+<h4>4. Spyware</h4>
+<ul>
+<li><strong>Definition:</strong> Software that aids in gathering information about a person or organization without their knowledge.</li>
+<li><strong>Function:</strong> Monitors web browsing, captures keystrokes, and harvests login credentials.</li>
+</ul>
+<h4>5. Adware</h4>
+<ul>
+<li><strong>Definition:</strong> Advertising-supported software.</li>
+<li><strong>Function:</strong> Automatically renders advertisements (pop-ups, banners) in the user interface. While often just annoying, it can degrade performance and track user behavior (crossing into spyware).</li>
+</ul>
+<h4>6. Scareware</h4>
+<ul>
+<li><strong>Definition:</strong> Malware that uses social engineering to cause shock, anxiety, or the perception of a threat.</li>
+<li><strong>Example:</strong> Fake antivirus pop-ups claiming, "Your computer is infected! Click here to clean," which actually installs malware or steals credit card info.</li>
+</ul>
+<h4>7. Ransomware</h4>
+<ul>
+<li><strong>Definition:</strong> Malware that denies access to a computer system or data until a ransom is paid.</li>
+<li><strong>Mechanism:</strong>
+<ul>
+<li><em>Crypto-ransomware:</em> Encrypts files (AES/RSA) and demands payment (usually Bitcoin) for the decryption key.</li>
+<li><em>Locker-ransomware:</em> Locks the user out of the operating system interface.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>4. Overt and Covert Channels</h2>
+<p>This concept relates to how data is transmitted and how security can be bypassed.</p>
+<h3>Overt Channels</h3>
+<ul>
+<li><strong>Definition:</strong> The normal, legitimate, and authorized methods of communication within a system or network.</li>
+<li><strong>Example:</strong> Transferring a file over FTP port 21, or browsing a website over HTTP port 80. Security policies usually monitor and control these channels.</li>
+</ul>
+<h3>Covert Channels</h3>
+<ul>
+<li><strong>Definition:</strong> A method of communication that is not intended for information transfer, used to leak data or send commands secretly, bypassing security monitors (firewalls/IDS).</li>
+<li><strong>Types:</strong>
+<ol>
+<li><strong>Covert Storage Channels:</strong> Hiding data within the protocol headers of a packet.
+<ul>
+<li><em>Example:</em> Manipulating the TCP "Sequence Number" field or the IP "Identification" field to carry ASCII characters.</li>
+</ul></li>
+<li><strong>Covert Timing Channels:</strong> Relaying information by modulating the timing of events or system resources.
+<ul>
+<li><em>Example:</em> Sending packets at specific intervals (e.g., a 1-second delay = 1, a 2-second delay = 0) to reconstruct binary data at the receiving end.</li>
+</ul></li>
+<li><strong>Tunneling:</strong> Encapsulating a forbidden protocol inside a permitted one (e.g., running SSH over DNS port 53).</li>
+</ol></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT244/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT244/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

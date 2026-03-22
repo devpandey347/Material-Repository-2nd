@@ -1,0 +1,631 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT394">INT394</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 6</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT394">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT394/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT394/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT394</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Model Complexity and Optimization</h1>
+<h2>1. Theoretical Foundations of Generalization</h2>
+<p>Understanding how machine learning models generalize from training data to unseen data requires quantifying model complexity.</p>
+<h3>1.1 VC Dimension (Vapnik-Chervonenkis Dimension)</h3>
+<p>The VC dimension is a measure of the capacity (complexity) of a statistical classification algorithm. It quantifies the algorithm's ability to "shatter" a set of points.</p>
+<ul>
+<li><strong>Shattering:</strong> A hypothesis space <span class="katex-inline" data-math="H"></span> shatters a set of points <span class="katex-inline" data-math="X"></span> if, for all possible assignments of binary labels (0 or 1) to the points in <span class="katex-inline" data-math="X"></span>, there exists a hypothesis <span class="katex-inline" data-math="h \in H"></span> that can perfectly separate the data.</li>
+<li><strong>Definition:</strong> The VC dimension of a hypothesis space <span class="katex-inline" data-math="H"></span>, denoted <span class="katex-inline" data-math="VC(H)"></span>, is the size of the largest set of points that can be shattered by <span class="katex-inline" data-math="H"></span>.</li>
+<li><strong>Significance:</strong>
+<ul>
+<li>If <span class="katex-inline" data-math="VC(H)"></span> is finite, the model will generalize (given enough data).</li>
+<li><strong>Low VC Dimension:</strong> The model is simple (e.g., a line). It may suffer from high bias (underfitting).</li>
+<li><strong>High VC Dimension:</strong> The model is complex (e.g., high-degree polynomial). It requires significantly more data to train and is prone to high variance (overfitting).</li>
+</ul></li>
+<li><strong>Examples:</strong>
+<ul>
+<li><strong>Linear Classifier in 2D:</strong> Can shatter 3 points. Cannot shatter 4 points (XOR problem). <span class="katex-inline" data-math="VC = 3"></span>.</li>
+<li><strong>Linear Classifier in d-dimensions:</strong> <span class="katex-inline" data-math="VC = d + 1"></span>.</li>
+</ul></li>
+</ul>
+<h3>1.2 Rademacher Complexity</h3>
+<p>While VC dimension is distribution-independent (worst-case scenario), Rademacher Complexity measures the ability of a hypothesis class to fit random noise <em>given a specific data distribution</em>.</p>
+<ul>
+<li><strong>Concept:</strong> It measures how well the function class correlates with random noise labels (Rademacher variables <span class="katex-inline" data-math="\sigma \in \{-1, +1\}"></span>).</li>
+<li><strong>Empirical Rademacher Complexity:</strong><br/>
+<span class="math-display" data-math="\hat{\mathfrak{R}}_S(H) = E_\sigma \left[ \sup_{h \in H} \frac{1}{m} \sum_{i=1}^m \sigma_i h(x_i) \right]"></span></li>
+<li><strong>Interpretation:</strong>
+<ul>
+<li>If a model implies a high Rademacher complexity, it can fit random noise easily, suggesting the model is too complex and likely to overfit.</li>
+<li>It provides tighter generalization bounds than VC dimension because it takes the actual data distribution into account.</li>
+</ul></li>
+</ul>
+<h3>1.3 Structural Risk Minimization (SRM)</h3>
+<p>SRM is an inductive principle for model selection used to balance model complexity and training error.</p>
+<ul>
+<li><strong>Empirical Risk Minimization (ERM):</strong> Minimizes error on the training set only.
+<ul>
+<li><span class="math-display" data-math="R_{emp}(h) = \frac{1}{N} \sum Loss(h(x_i), y_i)"></span></li>
+<li><strong>Problem:</strong> Leads to overfitting (memorization).</li>
+</ul></li>
+<li><strong>SRM Principle:</strong> Minimizes the <strong>True Risk</strong> bound, which is the sum of empirical risk and a complexity penalty.
+<ul>
+<li><span class="math-display" data-math="R_{true}(h) \leq R_{emp}(h) + \Omega(VC(H))"></span></li>
+<li>Where <span class="katex-inline" data-math="\Omega"></span> is a complexity term dependent on the VC dimension and sample size.</li>
+</ul></li>
+<li><strong>Mechanism:</strong> SRM orders hypothesis spaces by complexity (<span class="katex-inline" data-math="H_1 \subset H_2 \subset ..."></span>) and selects the hypothesis that minimizes the bound on the true risk, not just the empirical error.</li>
+</ul>
+<hr/>
+<h2>2. Error Analysis: Bias, Variance, and Fitting</h2>
+<h3>2.1 Bias-Variance Trade-off</h3>
+<p>The total error of a model can be decomposed into three parts: Bias, Variance, and Irreducible Error.</p>
+<p><span class="math-display" data-math="E[(y - \hat{f}(x))^2] = \text{Bias}[\hat{f}(x)]^2 + \text{Var}[\hat{f}(x)] + \sigma^2"></span></p>
+<ol>
+<li><strong>Bias (Error from erroneous assumptions):</strong>
+<ul>
+<li>The difference between the average prediction of the model and the correct value.</li>
+<li><strong>High Bias:</strong> The model is too simple to capture the underlying pattern (e.g., linear regression on quadratic data).</li>
+</ul></li>
+<li><strong>Variance (Error from sensitivity to fluctuations):</strong>
+<ul>
+<li>The variability of model prediction for a given data point if the model is retrained on different realizations of the data.</li>
+<li><strong>High Variance:</strong> The model captures random noise in the training data rather than the intended outputs.</li>
+</ul></li>
+<li><strong>Irreducible Error (<span class="katex-inline" data-math="\sigma^2"></span>):</strong> Noise inherent in the problem itself; cannot be removed.</li>
+</ol>
+<p><strong>The Trade-off:</strong> Increasing model complexity generally decreases bias but increases variance. The optimal model minimizes the sum of bias squared and variance.</p>
+<h3>2.2 Overfitting vs. Underfitting</h3>
+<ul>
+<li><strong>Underfitting (High Bias):</strong>
+<ul>
+<li><strong>Symptoms:</strong> High training error and high validation error.</li>
+<li><strong>Cause:</strong> Model is too simple; features are insufficient.</li>
+<li><strong>Solution:</strong> Increase model complexity, add new features, reduce regularization.</li>
+</ul></li>
+<li><strong>Overfitting (High Variance):</strong>
+<ul>
+<li><strong>Symptoms:</strong> Low training error but high validation error.</li>
+<li><strong>Cause:</strong> Model is too complex; insufficient training data.</li>
+<li><strong>Solution:</strong> Simplify model, gather more data, use regularization, early stopping.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>3. Practical Model Improvement</h2>
+<h3>3.1 Regularization Techniques</h3>
+<p>Regularization adds a penalty term to the loss function to constrain the magnitude of the model parameters (weights), effectively reducing complexity.</p>
+<p><strong>Loss Function with Regularization:</strong><br/>
+<span class="math-display" data-math="J(\theta) = Loss_{data}(\theta) + \lambda \cdot Penalty(\theta)"></span><br/>
+<em>(Where <span class="katex-inline" data-math="\lambda"></span> is the regularization strength hyperparameter)</em></p>
+<ol>
+<li><strong>L1 Regularization (Lasso Regression):</strong>
+<ul>
+<li><strong>Penalty:</strong> Sum of absolute values of weights (<span class="katex-inline" data-math="\sum |w_i|"></span>).</li>
+<li><strong>Effect:</strong> Shrinks coefficients to exactly zero. Performs <strong>Feature Selection</strong> (sparse solutions).</li>
+</ul></li>
+<li><strong>L2 Regularization (Ridge Regression):</strong>
+<ul>
+<li><strong>Penalty:</strong> Sum of squared weights (<span class="katex-inline" data-math="\sum w_i^2"></span>).</li>
+<li><strong>Effect:</strong> Shrinks coefficients toward zero but rarely reaches exactly zero. Handles collinearity well and ensures weight matrices are invertible.</li>
+</ul></li>
+<li><strong>Elastic Net:</strong>
+<ul>
+<li>Combination of L1 and L2 penalties. Useful when there are correlated features (L2 handles grouping, L1 handles sparsity).</li>
+</ul></li>
+</ol>
+<h3>3.2 Cross-Validation</h3>
+<p>A resampling procedure used to evaluate machine learning models on a limited data sample.</p>
+<ol>
+<li><strong>k-Fold Cross-Validation:</strong>
+<ul>
+<li>Split data into <span class="katex-inline" data-math="k"></span> equal subsets (folds).</li>
+<li>Train on <span class="katex-inline" data-math="k-1"></span> folds, validate on the remaining 1 fold.</li>
+<li>Repeat <span class="katex-inline" data-math="k"></span> times (rotating the validation fold).</li>
+<li><strong>Result:</strong> Average of the <span class="katex-inline" data-math="k"></span> scores. Balances bias and variance.</li>
+</ul></li>
+<li><strong>Leave-One-Out Cross-Validation (LOOCV):</strong>
+<ul>
+<li><span class="katex-inline" data-math="k = N"></span> (total number of data points).</li>
+<li>Train on all points except one.</li>
+<li><strong>Pros:</strong> Unbiased estimate of test error.</li>
+<li><strong>Cons:</strong> Computationally expensive; high variance.</li>
+</ul></li>
+<li><strong>Stratified k-Fold:</strong>
+<ul>
+<li>Ensures each fold represents the same class proportions as the whole dataset. Essential for imbalanced datasets.</li>
+</ul></li>
+</ol>
+<h3>3.3 Hyperparameter Tuning</h3>
+<p>Hyperparameters are configuration variables external to the model (e.g., learning rate, <span class="katex-inline" data-math="\lambda"></span>, <span class="katex-inline" data-math="k"></span> in k-NN) that must be set before training.</p>
+<ol>
+<li><strong>Grid Search:</strong>
+<ul>
+<li>Define a grid of hyperparameter values.</li>
+<li>Exhaustively search through every combination.</li>
+<li><strong>Con:</strong> Computationally prohibitive in high dimensions.</li>
+</ul></li>
+<li><strong>Random Search:</strong>
+<ul>
+<li>Sample hyperparameter combinations from statistical distributions.</li>
+<li><strong>Pro:</strong> Often finds better models than grid search in less time because some hyperparameters matter more than others.</li>
+</ul></li>
+<li><strong>Bayesian Optimization:</strong>
+<ul>
+<li>Builds a probabilistic model of the function mapping hyperparameters to a target objective (accuracy).</li>
+<li>Intelligently selects the next hyperparameter set to evaluate based on past results (Exploration vs. Exploitation).</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>4. Gradient Descent and Variants</h2>
+<p>Gradient Descent (GD) is an iterative optimization algorithm used to minimize the cost function <span class="katex-inline" data-math="J(\theta)"></span>.</p>
+<h3>4.1 Basic Gradient Descent</h3>
+<p><strong>Update Rule:</strong><br/>
+<span class="math-display" data-math="\theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t)"></span></p>
+<ul>
+<li><span class="katex-inline" data-math="\eta"></span>: Learning rate (step size).</li>
+<li><span class="katex-inline" data-math="\nabla J"></span>: Gradient (direction of steepest ascent). We subtract to go downhill.</li>
+</ul>
+<ol>
+<li><strong>Batch Gradient Descent:</strong> Uses the entire dataset to compute the gradient. Stable but slow for large datasets.</li>
+<li><strong>Stochastic Gradient Descent (SGD):</strong> Uses a single training example for each update. Fast but noisy convergence (oscillates).</li>
+<li><strong>Mini-Batch GD:</strong> Uses a small batch (e.g., 32 or 64 samples). Best balance of stability and speed.</li>
+</ol>
+<h3>4.2 Advanced Variants</h3>
+<h4>Momentum</h4>
+<p>Addresses the problem where SGD oscillates across the slopes of a ravine while only making small progress along the bottom.</p>
+<ul>
+<li><strong>Mechanism:</strong> Adds a fraction of the <em>previous</em> update vector to the current update. It gains speed in directions with persistent gradients.</li>
+<li><strong>Formula:</strong><br/>
+<span class="math-display" data-math="v_t = \gamma v_{t-1} + \eta \nabla J(\theta)"></span><br/>
+<span class="math-display" data-math="\theta = \theta - v_t"></span><br/>
+<em>(Where <span class="katex-inline" data-math="\gamma"></span> is the momentum term, typically 0.9)</em></li>
+</ul>
+<h4>RMSprop (Root Mean Square Propagation)</h4>
+<p>An adaptive learning rate method designed to resolve Adagrad's radically diminishing learning rates.</p>
+<ul>
+<li><strong>Mechanism:</strong> Normalizes the gradient by the square root of a moving average of squared gradients. This allows the learning rate to adapt per parameter (slower for frequent features, faster for sparse ones).</li>
+<li><strong>Formula:</strong>
+<ol>
+<li>Compute squared gradient average: <span class="katex-inline" data-math="E[g^2]_t = 0.9 E[g^2]_{t-1} + 0.1 g_t^2"></span></li>
+<li>Update parameter: <span class="katex-inline" data-math="\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{E[g^2]_t + \epsilon}} g_t"></span></li>
+</ol></li>
+</ul>
+<h3>4.3 Convergence Analysis</h3>
+<ol>
+<li><strong>Convexity:</strong>
+<ul>
+<li>If the Loss function <span class="katex-inline" data-math="J(\theta)"></span> is <strong>Convex</strong> (bowl-shaped), Gradient Descent is guaranteed to converge to the Global Minimum (assuming <span class="katex-inline" data-math="\eta"></span> is not too large).</li>
+<li>If <strong>Non-Convex</strong> (many peaks and valleys), it may get stuck in a Local Minimum or Saddle Point.</li>
+</ul></li>
+<li><strong>Learning Rate (<span class="katex-inline" data-math="\eta"></span>):</strong>
+<ul>
+<li><strong>Too Small:</strong> Convergence is extremely slow.</li>
+<li><strong>Too Large:</strong> The algorithm may overshoot the minimum and diverge (Loss increases).</li>
+</ul></li>
+<li><strong>Lipschitz Continuity:</strong>
+<ul>
+<li>Convergence proofs often rely on the gradient being Lipschitz continuous, meaning the gradient does not change arbitrarily fast.</li>
+<li>Standard convergence rate for Convex functions using GD is <span class="katex-inline" data-math="O(1/k)"></span>, and for Strongly Convex functions is <span class="katex-inline" data-math="O(c^k)"></span> (geometric convergence).</li>
+</ul></li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT394/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

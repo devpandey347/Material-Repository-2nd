@@ -1,0 +1,639 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/PES319">PES319</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/PES319">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/PES319/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/PES319/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/PES319/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>PES319</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: KYC and Digital Portfolio Design</h1>
+<h2>1. Understanding KYC (Know Your Company)</h2>
+<p>In the context of recruitment and soft skills, <strong>KYC</strong> stands for <strong>Know Your Company</strong> (adapted from the banking term "Know Your Customer"). It refers to the comprehensive research a candidate must undertake regarding a prospective employer before applying for a job or attending an interview.</p>
+<h3>The Importance of KYC</h3>
+<ul>
+<li><strong>Demonstrates Interest:</strong> Detailed knowledge shows the recruiter that you are serious about the role and not just applying randomly.</li>
+<li><strong>Confidence Building:</strong> Knowledge reduces anxiety. Understanding the company's position in the market allows you to answer questions more authoritatively.</li>
+<li><strong>Alignment check:</strong> Helps you determine if the company’s culture and values align with your own career goals.</li>
+<li><strong>Strategic Questioning:</strong> Enables you to ask insightful questions during the "Do you have any questions for us?" segment of the interview.</li>
+</ul>
+<h3>Elements of KYC</h3>
+<p>Effective KYC involves researching four distinct layers:</p>
+<ol>
+<li>
+<p><strong>Organizational Overview:</strong></p>
+<ul>
+<li><strong>Vision and Mission Statements:</strong> What is the company's ultimate goal?</li>
+<li><strong>Leadership Team:</strong> Who is the CEO, CTO, and Founder? (Check their LinkedIn profiles).</li>
+<li><strong>History/Timeline:</strong> Major milestones and years of operation.</li>
+<li><strong>Products/Services:</strong> Deep understanding of what they sell or build.</li>
+</ul>
+</li>
+<li>
+<p><strong>Market Position:</strong></p>
+<ul>
+<li><strong>Competitors:</strong> Who are their main rivals? (e.g., Pepsi vs. Coke; Uber vs. Lyft).</li>
+<li><strong>USP (Unique Selling Proposition):</strong> What makes them different from competitors?</li>
+<li><strong>Recent News:</strong> Mergers, acquisitions, funding rounds, or stock market performance.</li>
+</ul>
+</li>
+<li>
+<p><strong>Culture and Values:</strong></p>
+<ul>
+<li><strong>Core Values:</strong> Innovation, integrity, customer obsession, etc.</li>
+<li><strong>Employee Reviews:</strong> Information from Glassdoor or AmbitionBox regarding work-life balance.</li>
+<li><strong>CSR (Corporate Social Responsibility):</strong> Their stance on environmental and social issues.</li>
+</ul>
+</li>
+<li>
+<p><strong>Job Description (JD) Specifics:</strong></p>
+<ul>
+<li>Required technology stack.</li>
+<li>Soft skills emphasized (e.g., "team player," "agile mindset").</li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h2>2. CV Mapping with KYC &amp; Specialized Customization</h2>
+<p>A generic CV is often rejected by Applicant Tracking Systems (ATS). CV Mapping is the process of tailoring your resume to mirror the language and requirements discovered during your KYC research.</p>
+<h3>The CV Mapping Process</h3>
+<ol>
+<li><strong>Keyword Extraction:</strong> Analyze the Job Description (JD) and highlight high-frequency keywords (e.g., "Python," "Project Management," "Stakeholder Communication").</li>
+<li><strong>Gap Analysis:</strong> Compare these keywords with your current CV.</li>
+<li><strong>Injection:</strong> weave these keywords naturally into your specific skills section, professional summary, and project descriptions.</li>
+</ol>
+<h3>Specialized CV Customization Techniques</h3>
+<ul>
+<li><strong>The Summary/Objective Section:</strong> Customize this to mention the specific company name and how your goals align with their mission.
+<ul>
+<li><em>Generic:</em> "Seeking a software engineering role."</li>
+<li><em>Customized:</em> "Aspiring Software Engineer looking to leverage Java skills to contribute to [Company Name]'s innovative fintech solutions."</li>
+</ul></li>
+<li><strong>Reordering Skills:</strong> If the company values "React.js" over "Angular," ensure React appears first in your skills list.</li>
+<li><strong>Project Highlighting:</strong> Select projects in your portfolio that solve problems similar to those the company faces.</li>
+<li><strong>Metrics-Driven Descriptions:</strong> Use the KYC data to focus on metrics that matter to the company (e.g., if they are a startup, highlight "speed to deployment"; if they are a bank, highlight "security and compliance").</li>
+</ul>
+<hr/>
+<h2>3. Recap of Professional Grooming</h2>
+<p>Professional grooming in the digital age extends beyond physical appearance to include virtual presence.</p>
+<h3>Physical Grooming (Interview/Office)</h3>
+<ul>
+<li><strong>Attire:</strong> Formal or Business Casual (depending on industry). Clothes should be ironed and stain-free.</li>
+<li><strong>Hygiene:</strong> Neat hair, trimmed nails, polished shoes.</li>
+<li><strong>Body Language:</strong> Firm handshake, upright posture, maintaining eye contact without staring.</li>
+</ul>
+<h3>Virtual/Digital Grooming</h3>
+<ul>
+<li><strong>Background:</strong> Clean, decluttered background or a professional virtual blur.</li>
+<li><strong>Lighting:</strong> Front-facing light source (avoid backlighting).</li>
+<li><strong>Camera Angle:</strong> Eye-level placement (avoid looking down at the camera).</li>
+<li><strong>Audio:</strong> Use of a dedicated microphone or headset to eliminate background noise.</li>
+</ul>
+<hr/>
+<h2>4. Platform Skills</h2>
+<p>Platform skills refer to the technical literacy required to navigate the digital ecosystem of modern recruitment and remote work.</p>
+<ul>
+<li><strong>Video Conferencing Proficiency:</strong> Mastery of Zoom, MS Teams, and Google Meet (sharing screens, muting/unmuting, troubleshooting audio).</li>
+<li><strong>Collaborative Tools:</strong> Familiarity with Slack, Discord, Trello, or Jira.</li>
+<li><strong>Professional Networking:</strong> Advanced use of LinkedIn (writing posts, engaging with content, direct messaging recruiters).</li>
+<li><strong>Version Control:</strong> Basic understanding of Git/GitHub for uploading and managing code repositories (essential for tech roles).</li>
+</ul>
+<hr/>
+<h2>5. Key Components of Effective Portfolio Design</h2>
+<p>A digital portfolio is "proof of work." While a CV claims you have skills, a portfolio demonstrates them.</p>
+<h3>Essential Components</h3>
+<ol>
+<li><strong>Hero Section:</strong> A clear introduction. Who are you? What do you do? (e.g., "Full Stack Developer | UI/UX Enthusiast").</li>
+<li><strong>About Me:</strong> A brief professional bio. Keep it personal but professional.</li>
+<li><strong>Projects Section (The Core):</strong>
+<ul>
+<li>Title of the project.</li>
+<li>Tech stack used.</li>
+<li><strong>Live Link</strong> (deployed version) and <strong>Source Code Link</strong> (GitHub).</li>
+<li>A brief description using the <strong>STAR method</strong> (Situation, Task, Action, Result).</li>
+</ul></li>
+<li><strong>Skills Section:</strong> Visual representation of technical and soft skills.</li>
+<li><strong>Resume Download:</strong> A button to download the PDF version of your customized CV.</li>
+<li><strong>Contact:</strong> Form, email address, and links to LinkedIn/GitHub/Behance.</li>
+</ol>
+<h3>Design Principles</h3>
+<ul>
+<li><strong>Minimalism:</strong> Less is more. Don't clutter the screen.</li>
+<li><strong>Responsiveness:</strong> The portfolio <strong>must</strong> work perfectly on mobile devices.</li>
+<li><strong>Navigation:</strong> Intuitive menu structure (Home, Projects, Contact).</li>
+<li><strong>Consistency:</strong> Use a consistent color palette and font pairing throughout.</li>
+</ul>
+<hr/>
+<h2>6. Tools for Portfolio Creation</h2>
+<p>Choosing the right tool depends on your technical expertise and the time available.</p>
+<h3>A. Netlify &amp; Vercel (For Developers)</h3>
+<p>These platforms are best for hosting static sites and modern web applications (React, Vue, Next.js).</p>
+<ul>
+<li><strong>Workflow:</strong> Code locally -&gt; Push to GitHub -&gt; Connect GitHub to Netlify/Vercel.</li>
+<li><strong>Pros:</strong> Free SSL, continuous deployment (updates automatically when you push code), high performance, demonstrates coding ability.</li>
+<li><strong>Cons:</strong> Requires knowledge of HTML/CSS/JS or frameworks.</li>
+</ul>
+<h3>B. WordPress (CMS)</h3>
+<ul>
+<li><strong>Workflow:</strong> Install WordPress -&gt; Select Theme -&gt; Customize via Dashboard.</li>
+<li><strong>Pros:</strong> Highly customizable via plugins, good SEO capabilities, powers 40% of the web.</li>
+<li><strong>Cons:</strong> Can be slow if bloated with plugins; requires maintenance/updates.</li>
+</ul>
+<h3>C. Wix (Website Builder)</h3>
+<ul>
+<li><strong>Workflow:</strong> Drag-and-drop editor.</li>
+<li><strong>Pros:</strong> No coding required, beautiful templates, very fast to set up.</li>
+<li><strong>Cons:</strong> Free version has branding/watermarks, generic URL structure, limited flexibility for custom code.</li>
+</ul>
+<h3>Comparative Summary Table</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Netlify/Vercel</th>
+<th style="text-align: left;">WordPress</th>
+<th style="text-align: left;">Wix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Best For</strong></td>
+<td style="text-align: left;">Developers / Custom Code</td>
+<td style="text-align: left;">Blogs / Content Heavy</td>
+<td style="text-align: left;">Non-coders / Designers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cost</strong></td>
+<td style="text-align: left;">Free Tier (Generous)</td>
+<td style="text-align: left;">Free (limited) to Paid</td>
+<td style="text-align: left;">Free (with Ads) to Paid</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Skill Level</strong></td>
+<td style="text-align: left;">High (Coding req.)</td>
+<td style="text-align: left;">Medium</td>
+<td style="text-align: left;">Low</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Maintenance</strong></td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">High (Plugins/Updates)</td>
+<td style="text-align: left;">Low</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>7. Placement Portal Logistics</h2>
+<p>Once the CV is mapped and the portfolio is live, the final step involves the institution's placement portal.</p>
+<h3>Uploading and Verification of Portfolio Link</h3>
+<ol>
+<li><strong>Sanity Check:</strong> Before uploading, open your portfolio link in an <strong>Incognito/Private window</strong>. This ensures the link is public and accessible to anyone, not just you.</li>
+<li><strong>Broken Link Check:</strong> Click every button on your live site to ensure no "404 Errors" exist.</li>
+<li><strong>Submission:</strong> Copy the URL (ensure it starts with <code>https://</code>) and paste it into the designated field on the portal.</li>
+</ol>
+<h3>Approval on the Placement Portal</h3>
+<p>Institutions usually implement a verification workflow:</p>
+<ol>
+<li><strong>Student Upload:</strong> Student submits CV and Portfolio URL.</li>
+<li><strong>Automated/Manual Check:</strong> System or administrator checks if the link is active.</li>
+<li><strong>Content Audit:</strong>
+<ul>
+<li>Is the photo professional?</li>
+<li>Are the projects real?</li>
+<li>Is the contact info accurate?</li>
+</ul></li>
+<li><strong>Approval/Rejection:</strong>
+<ul>
+<li><strong>Approved:</strong> Profile becomes visible to recruiters.</li>
+<li><strong>Rejected:</strong> Feedback is provided (e.g., "Fix mobile responsiveness," "Resume link broken"). Student must rectify and resubmit.</li>
+</ul></li>
+</ol>
+<p><strong>Critical Note:</strong> A rejected portfolio on the placement portal often freezes the student's ability to apply for drives. Accuracy and functionality are paramount.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/PES319/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

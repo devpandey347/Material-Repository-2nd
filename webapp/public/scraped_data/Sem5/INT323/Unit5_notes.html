@@ -1,0 +1,662 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT323">INT323</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 5</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT323">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT323/Unit5/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT323/Unit4/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT323/Unit6/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 5 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT323</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 5: ETL Processing with SQL Server Integration Services and Rapid Miner</h1>
+<h2>Part 1: SQL Server Integration Services (SSIS)</h2>
+<h3>1. Introduction to the SSIS Ecosystem</h3>
+<p>SQL Server Integration Services (SSIS) is a component of the Microsoft SQL Server database software that can be used to perform a broad range of data migration tasks. It is an enterprise-level platform for data integration and data transformations.</p>
+<ul>
+<li><strong>Core Purpose:</strong> To extract data from various sources (ETL), transform it to meet business requirements, and load it into a destination (Data Warehouse or Database).</li>
+<li><strong>Architecture:</strong>
+<ul>
+<li><strong>SSIS Designer:</strong> The graphical tool within Visual Studio (via SQL Server Data Tools - SSDT) used to create packages.</li>
+<li><strong>SSIS Runtime:</strong> The engine that executes the packages.</li>
+<li><strong>SSIS Catalog (SSISDB):</strong> A central point on the SQL Server instance to store, manage, and monitor deployed packages.</li>
+<li><strong>Packages:</strong> The fundamental unit of execution in SSIS. A package is a collection of tasks, connections, and flow logic saved as a <code>.dtsx</code> file.</li>
+</ul></li>
+</ul>
+<h3>2. Getting Started: User Interface (SSDT)</h3>
+<p>SSIS development takes place in <strong>SQL Server Data Tools (SSDT)</strong>. The UI is divided into several specific panels:</p>
+<ul>
+<li><strong>The Canvas (Design Window):</strong> The central area where you drag and drop tasks. It has tabs for Control Flow, Data Flow, Parameters, Event Handlers, and Package Explorer.</li>
+<li><strong>SSIS Toolbox:</strong> Located on the left, it contains the available tasks (for Control Flow) and transformations/sources/destinations (for Data Flow).</li>
+<li><strong>Solution Explorer:</strong> Manages project files, project parameters, and connection managers.</li>
+<li><strong>Connection Managers:</strong> A pane at the bottom of the designer defining connections to data sources (SQL Server, Oracle, Excel, Flat Files).</li>
+<li><strong>Properties Window:</strong> Used to configure specific settings for the selected task or package.</li>
+</ul>
+<h3>3. Creating SSIS Projects</h3>
+<ol>
+<li><strong>Launch Visual Studio (SSDT).</strong></li>
+<li><strong>New Project:</strong> Select "Integration Services Project".</li>
+<li><strong>Project Structure:</strong>
+<ul>
+<li><strong>Project Parameters:</strong> Variables accessible across all packages in the project.</li>
+<li><strong>Packages:</strong> Individual <code>.dtsx</code> files containing the ETL logic.</li>
+</ul></li>
+<li><strong>Configuration:</strong> Define <strong>Connection Managers</strong> first. Right-click in the Connection Manager pane <span class="katex-inline" data-math="\rightarrow"></span> New OLE DB Connection (for databases) or Flat File Connection (for CSVs).</li>
+</ol>
+<h3>4. Control Flow vs. Data Flow</h3>
+<p>Understanding the distinction between these two tabs is critical for SSIS development.</p>
+<h4>Control Flow (Orchestration)</h4>
+<p>The Control Flow defines the <strong>workflow</strong> or the sequence of operations. It handles the high-level logic of the package.</p>
+<ul>
+<li><strong>Tasks:</strong> Discrete units of work (e.g., "Execute SQL Task", "Send Mail Task", "File System Task").</li>
+<li><strong>Precedence Constraints:</strong> Arrows connecting tasks that determine the sequence based on outcomes (Success (Green), Failure (Red), Completion (Blue)).</li>
+<li><strong>Containers:</strong> Used to group tasks (e.g., "Sequence Container", "For Loop Container").</li>
+<li><strong>Key Concept:</strong> It does <strong>not</strong> move data row-by-row; it manages the process execution.</li>
+</ul>
+<h4>Data Flow (The ETL Engine)</h4>
+<p>The Data Flow Task is a specific task <em>within</em> the Control Flow. When the engine reaches this task, it switches to the Data Flow tab to move and transform data.</p>
+<ul>
+<li><strong>Pipeline Architecture:</strong> Data is processed in buffers in memory.</li>
+<li><strong>Components:</strong>
+<ol>
+<li><strong>Sources:</strong> Extract data (e.g., OLE DB Source, Flat File Source).</li>
+<li><strong>Transformations:</strong> Modify data (e.g., Lookup, Derived Column).</li>
+<li><strong>Destinations:</strong> Load data (e.g., OLE DB Destination, Excel Destination).</li>
+</ol></li>
+</ul>
+<h3>5. Performing Different Transformations on ETL Jobs</h3>
+<p>Transformations manipulate data as it moves from Source to Destination.</p>
+<ul>
+<li>
+<p><strong>Synchronous Transformations:</strong> The number of rows entering equals the number of rows exiting (Output is immediate).</p>
+<ul>
+<li><strong>Derived Column:</strong> Creates new columns or modifies existing ones using expressions (e.g., <code>ISNULL(Column) ? "NA" : Column</code>).</li>
+<li><strong>Data Conversion:</strong> Changes the data type of a column (e.g., Unicode string to Non-Unicode).</li>
+<li><strong>Copy Column:</strong> Creates a duplicate of a column to be modified later.</li>
+</ul>
+</li>
+<li>
+<p><strong>Asynchronous Transformations:</strong> The output depends on all rows (blocking) or the number of rows changes.</p>
+<ul>
+<li><strong>Conditional Split:</strong> Routes data rows to different outputs based on Boolean expressions (e.g., if <code>Region == "North"</code>, go to Path A).</li>
+<li><strong>Aggregate:</strong> Performs calculations like Sum, Average, or Count Distinct (Block transformation; requires all data to be read before outputting).</li>
+<li><strong>Sort:</strong> Sorts data in memory (Expensive operation; prefer sorting in the SQL source query).</li>
+<li><strong>Lookup:</strong> Joins data in the stream with an external reference dataset (e.g., getting <code>CustomerID</code> based on <code>CustomerName</code>).</li>
+<li><strong>Merge/Merge Join:</strong> Combines data from two sorted inputs (similar to SQL UNION or JOIN).</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2>Part 2: RapidMiner Ecosystem</h2>
+<h3>1. Introduction to RapidMiner Ecosystem</h3>
+<p>RapidMiner is a data science software platform that provides an integrated environment for data preparation, machine learning, deep learning, text mining, and predictive analytics. Unlike SSIS, which is primarily for moving data (ETL), RapidMiner focuses heavily on <strong>analytics and modeling</strong>.</p>
+<ul>
+<li><strong>Core Philosophy:</strong> Visual workflow design (no coding required, though Python/R scripting is supported).</li>
+<li><strong>RapidMiner Studio:</strong> The desktop client used for visual process design.</li>
+<li><strong>RapidMiner Server:</strong> For scheduling, execution, and sharing of processes.</li>
+</ul>
+<h3>2. Getting Started: User Interface (Views)</h3>
+<p>RapidMiner Studio is organized into "Views." The most important are:</p>
+<ol>
+<li><strong>Design View:</strong> Where the ETL and analysis processes are built.
+<ul>
+<li><strong>Repository Panel:</strong> (Top Left) Stores data and processes.</li>
+<li><strong>Operators Panel:</strong> (Bottom Left) Contains all functional blocks (Load, Transform, Model).</li>
+<li><strong>Process Canvas:</strong> (Center) The workspace where operators are dragged and connected.</li>
+<li><strong>Parameters Panel:</strong> (Right) Configuration settings for the currently selected operator.</li>
+</ul></li>
+<li><strong>Results View:</strong> Displays the output of the process (tables, charts, models) after execution.</li>
+</ol>
+<h3>3. Creating and Managing Repositories</h3>
+<p>Repositories are the central storage mechanism in RapidMiner. They act as the file system.</p>
+<ul>
+<li><strong>Local Repository:</strong> Stored on the user's hard drive.</li>
+<li><strong>Structure:</strong> Organized using folders. It is best practice to create folders for <code>Data</code>, <code>Processes</code>, and <code>Results</code>.</li>
+<li><strong>Importing Data:</strong> Clicking "Import Data" allows you to wizard-import Excel/CSV files, define types, and save them as RapidMiner objects <code>.rmoo</code> in the repository for faster access later.</li>
+</ul>
+<h3>4. Operations and Processes</h3>
+<ul>
+<li><strong>Operators:</strong> The building blocks of RapidMiner. Each operator performs a specific task (e.g., <code>Read CSV</code>, <code>Filter Examples</code>, <code>Decision Tree</code>).</li>
+<li><strong>Ports:</strong> Operators have input and output ports.
+<ul>
+<li><strong>exa (ExampleSet):</strong> Refers to the data table (rows/columns).</li>
+<li><strong>mod (Model):</strong> Refers to a trained machine learning model.</li>
+</ul></li>
+<li><strong>Wiring:</strong> You connect the Output port of one operator to the Input port of the next.</li>
+<li><strong>Process:</strong> The complete chain of connected operators.</li>
+</ul>
+<h3>5. Storing Data, Processes, and Result Sets</h3>
+<ul>
+<li><strong>Storing Processes:</strong> Save the visual workflow in the Repository.</li>
+<li><strong>Store Operator:</strong> To persist the results of a transformation permanently, use the <code>Store</code> operator connected to the output of the workflow. This saves the data into the Repository.</li>
+<li><strong>Result Sets:</strong> If the final operator's output port is connected to the <strong>res (Result)</strong> port of the process panel (far right wall of the canvas), the data will appear in the <strong>Results View</strong> after running the process.</li>
+</ul>
+<hr/>
+<h2>Part 3: EDA (Exploratory Data Analysis) in RapidMiner</h2>
+<h3>1. Loading Data</h3>
+<p>Before analysis, data must be brought into the "Process" canvas.</p>
+<ul>
+<li><strong>Retrieve Operator:</strong> Used to load data already stored in a RapidMiner Repository.</li>
+<li><strong>Read Operators:</strong> Used for external files (<code>Read CSV</code>, <code>Read Excel</code>).
+<ul>
+<li><em>Configuration:</em> You must define the separator (comma/semicolon) and ensure the first row is identified as the header.</li>
+</ul></li>
+</ul>
+<h3>2. Summary Statistics</h3>
+<p>Once data is loaded and the process is run, RapidMiner automatically generates statistics in the <strong>Results View</strong> under the <strong>Statistics</strong> tab.</p>
+<ul>
+<li><strong>Overview:</strong> Displays Name, Type, Missing values count, and Statistics.</li>
+<li><strong>Numerical Attributes:</strong> Shows Min, Max, Average, and Standard Deviation.</li>
+<li><strong>Nominal (Categorical) Attributes:</strong> Shows "Least" and "Most" frequent values (Mode).</li>
+<li><strong>Utility:</strong> This is the first step to identify data quality issues (e.g., a column with 90% missing values or impossible min/max values).</li>
+</ul>
+<h3>3. Visualizing Data and Basic Charting</h3>
+<p>In the <strong>Results View</strong>, the <strong>Visualization</strong> tab provides dynamic charting capabilities.</p>
+<ul>
+<li><strong>Plot Types:</strong> Scatter, Histogram, Bar, Box Plot, Correlation Matrix.</li>
+<li><strong>Interactive Design:</strong>
+<ul>
+<li><strong>x-Axis / y-Axis:</strong> Select which attributes to map.</li>
+<li><strong>Color (Dimension):</strong> Map a third attribute to the color of the points (useful for classification labels).</li>
+<li><strong>Jitter:</strong> Add noise to scatter plots to see overlapping points.</li>
+</ul></li>
+<li><strong>Advanced Charts:</strong> "Turbo Prep" and "Auto Model" modules offer even more automated visual insights, but the core Visualization tab is the standard for manual EDA.</li>
+</ul>
+<hr/>
+<h2>Part 4: Data Preparation: Basic Data ETL</h2>
+<p>Data Preparation consumes roughly 80% of a data project's time. RapidMiner terminology distinguishes between <strong>Attributes</strong> (Columns) and <strong>Examples</strong> (Rows).</p>
+<h3>1. Data Types and Performing Transformation of Values</h3>
+<p>RapidMiner uses specific data types:</p>
+<ul>
+<li><strong>Polynomial/Nominal:</strong> String/Categorical data.</li>
+<li><strong>Real/Integer:</strong> Numerical data.</li>
+<li><strong>Binominal:</strong> Exactly two values (True/False).</li>
+<li><strong>Date_Time:</strong> Temporal data.</li>
+</ul>
+<p><strong>Key Operators:</strong></p>
+<ul>
+<li><strong>Parse Numbers:</strong> Converts text fields that look like numbers into actual numeric types.</li>
+<li><strong>Numerical to Polynominal / Polynominal to Numerical:</strong> Type conversion operators.</li>
+<li><strong>Generate Attributes:</strong> Creates new columns based on mathematical formulas (similar to SSIS Derived Column).
+<ul>
+<li><em>Example Expression:</em> <code>[Price] * 0.9</code> (creates a discounted price).</li>
+</ul></li>
+</ul>
+<h3>2. Handling Missing Values</h3>
+<p>Missing data impacts model accuracy.</p>
+<ul>
+<li><strong>Operator:</strong> <code>Replace Missing Values</code>.</li>
+<li><strong>Techniques:</strong>
+<ul>
+<li><strong>Minimum/Maximum:</strong> Replaces <code>NaN</code> with the extreme values.</li>
+<li><strong>Average:</strong> Replaces <code>NaN</code> with the mean of the column (standard for numerics).</li>
+<li><strong>Zero/Value:</strong> Replaces with a constant.</li>
+<li><strong>KNN (k-Nearest Neighbor):</strong> Imputes the value based on similar rows (more computationally expensive but often more accurate).</li>
+</ul></li>
+</ul>
+<h3>3. Filtering</h3>
+<ul>
+<li><strong>Filtering Rows (Examples):</strong>
+<ul>
+<li><strong>Operator:</strong> <code>Filter Examples</code>.</li>
+<li><em>Logic:</em> Define a condition (e.g., <code>age &gt; 21</code> AND <code>state equals NY</code>). Only rows meeting the condition pass through.</li>
+</ul></li>
+<li><strong>Filtering Columns (Attributes):</strong>
+<ul>
+<li><strong>Operator:</strong> <code>Select Attributes</code>.</li>
+<li><em>Modes:</em>
+<ul>
+<li><em>Single/Subset:</em> Manually select columns to keep.</li>
+<li><em>Regular Expression:</em> Select columns matching a pattern (e.g., <code>cust_.*</code>).</li>
+<li><em>No Missing Values:</em> Automatically drops columns that have missing data.</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3>4. Normalization and Standardization</h3>
+<p>Machine learning algorithms (like Neural Networks or K-Means) perform poorly if data scales differ (e.g., Age 0-100 vs. Salary 0-100,000).</p>
+<ul>
+<li><strong>Operator:</strong> <code>Normalize</code>.</li>
+<li><strong>Z-Transformation (Standardization):</strong>
+<ul>
+<li>Converts data so the mean is 0 and standard deviation is 1.</li>
+<li>formula: <span class="katex-inline" data-math="z = \frac{x - \mu}{\sigma}"></span></li>
+<li>Used when data follows a Gaussian (Bell curve) distribution.</li>
+</ul></li>
+<li><strong>Range Transformation (Min-Max Normalization):</strong>
+<ul>
+<li>Scales data into a specific range, usually [0, 1].</li>
+<li>formula: <span class="katex-inline" data-math="x' = \frac{x - \min(x)}{\max(x) - \min(x)}"></span></li>
+<li>Used for Neural Networks or when data does not follow a normal distribution.</li>
+</ul></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT323/Unit4/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT323/Unit6/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 6</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

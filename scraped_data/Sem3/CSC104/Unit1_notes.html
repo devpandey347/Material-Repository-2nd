@@ -1,0 +1,663 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem3/CSC104">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSC104/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSC104/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSC104/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSC104</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Windows Operating System Fundamentals and Architecture</h1>
+<h2>1. Introduction to the Windows Operating System</h2>
+<p>Windows is a graphical operating system developed by Microsoft. It allows users to view and store files, run software, play games, watch videos, and connect to the internet. It is the dominant OS for personal computers (PCs).</p>
+<h3>Key Characteristics</h3>
+<ul>
+<li><strong>Graphical User Interface (GUI):</strong> Uses icons, windows, and menus rather than text-based commands.</li>
+<li><strong>Multitasking:</strong> Capable of running multiple applications simultaneously.</li>
+<li><strong>Plug and Play (PnP):</strong> Automatically detects and configures hardware devices.</li>
+<li><strong>Multi-user:</strong> Supports multiple user profiles on a single machine with unique settings and permissions.</li>
+</ul>
+<h3>Windows Editions and Versions</h3>
+<p>It is crucial to distinguish between a <em>version</em> (the generation of the OS) and an <em>edition</em> (the feature set within that generation).</p>
+<h4>Versions (Generational Releases)</h4>
+<ul>
+<li><strong>Windows XP/7/8:</strong> Legacy versions.</li>
+<li><strong>Windows 10:</strong> Introduced "Windows as a Service" (continual updates).</li>
+<li><strong>Windows 11:</strong> Current standard with updated UI and security requirements (TPM 2.0).</li>
+</ul>
+<h4>Editions (Feature Tiers)</h4>
+<ul>
+<li><strong>Windows Home:</strong> Designed for consumers. Includes standard apps (Edge, Mail). Lacks domain join capabilities and BitLocker (usually).</li>
+<li><strong>Windows Pro:</strong> Designed for small businesses and enthusiasts. Includes <strong>BitLocker</strong> (encryption), <strong>Hyper-V</strong> (virtualization), and <strong>Domain Join</strong> (Active Directory support).</li>
+<li><strong>Windows Enterprise:</strong> For large organizations. Includes AppLocker, BranchCache, and advanced deployment tools. Available via Volume Licensing.</li>
+<li><strong>Windows Server:</strong> Optimized for network services (DNS, DHCP, Web Hosting). Prioritizes background tasks over user interface.</li>
+</ul>
+<hr/>
+<h2>2. User Interface and System Navigation</h2>
+<h3>The Desktop Environment</h3>
+<ul>
+<li><strong>Desktop:</strong> The main workspace containing shortcuts and the Recycle Bin.</li>
+<li><strong>Taskbar:</strong> Located at the bottom (usually); houses the Start button, pinned apps, active programs, and the System Tray (notification area).</li>
+<li><strong>Start Menu:</strong> The central launchpad for applications, settings, and power options.</li>
+</ul>
+<h3>Configuration Hubs</h3>
+<p>Windows has two primary areas for system configuration:</p>
+<ol>
+<li><strong>Settings App (Modern UI):</strong> The primary interface in Windows 10/11 for display, sound, windows update, and personalization.</li>
+<li><strong>Control Panel (Legacy UI):</strong> Contains advanced administrative tools (e.g., Network and Sharing Center, Administrative Tools).</li>
+</ol>
+<hr/>
+<h2>3. File System Hierarchy</h2>
+<p>Windows uses a hierarchical directory structure. The way data is stored on the disk depends on the <strong>File System</strong>.</p>
+<h3>FAT32 vs. NTFS</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">FAT32 (File Allocation Table 32)</th>
+<th style="text-align: left;">NTFS (New Technology File System)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Max File Size</strong></td>
+<td style="text-align: left;">4 GB</td>
+<td style="text-align: left;">16 Exabytes (Theoretical)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Max Volume Size</strong></td>
+<td style="text-align: left;">32 GB (Windows limit) / 2 TB</td>
+<td style="text-align: left;">256 TB</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Security</strong></td>
+<td style="text-align: left;">None (No file permissions)</td>
+<td style="text-align: left;"><strong>ACLs</strong> (Access Control Lists) for permissions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Reliability</strong></td>
+<td style="text-align: left;">Prone to corruption on crash</td>
+<td style="text-align: left;"><strong>Journaling</strong> (Logs changes to recover from crashes)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Features</strong></td>
+<td style="text-align: left;">High compatibility (Mac/Linux/USB)</td>
+<td style="text-align: left;">Encryption (EFS), Compression, Quotas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Usage</strong></td>
+<td style="text-align: left;">USB Drives, Legacy systems</td>
+<td style="text-align: left;">System Drives (C:), Internal HDDs</td>
+</tr>
+</tbody>
+</table>
+<h3>Critical System Folders</h3>
+<ul>
+<li><code>C:\</code> (Root Directory): The top of the hierarchy.</li>
+<li><code>C:\Windows</code>: Contains operating system files (Kernel, drivers, libraries). <strong>Do not modify manually.</strong></li>
+<li><code>C:\Program Files</code>: Installation directory for 64-bit applications.</li>
+<li><code>C:\Program Files (x86)</code>: Installation directory for 32-bit applications (only on 64-bit OS).</li>
+<li><code>C:\Users</code>: Contains user profiles (Desktop, Documents, AppData for each user).</li>
+</ul>
+<h3>Environment Variables</h3>
+<p>Environment variables are dynamic named values that can affect the way running processes will behave on a computer.</p>
+<ul>
+<li><strong>System Variables:</strong> Global settings (e.g., <code>%OS%</code>, <code>%PATH%</code> - tells Windows where to look for executable files).</li>
+<li><strong>User Variables:</strong> Specific to the currently logged-in user.</li>
+<li><strong>Access:</strong> Right-click <em>This PC</em> &gt; Properties &gt; Advanced System Settings &gt; Environment Variables.</li>
+</ul>
+<hr/>
+<h2>4. Windows Architecture Overview</h2>
+<p>Windows operates on a <strong>Dual-Mode Architecture</strong> to ensure stability and security.</p>
+<h3>1. User Mode (Ring 3)</h3>
+<ul>
+<li>Where applications (Word, Chrome) and user interface components run.</li>
+<li>Isolated from the hardware. If an app crashes in User Mode, it typically does not crash the entire OS.</li>
+<li><strong>Subsystems:</strong> Environment subsystems (Win32) translate app requests into kernel calls.</li>
+</ul>
+<h3>2. Kernel Mode (Ring 0)</h3>
+<ul>
+<li>The core of the operating system with unrestricted access to system memory and external devices.</li>
+<li><strong>The Kernel (ntoskrnl.exe):</strong> The "brain" that manages CPU scheduling, memory management, and I/O requests.</li>
+<li><strong>HAL (Hardware Abstraction Layer):</strong> A layer of code that hides hardware complexities from the kernel. It allows the same OS kernel to run on different hardware (e.g., Intel vs. AMD).</li>
+<li><strong>Drivers:</strong> Software components that let the OS communicate with specific hardware (Graphics card, Printer). Drivers mostly run in Kernel mode; a bad driver can cause a <strong>BSOD</strong> (Blue Screen of Death).</li>
+</ul>
+<h3>Windows Services</h3>
+<ul>
+<li>Background processes that run without a user interface.</li>
+<li>Examples: Windows Update, Print Spooler, DHCP Client.</li>
+<li>Management Tool: <code>services.msc</code>.</li>
+</ul>
+<hr/>
+<h2>5. Managing Processes, Threads, and Memory</h2>
+<h3>Task Manager</h3>
+<p>Accessed via <code>Ctrl + Shift + Esc</code> or <code>Ctrl + Alt + Del</code>.</p>
+<ul>
+<li><strong>Processes Tab:</strong> Shows running apps and background processes. Allows users to "End Task" (force quit).</li>
+<li><strong>Performance Tab:</strong> Real-time graphs for CPU, Memory (RAM), Disk, and Network usage.</li>
+<li><strong>Startup Tab:</strong> Manages programs that launch automatically when Windows boots.</li>
+</ul>
+<h3>Resource Monitor (<code>resmon</code>)</h3>
+<p>Provides a deeper granular view than Task Manager.</p>
+<ul>
+<li><strong>Disk:</strong> Shows exactly which files are being read/written by which process.</li>
+<li><strong>Network:</strong> Shows active TCP connections and listening ports.</li>
+</ul>
+<h3>Key Concepts</h3>
+<ul>
+<li><strong>Process:</strong> An instance of a computer program that is being executed. It contains the program code and its current activity.</li>
+<li><strong>Thread:</strong> A basic unit of CPU utilization. A single process can contain multiple threads (Multi-threading) to perform tasks in parallel.</li>
+<li><strong>Memory (RAM):</strong>
+<ul>
+<li><em>Physical Memory:</em> Actual RAM sticks installed.</li>
+<li><em>Virtual Memory (Pagefile):</em> Uses the hard drive as temporary RAM when physical RAM is full (<code>pagefile.sys</code>).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>6. System Information and Logs</h2>
+<h3>System Information (<code>msinfo32</code>)</h3>
+<p>A comprehensive tool to view hardware resources, components, and the software environment.</p>
+<ul>
+<li><strong>System Summary:</strong> BIOS Version/Date, Secure Boot State, Total Physical Memory.</li>
+<li><strong>Hardware Resources:</strong> IRQs, DMA, and Memory addresses (useful for troubleshooting hardware conflicts).</li>
+</ul>
+<h3>Event Viewer (<code>eventvwr.msc</code>)</h3>
+<p>A centralized log of all significant system events.</p>
+<ul>
+<li><strong>Windows Logs:</strong>
+<ol>
+<li><strong>Application:</strong> Events logged by programs (e.g., Outlook crashing).</li>
+<li><strong>Security:</strong> Audit logs (e.g., Valid/Invalid login attempts). Success/Audit Failure.</li>
+<li><strong>System:</strong> Events logged by Windows system components (e.g., Driver failure, Service stopped).</li>
+</ol></li>
+<li><strong>Event Levels:</strong>
+<ul>
+<li><em>Information:</em> Normal operation.</li>
+<li><em>Warning:</em> Potential issue in the future (e.g., Low disk space).</li>
+<li><em>Error:</em> A problem has occurred.</li>
+<li><em>Critical:</em> Immediate failure (e.g., Kernel power loss).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>7. The Windows Registry</h2>
+<p>The Registry is a hierarchical database used to store low-level settings for the OS and applications.</p>
+<ul>
+<li><strong>Access Tool:</strong> Registry Editor (<code>regedit</code>).</li>
+<li><strong>Warning:</strong> Improperly editing the registry can corrupt the OS.</li>
+</ul>
+<h3>Registry Structure</h3>
+<p>The registry is organized into <strong>Hives</strong>, <strong>Keys</strong>, and <strong>Values</strong>.</p>
+<h4>The 5 Root Hives (HKEY)</h4>
+<ol>
+<li><strong>HKEY_CLASSES_ROOT (HKCR):</strong> Stores file association types (e.g., linking <code>.docx</code> to Microsoft Word).</li>
+<li><strong>HKEY_CURRENT_USER (HKCU):</strong> Contains configuration data for the <em>user currently logged in</em> (colors, control panel settings).</li>
+<li><strong>HKEY_LOCAL_MACHINE (HKLM):</strong> Settings specific to the computer <em>hardware and software</em>, regardless of who is logged in. This is the most critical hive.</li>
+<li><strong>HKEY_USERS (HKU):</strong> Contains the profiles of all users loaded on the computer. HKCU is actually a sub-key of this hive.</li>
+<li><strong>HKEY_CURRENT_CONFIG (HKCC):</strong> Information about the hardware profile being used by the local computer at startup.</li>
+</ol>
+<h4>Data Types</h4>
+<ul>
+<li><strong>REG_SZ:</strong> A text string.</li>
+<li><strong>REG_DWORD:</strong> A 32-bit number (0 or 1 is often used for On/Off).</li>
+<li><strong>REG_BINARY:</strong> Raw binary data.</li>
+</ul>
+<hr/>
+<h2>8. Introduction to Command-Line Tools</h2>
+<p>Administrators often use the command line for efficiency and automation.</p>
+<h3>Command Prompt (CMD)</h3>
+<p>The legacy command-line interpreter.</p>
+<ul>
+<li><strong>Navigation:</strong>
+<ul>
+<li><code>cd</code> (Change Directory)</li>
+<li><code>dir</code> (List contents of directory)</li>
+</ul></li>
+<li><strong>File Management:</strong>
+<ul>
+<li><code>mkdir</code> (Make directory)</li>
+<li><code>copy</code> / <code>xcopy</code> / <code>robocopy</code> (Copy files)</li>
+</ul></li>
+<li><strong>Networking:</strong>
+<ul>
+<li><code>ipconfig</code> (View IP address)</li>
+<li><code>ping</code> (Test connectivity)</li>
+</ul></li>
+<li><strong>System:</strong>
+<ul>
+<li><code>sfc /scannow</code> (System File Checker - repairs OS files)</li>
+<li><code>chkdsk</code> (Check Disk - repairs file system errors)</li>
+</ul></li>
+</ul>
+<h3>PowerShell</h3>
+<p>A modern, cross-platform task automation and configuration management framework. It is more powerful than CMD and is object-oriented.</p>
+<ul>
+<li><strong>Syntax:</strong> Uses <strong>Cmdlets</strong> (pronounced "command-lets") in a <code>Verb-Noun</code> format.</li>
+<li><strong>Examples:</strong>
+<ul>
+<li><code>Get-Process</code> (Lists running processes - equivalent to Task Manager).</li>
+<li><code>Get-Service</code> (Lists status of services).</li>
+<li><code>Get-Help</code> (Shows manual for a command).</li>
+</ul></li>
+<li><strong>Scripting:</strong> Scripts are saved as <code>.ps1</code> files.</li>
+<li><strong>ISE:</strong> PowerShell Integrated Scripting Environment allows for writing and debugging scripts.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem3/CSC104/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

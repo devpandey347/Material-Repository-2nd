@@ -1,0 +1,621 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/INT255">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT255/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT255/Unit6/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT255/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT255</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            11 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Regularization and Generalization Theory</h1>
+<h2>1. The Bias-Variance Trade-off</h2>
+<p>The bias-variance trade-off is a fundamental concept in supervised learning that describes the tension between model complexity and its ability to generalize to new, unseen data. It decomposes the expected generalization error of a learning algorithm into three components.</p>
+<h3>1.1. Decomposing Generalization Error</h3>
+<p>Let's consider a regression problem. The true underlying relationship between features <code>x</code> and target <code>y</code> is given by <code>y = f(x) + ε</code>, where <code>ε</code> is random noise with zero mean and variance <code>σ²</code>.</p>
+<ul>
+<li><code>f(x)</code>: The true, unknown function we want to approximate.</li>
+<li><code>ε</code>: Irreducible noise (e.g., measurement error). <code>E[ε] = 0</code>, <code>Var(ε) = σ²</code>.</li>
+</ul>
+<p>We use a dataset <code>D</code> to train a model, resulting in a learned hypothesis <code>h_D(x)</code>. Note that the hypothesis <code>h_D</code> is a random variable because it depends on the specific training dataset <code>D</code> we happened to draw from the underlying data distribution.</p>
+<p>The goal is to minimize the <strong>Expected Prediction Error (EPE)</strong> for a new data point <code>(x, y)</code>:</p>
+<blockquote>
+<p><strong>EPE(x)</strong> = <code>E_D[E_y[(y - h_D(x))² | x]]</code></p>
+</blockquote>
+<p>This is the expected squared error at a point <code>x</code>, averaged over all possible training datasets <code>D</code> and all possible values of <code>y</code> for that <code>x</code>. This can be decomposed as follows:</p>
+<p><strong>EPE(x) = (Bias)² + Variance + Irreducible Error</strong></p>
+<p>Let's break down each term:</p>
+<h4>a) Bias</h4>
+<p>Bias measures the difference between the average prediction of our model and the correct value <code>f(x)</code>. It represents the model's inherent assumptions and simplifications.</p>
+<blockquote>
+<p><strong>Bias[h_D(x)]</strong> = <code>E_D[h_D(x)] - f(x)</code></p>
+</blockquote>
+<ul>
+<li><strong>High Bias</strong>: The model's average prediction is far from the true function. This happens when the model is too simple to capture the underlying structure of the data (e.g., fitting a linear model to a quadratic relationship). This leads to <strong>underfitting</strong>.</li>
+<li><strong>Low Bias</strong>: The model's average prediction is close to the true function. This indicates the model is flexible enough to capture the data's true structure.</li>
+</ul>
+<h4>b) Variance</h4>
+<p>Variance measures how much the model's prediction <code>h_D(x)</code> changes for a given point <code>x</code> if we train it on different datasets <code>D</code>. It represents the model's sensitivity to the specific training data.</p>
+<blockquote>
+<p><strong>Var[h_D(x)]</strong> = <code>E_D[(h_D(x) - E_D[h_D(x)])²]</code></p>
+</blockquote>
+<ul>
+<li><strong>High Variance</strong>: The model changes significantly with small changes in the training data. It is learning the noise and specific quirks of the training set, not the underlying function. This leads to <strong>overfitting</strong>.</li>
+<li><strong>Low Variance</strong>: The model's predictions are stable across different training sets. It produces a consistent output, indicating it has learned the general patterns.</li>
+</ul>
+<h4>c) Irreducible Error</h4>
+<p>This error component is due to the inherent noise <code>ε</code> in the data itself. No model, no matter how good, can eliminate this error.</p>
+<blockquote>
+<p><strong>Irreducible Error</strong> = <code>Var(ε) = σ²</code></p>
+</blockquote>
+<h3>1.2. The Trade-off in Practice</h3>
+<ul>
+<li><strong>Simple Models (e.g., Linear Regression)</strong>: Tend to have high bias and low variance. They make strong assumptions (e.g., linearity) and are not overly sensitive to the training data.</li>
+<li><strong>Complex Models (e.g., High-Degree Polynomials, Deep Neural Networks)</strong>: Tend to have low bias and high variance. They are flexible enough to fit the training data very well (low bias) but are highly sensitive to its noise, leading to poor generalization (high variance).</li>
+</ul>
+<p>The relationship is illustrated by the "U-shaped" curve of total error versus model complexity.</p>
+<p>The optimal model complexity is at the bottom of the "U," where the total error is minimized. This is the sweet spot that balances bias and variance.</p>
+<h2>2. Overfitting and Underfitting: A Mathematical Viewpoint</h2>
+<p>Let <code>h</code> be a hypothesis from a hypothesis space <code>H</code>.</p>
+<ul>
+<li><strong>True Risk / Generalization Error <code>R(h)</code></strong>: The expected loss over the entire data distribution.<br/>
+<code>R(h) = E_{(x,y)∼P}[L(h(x), y)]</code>, where <code>L</code> is a loss function (e.g., squared error). This is what we truly want to minimize, but we can't compute it because we don't know the true distribution <code>P</code>.</li>
+<li><strong>Empirical Risk / Training Error <code>R_emp(h)</code></strong>: The average loss over our training set <code>S = {(x_i, y_i)}_{i=1}^n</code>.<br/>
+<code>R_emp(h) = (1/n) * Σ_{i=1}^n L(h(x_i), y_i)</code>. This is what we can compute and minimize during training.</li>
+</ul>
+<p><strong>Underfitting (High Bias):</strong></p>
+<ul>
+<li>The model is too simple. The hypothesis space <code>H</code> is not rich enough to contain a function that can approximate the true function <code>f</code>.</li>
+<li><strong>Mathematical Symptom</strong>: Both <code>R_emp(h)</code> and <code>R(h)</code> are high. The model performs poorly on both the training data and new data.</li>
+</ul>
+<p><strong>Overfitting (High Variance):</strong></p>
+<ul>
+<li>The model is too complex. It has learned the noise and specific patterns of the training set <code>S</code>.</li>
+<li><strong>Mathematical Symptom</strong>: <code>R_emp(h)</code> is very low, but <code>R(h)</code> is high. There is a large <strong>generalization gap</strong>: <code>R(h) - R_emp(h) &gt;&gt; 0</code>. The model has "memorized" the training data but fails to generalize.</li>
+</ul>
+<p>The goal of machine learning, particularly regularization, is to find a hypothesis <code>h</code> that not only has a low empirical risk <code>R_emp(h)</code> but also a small generalization gap, thereby ensuring a low true risk <code>R(h)</code>.</p>
+<h2>3. L1 and L2 Regularization</h2>
+<p>Regularization is a technique used to prevent overfitting by adding a penalty term to the loss function. This penalty discourages the model from becoming too complex.</p>
+<p>The general form of a regularized objective function is:</p>
+<blockquote>
+<p><code>J(w) = R_emp(w) + λ * Ω(w)</code></p>
+</blockquote>
+<ul>
+<li><code>R_emp(w)</code>: The original loss function (e.g., Mean Squared Error).</li>
+<li><code>w</code>: The model parameters (weights).</li>
+<li><code>Ω(w)</code>: The regularization term, which penalizes complexity.</li>
+<li><code>λ</code>: The regularization parameter, a hyperparameter that controls the strength of the penalty. <code>λ ≥ 0</code>.</li>
+</ul>
+<h3>3.1. L2 Regularization (Ridge Regression)</h3>
+<p>L2 regularization adds a penalty proportional to the squared magnitude of the weights. The penalty term is the squared L2 norm of the weight vector.</p>
+<blockquote>
+<p><code>Ω(w) = ||w||₂² = Σ_{j=1}^d w_j²</code></p>
+</blockquote>
+<p>The objective function becomes:</p>
+<blockquote>
+<p><code>J(w) = Σ_{i=1}^n (y_i - wᵀx_i)² + λ * Σ_{j=1}^d w_j²</code></p>
+</blockquote>
+<p><strong>Mathematical Effects:</strong></p>
+<ol>
+<li><strong>Shrinks Weights</strong>: It encourages the model to use smaller weights. Large weights are heavily penalized, pushing them towards zero but rarely ever reaching exactly zero.</li>
+<li><strong>Distributes Weights</strong>: In the presence of correlated features, L2 tends to distribute the weight more evenly among them.</li>
+<li><strong>Makes the Problem Well-Posed</strong>: For linear regression, the closed-form solution is <code>w = (XᵀX)⁻¹Xᵀy</code>. If features are correlated, <code>XᵀX</code> can be singular or ill-conditioned, making its inverse unstable. The L2-regularized solution is <code>w = (XᵀX + λI)⁻¹Xᵀy</code>. The term <code>λI</code> adds a positive value to the diagonal, making the matrix invertible and the solution stable.</li>
+</ol>
+<h3>3.2. L1 Regularization (Lasso Regression)</h3>
+<p>L1 regularization adds a penalty proportional to the absolute value of the weights. The penalty term is the L1 norm of the weight vector.</p>
+<blockquote>
+<p><code>Ω(w) = ||w||₁ = Σ_{j=1}^d |w_j|</code></p>
+</blockquote>
+<p>The objective function becomes:</p>
+<blockquote>
+<p><code>J(w) = Σ_{i=1}^n (y_i - wᵀx_i)² + λ * Σ_{j=1}^d |w_j|</code></p>
+</blockquote>
+<p><strong>Mathematical Effects:</strong></p>
+<ol>
+<li><strong>Creates Sparsity</strong>: The key feature of L1 is that it can shrink some weights to be <em>exactly zero</em>. This effectively performs automatic feature selection, as features with zero weights are removed from the model.</li>
+<li><strong>Non-differentiable</strong>: The <code>|w_j|</code> term is not differentiable at <code>w_j = 0</code>. This means there is no simple closed-form solution, and optimization must be done with algorithms like Coordinate Descent or Subgradient Descent.</li>
+</ol>
+<h3>3.3. Geometric Intuition: L1 vs. L2</h3>
+<p>The difference between L1 and L2 can be understood geometrically by viewing regularization as a constrained optimization problem.</p>
+<blockquote>
+<p>Minimize <code>R_emp(w)</code> subject to <code>Ω(w) ≤ C</code></p>
+</blockquote>
+<p>For a given <code>λ</code>, there is a corresponding constraint radius <code>C</code>.</p>
+<ul>
+<li><strong>L2 Regularization</strong>: The constraint region is <code>||w||₂² ≤ C</code>, which is a hypersphere (a circle in 2D). The level curves of the loss function are ellipses. The optimal solution is the point where an ellipse first touches the circle. This tangency point is unlikely to be on an axis, so weights are small but non-zero.</li>
+<li><strong>L1 Regularization</strong>: The constraint region is <code>||w||₁ ≤ C</code>, which is a hyper-rhombus (a diamond in 2D). Because the L1 "ball" has sharp corners (vertices) at the axes, the expanding ellipses of the loss function are much more likely to hit one of these corners first. At a corner, one of the weight components is zero, leading to a sparse solution.</li>
+</ul>
+<h2>4. Norm-based Constraints and Structural Risk Minimization</h2>
+<p>The L1 and L2 penalties are specific instances of a more general idea of controlling model complexity.</p>
+<h3>4.1. Lp Norms</h3>
+<p>The Lp norm of a vector <code>w</code> is defined as:</p>
+<blockquote>
+<p><code>||w||_p = (Σ_{i=1}^d |w_i|^p)^(1/p)</code></p>
+</blockquote>
+<ul>
+<li><code>p=1</code>: L1 norm (Manhattan distance)</li>
+<li><code>p=2</code>: L2 norm (Euclidean distance)</li>
+</ul>
+<p>Regularization can use any Lp norm. The "Elastic Net" regularization combines both L1 and L2 penalties: <code>λ₁||w||₁ + λ₂||w||₂²</code>.</p>
+<h3>4.2. Structural Risk Minimization (SRM)</h3>
+<p>SRM is a theoretical principle from statistical learning theory (developed by Vapnik) that provides a formal justification for regularization.</p>
+<p>The core idea is to balance the quality of the fit on the training data (empirical risk) with the complexity of the hypothesis class. Instead of just minimizing <code>R_emp(h)</code>, SRM aims to minimize an <strong>upper bound on the true risk <code>R(h)</code></strong>.</p>
+<p>A key result from learning theory states that with probability at least <code>1-δ</code>, the following bound holds for any hypothesis <code>h</code> in a hypothesis class <code>H</code>:</p>
+<blockquote>
+<p><code>R(h) ≤ R_emp(h) + Φ(H, n, δ)</code></p>
+</blockquote>
+<ul>
+<li><code>R(h)</code>: True risk (what we care about).</li>
+<li><code>R_emp(h)</code>: Empirical risk (what we measure).</li>
+<li><code>Φ(H, n, δ)</code>: The "complexity penalty" or "generalization bound". This term depends on:
+<ul>
+<li><code>H</code>: The complexity/capacity of the hypothesis space.</li>
+<li><code>n</code>: The number of training samples.</li>
+<li><code>δ</code>: A confidence parameter (how certain we are that the bound holds).</li>
+</ul></li>
+</ul>
+<p><strong>The SRM Principle:</strong><br/>
+Instead of naively picking a hypothesis <code>h</code> that minimizes <code>R_emp(h)</code> (which can lead to overfitting), we should pick the hypothesis <code>h</code> that minimizes the entire right-hand side of the inequality.</p>
+<p>Regularization is a practical implementation of SRM. The term <code>λ * Ω(w)</code> in our regularized objective function is a proxy for the theoretical complexity penalty <code>Φ(H, n, δ)</code>. By penalizing large weights, we are effectively restricting ourselves to a simpler subset of the hypothesis space, thereby controlling the complexity term and improving generalization.</p>
+<h2>5. VC Dimension (Vapnik-Chervonenkis Dimension)</h2>
+<p>The VC dimension is a formal, quantitative measure of the <strong>capacity</strong>, <strong>complexity</strong>, or <strong>expressive power</strong> of a hypothesis class <code>H</code>. It is a key concept used in the complexity term <code>Φ</code> from the SRM principle.</p>
+<h3>5.1. Intuition and Definition</h3>
+<p><strong>Intuition</strong>: The VC dimension measures how many data points a model class can perfectly classify, no matter how the labels are assigned.</p>
+<p><strong>Shattering</strong>: A hypothesis class <code>H</code> is said to <strong>shatter</strong> a set of <code>n</code> points <code>{x₁, ..., x_n}</code> if for <em>every possible</em> binary labeling of these points, there exists a hypothesis <code>h ∈ H</code> that can produce that exact labeling.</p>
+<ul>
+<li>There are <code>2^n</code> possible binary labelings for <code>n</code> points. To shatter the set, <code>H</code> must be able to realize all of them.</li>
+</ul>
+<blockquote>
+<p><strong>Definition: VC Dimension</strong><br/>
+The VC dimension of a hypothesis class <code>H</code>, denoted <code>VC(H)</code>, is the size of the largest set of points that <code>H</code> can shatter. If <code>H</code> can shatter any arbitrarily large set of points, its VC dimension is infinite.</p>
+</blockquote>
+<h3>5.2. Examples</h3>
+<p><strong>a) Linear Classifier in 1D (Thresholds on a line)</strong></p>
+<ul>
+<li>A set of 1 point can be shattered. (<code>{+}</code> or <code>{-}</code>)</li>
+<li>A set of 2 points <code>{x₁, x₂}</code> can be shattered. We can label them <code>{+,+}</code>, <code>{+,-}</code>, <code>{-,-}</code>, <code>{-,+}</code> using a threshold.</li>
+<li>A set of 3 points <code>{x₁, x₂, x₃}</code> cannot be shattered. The labeling <code>{+,-,+}</code> is impossible to achieve with a single threshold.</li>
+<li><strong>VC(H_threshold) = 2</strong>.</li>
+</ul>
+<p><strong>b) Linear Classifier in 2D (Lines in a plane)</strong></p>
+<ul>
+<li>
+<p>Can <code>H</code> shatter 3 points (non-collinear)? Yes. For any of the <code>2³=8</code> labelings, we can draw a line to separate the positives from the negatives.</p>
+</li>
+<li>
+<p>Can <code>H</code> shatter 4 points? No. Consider 4 points arranged in a convex hull (e.g., corners of a square). It is impossible to find a line that correctly classifies the labeling where diagonally opposite points have the same label (the XOR problem).</p>
+</li>
+<li>
+<p><strong>VC(H_line_in_2D) = 3</strong>.</p>
+</li>
+</ul>
+<p><strong>Generalization</strong>: The VC dimension of a linear classifier (hyperplane) in <code>d</code> dimensions is <code>d+1</code>.</p>
+<h3>5.3. Role in Generalization Theory</h3>
+<p>The VC dimension provides a concrete measure of complexity for the SRM bound. A simplified version of the VC bound is:</p>
+<blockquote>
+<p><code>R(h) ≤ R_emp(h) + sqrt( (VC(H) * (log(2n/VC(H)) + 1) - log(δ/4)) / n )</code></p>
+</blockquote>
+<p><strong>Key Takeaways from the Bound:</strong></p>
+<ol>
+<li><strong>Complexity</strong>: If <code>VC(H)</code> is high, the second term (the generalization bound) is large. This means that for a complex model, the true risk could be much higher than the empirical risk. This is the mathematical formalization of overfitting.</li>
+<li><strong>Data</strong>: As the number of samples <code>n</code> increases, the generalization bound decreases (at a rate of approx. <code>1/√n</code>). This means with enough data, even a complex model can generalize well.</li>
+<li><strong>SRM in Practice</strong>: SRM involves defining a nested sequence of hypothesis spaces <code>H₁ ⊂ H₂ ⊂ ...</code> where <code>VC(H₁) &lt; VC(H₂) &lt; ...</code>. We then choose the hypothesis space <code>H_k</code> and the specific hypothesis <code>h ∈ H_k</code> that together minimize the VC bound. Regularization is a smoother, more practical way to do this: increasing <code>λ</code> effectively restricts the model to a hypothesis space with a smaller "effective" VC dimension.</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/INT255/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

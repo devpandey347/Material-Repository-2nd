@@ -1,0 +1,739 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/HIS291">HIS291</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/HIS291">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/HIS291/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/HIS291/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/HIS291/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>HIS291</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: The Great Aryans</h1>
+<h2>I. The Early Vedic Period (Rig Vedic Age)</h2>
+<p><strong>Timeline:</strong> c. 1500 – 1000 BCE<br/>
+<strong>Primary Source:</strong> The Rig Veda (The oldest religious text in the world).</p>
+<h3>1. Geographical Extent</h3>
+<ul>
+<li><strong>Sapta Sindhu:</strong> The Early Aryans settled in the "Land of Seven Rivers" (modern Punjab and Haryana).</li>
+<li><strong>The Rivers:</strong>
+<ul>
+<li>Indus (Sindhu) – Most mentioned river.</li>
+<li>Saraswati – Considered the holiest river (Matetama, Devitama).</li>
+<li>The five tributaries: Jhelum (Vitasta), Chenab (Asikni), Ravi (Parushni), Beas (Vipasa), Sutlej (Sutudri).</li>
+</ul></li>
+<li><strong>Expansion:</strong> They had knowledge of the Himalayas (Himavant) but no knowledge of the Vindhyas or the Indian Ocean.</li>
+</ul>
+<h3>2. Polity (Political Structure)</h3>
+<ul>
+<li><strong>Tribal Structure:</strong> The polity was tribal rather than territorial. The tribe was called <strong>Jana</strong>.</li>
+<li><strong>The King (Rajan):</strong>
+<ul>
+<li>The chief of the tribe.</li>
+<li>Office was generally hereditary but could be elected by the tribal assembly.</li>
+<li><strong>Power:</strong> Limited; he was not an absolute monarch. His primary duty was the protection of the tribe and cattle (<em>Gopis</em> or protector of cows).</li>
+<li>No standing army or regular taxation system.</li>
+</ul></li>
+<li><strong>Tribal Assemblies:</strong> The King’s power was checked by assemblies:
+<ul>
+<li><strong>Sabha:</strong> Council of elders/elites (included women).</li>
+<li><strong>Samiti:</strong> General assembly of the people.</li>
+<li><strong>Vidatha:</strong> Oldest assembly, performed social, religious, and military functions.</li>
+<li><strong>Gana:</strong> Assembly of the troops.</li>
+</ul></li>
+<li><strong>Officers:</strong>
+<ul>
+<li><em>Purohita</em> (High Priest): Most important official (e.g., Vashistha and Vishvamitra).</li>
+<li><em>Senani</em> (Army Chief).</li>
+<li><em>Vrajapati</em> (Officer of pasture lands).</li>
+</ul></li>
+</ul>
+<h3>3. Society</h3>
+<ul>
+<li><strong>Social Unit:</strong> The basic unit was the <strong>Kula</strong> (family), headed by the <strong>Kulapa</strong> (eldest male). The society was patriarchal.</li>
+<li><strong>Position of Women:</strong>
+<ul>
+<li>Enjoyed a high status.</li>
+<li>Educated and composed hymns (e.g., Lopamudra, Ghosa, Apala).</li>
+<li>Could attend assemblies (Sabha and Vidatha).</li>
+<li>No Child Marriage; Widow Remarriage (Niyoga) was allowed.</li>
+<li>No Sati or Purdah system.</li>
+</ul></li>
+<li><strong>Varna System:</strong>
+<ul>
+<li>Based on <strong>occupation</strong>, not birth.</li>
+<li>Society was divided into <em>Aryas</em> (fair) and <em>Dasas/Dasyus</em> (indigenous dark-complexioned people).</li>
+<li>Towards the end of the Rig Vedic period (Purusha Sukta of 10th Mandala), the four-fold division appeared: Brahman, Kshatriya, Vaishya, and Shudra.</li>
+</ul></li>
+</ul>
+<h3>4. Economy</h3>
+<ul>
+<li><strong>Pastoralism:</strong> Cattle rearing was the primary occupation. Cows were the measure of wealth. Wars were often fought for cattle (<em>Gavisthi</em>).</li>
+<li><strong>Agriculture:</strong> Secondary occupation. Cultivated Yava (Barley). Shifting cultivation was common.</li>
+<li><strong>Trade:</strong> System of Barter. <strong>Nishka</strong> (gold ornament) was used as a unit of value, though not yet a coin.</li>
+<li><strong>Crafts:</strong> Chariot making, carpentry, weaving, and pottery (Ochre Coloured Pottery - OCP).</li>
+</ul>
+<h3>5. Religion</h3>
+<ul>
+<li><strong>Nature Worship:</strong> They worshipped personified powers of nature.</li>
+<li><strong>Key Deities:</strong>
+<ul>
+<li><strong>Indra (Purandara):</strong> The destroyer of forts and Rain God. Most important (250 hymns).</li>
+<li><strong>Agni:</strong> Fire God; intermediary between God and Man (200 hymns).</li>
+<li><strong>Varuna:</strong> God of water and upholder of natural order (<em>Rita</em>).</li>
+<li><strong>Soma:</strong> God of plants/intoxicating drink.</li>
+<li>Female deities: Usha (Dawn) and Aditi (Mother of Gods).</li>
+</ul></li>
+<li><strong>Rituals:</strong> Worship was performed through prayer and simple sacrifices (<em>Yajna</em>). No temples or idol worship.</li>
+</ul>
+<hr/>
+<h2>II. The Later Vedic Period</h2>
+<p><strong>Timeline:</strong> c. 1000 – 600 BCE<br/>
+<strong>Sources:</strong> Samaveda, Yajurveda, Atharvaveda, Brahmanas, Aranyakas, and Upanishads.</p>
+<h3>1. Geographical Expansion</h3>
+<ul>
+<li>Aryans moved eastward into the <strong>Gangetic Doab</strong>.</li>
+<li>The center of culture shifted from Punjab to <strong>Kurukshetra</strong> (Kuru-Panchala region).</li>
+<li>They cleared forests using fire and iron axes.</li>
+<li>Knowledge of the Eastern Seas and Vindhya mountains emerged.</li>
+</ul>
+<h3>2. Polity (State Formation)</h3>
+<ul>
+<li><strong>Territorial State (Janapada):</strong> The "Jana" (tribe) transformed into "Janapada" (territory).</li>
+<li><strong>Kingship:</strong>
+<ul>
+<li>King became powerful and claimed absolute authority.</li>
+<li>Emergence of "Divine Right of Kingship."</li>
+<li>Adoption of grand titles: <em>Samrat, Ekrat, Virat</em>.</li>
+</ul></li>
+<li><strong>Royal Rituals:</strong> To legitimize power.
+<ul>
+<li><em>Ashvamedha:</em> Horse sacrifice for territorial control.</li>
+<li><em>Rajasuya:</em> Consecration ceremony conferring supreme power.</li>
+<li><em>Vajapeya:</em> Chariot race to prove superiority.</li>
+</ul></li>
+<li><strong>Administration:</strong>
+<ul>
+<li>Popular assemblies (Sabha/Samiti) lost power and were dominated by chiefs and Brahmins. Women were excluded.</li>
+<li>Taxation became regular (<em>Bali</em> became mandatory tax, collected by <em>Sangrihitri</em>).</li>
+<li>Standing army concept began to emerge.</li>
+</ul></li>
+</ul>
+<h3>3. Society</h3>
+<ul>
+<li><strong>Varna System (Rigid):</strong>
+<ul>
+<li>Based on <strong>birth/heredity</strong>.</li>
+<li><strong>Brahmanas:</strong> Priests, teachers (claimed highest status).</li>
+<li><strong>Kshatriyas:</strong> Rulers, warriors.</li>
+<li><strong>Vaishyas:</strong> Agriculturists, traders (the only tax-paying class).</li>
+<li><strong>Shudras:</strong> Servers of the upper three varnas; denied education (Upanayana).</li>
+</ul></li>
+<li><strong>Gotra System:</strong> Institution of Gotra (clan exogamy) appeared. Marriage within the same Gotra was forbidden.</li>
+<li><strong>Ashrama System:</strong> The four stages of life evolved:
+<ol>
+<li><em>Brahmacharya</em> (Student life).</li>
+<li><em>Grihastha</em> (Householder).</li>
+<li><em>Vanaprastha</em> (Hermit/Partial retirement).</li>
+<li><em>Sannyasa</em> (Ascetic/Renunciation - fully developed later).</li>
+</ol></li>
+<li><strong>Status of Women:</strong> Declined significantly. Denied education and entry to assemblies. Child marriage began. Birth of a daughter was considered a source of misery (Aitareya Brahmana).</li>
+</ul>
+<h3>4. Economy</h3>
+<ul>
+<li><strong>Iron Age:</strong> Widespread use of Iron (<em>Krishna Ayas</em> or <em>Shyama Ayas</em>) around 1000 BCE revolutionized agriculture (iron plowshares).</li>
+<li><strong>Agriculture:</strong> Became the primary occupation. Rice (<em>Vrihi</em>) and Wheat (<em>Godhuma</em>) became staple crops.</li>
+<li><strong>Crafts:</strong> Metalwork, leatherwork, jewelry.</li>
+<li><strong>Pottery:</strong> Painted Grey Ware (PGW) culture.</li>
+<li><strong>Urbanization:</strong> Growth of towns (Nagara) towards the end of the period (Hastinapur, Kaushambi). Guilds (<em>Shrenis</em>) began to form.</li>
+</ul>
+<h3>5. Religion and Philosophy</h3>
+<ul>
+<li><strong>Change in Pantheon:</strong> Indra and Agni lost importance.
+<ul>
+<li><strong>Prajapati</strong> (The Creator/Brahma) became supreme.</li>
+<li><strong>Vishnu</strong> (The Preserver) and <strong>Rudra</strong> (The Destroyer/Shiva) gained prominence.</li>
+</ul></li>
+<li><strong>Ritualism:</strong> Religion became complex, mechanical, and expensive. Dominance of Brahmanas and intricate sacrifices.</li>
+<li><strong>Philosophical Reaction:</strong> Towards the end, a reaction against ritualism led to the <strong>Upanishads</strong> (Vedanta), focusing on <em>Jnana</em> (knowledge), <em>Brahman</em> (Universal Soul), and <em>Atman</em> (Individual Soul).</li>
+</ul>
+<hr/>
+<h2>III. Religious Movements (6th Century BCE)</h2>
+<h3>Causes for the Rise of Heterodox Sects (Buddhism &amp; Jainism)</h3>
+<ol>
+<li><strong>Religious Unrest:</strong> Complexity of Vedic rituals, expensive sacrifices, and corruption in the priestly class.</li>
+<li><strong>Varna System:</strong> Growing tension between Brahmins and Kshatriyas. Both Mahavira and Buddha were Kshatriyas who disputed Brahmanical supremacy.</li>
+<li><strong>Economic Factors:</strong> The rise of the Vaishya class (traders) who wanted a social status matching their economic power. They supported non-violent religions that favored trade.</li>
+<li><strong>Agricultural Needs:</strong> Vedic sacrifices involved the mass slaughter of cattle. The new iron-plow agriculture required the preservation of cattle, making the doctrine of <em>Ahimsa</em> (non-violence) economically necessary.</li>
+</ol>
+<hr/>
+<h2>IV. Jainism</h2>
+<h3>1. The Tirthankaras</h3>
+<ul>
+<li>Jainism believes in 24 Tirthankaras (Ford-makers/Teachers).</li>
+<li><strong>1st:</strong> Rishabhadeva (Symbol: Bull).</li>
+<li><strong>23rd:</strong> Parsvanatha (Symbol: Snake). He proposed four vows: Ahimsa, Satya, Asteya, Aparigraha.</li>
+<li><strong>24th:</strong> Vardhamana Mahavira.</li>
+</ul>
+<h3>2. Life of Vardhamana Mahavira (540–468 BCE)</h3>
+<ul>
+<li><strong>Birth:</strong> Kundagrama (near Vaishali).</li>
+<li><strong>Clan:</strong> Jnatrika clan (Kshatriya).</li>
+<li><strong>Enlightenment:</strong> Attained <em>Kaivalya</em> (Omniscience) at age 42 under a Sal tree at Jrimbhikagrama. Became a <em>Jina</em> (Conqueror).</li>
+<li><strong>Death:</strong> attained Nirvana at Pava (near Rajgir).</li>
+</ul>
+<h3>3. Doctrines of Jainism</h3>
+<ul>
+<li><strong>Triratna (Three Gems):</strong>
+<ol>
+<li>Right Faith (<em>Samyak Darshana</em>).</li>
+<li>Right Knowledge (<em>Samyak Jnana</em>).</li>
+<li>Right Conduct (<em>Samyak Charitra</em>).</li>
+</ol></li>
+<li><strong>Pancha Mahavratas (Five Great Vows):</strong>
+<ol>
+<li><em>Ahimsa:</em> Non-violence (most important).</li>
+<li><em>Satya:</em> Truth.</li>
+<li><em>Asteya:</em> Non-stealing.</li>
+<li><em>Aparigraha:</em> Non-possession.</li>
+<li><em>Brahmacharya:</em> Celibacy (Added by Mahavira).</li>
+</ol></li>
+<li><strong>Philosophy:</strong>
+<ul>
+<li><strong>Syadvada/Anekantavada:</strong> The theory of "maybe" or relativity of knowledge. Truth has many aspects.</li>
+<li>Rejection of God as the creator; the Universe is eternal.</li>
+<li>Belief in Karma and Transmigration of Soul.</li>
+<li>Extreme penance and austerity to liberate the soul.</li>
+</ul></li>
+</ul>
+<h3>4. Jain Sects</h3>
+<p>Split occurred around 300 BCE due to a famine in Magadha.</p>
+<ol>
+<li><strong>Digambaras:</strong> "Sky-clad" (Naked). Orthodox followers of Bhadrabahu who moved South.</li>
+<li><strong>Shvetambaras:</strong> "White-clad". Followers of Sthulabhadra who stayed in Magadha.</li>
+</ol>
+<h3>5. Jain Councils</h3>
+<ul>
+<li><strong>1st Council:</strong> Pataliputra (300 BCE). Chair: Sthulabhadra. Compilation of 12 Angas.</li>
+<li><strong>2nd Council:</strong> Valabhi (512 CE). Chair: Devardhi Kshamasramana. Final compilation of Jain texts.</li>
+</ul>
+<hr/>
+<h2>V. Buddhism</h2>
+<h3>1. Life of Gautama Buddha (563–483 BCE)</h3>
+<ul>
+<li><strong>Original Name:</strong> Siddhartha.</li>
+<li><strong>Birth:</strong> Lumbini (Nepal).</li>
+<li><strong>Clan:</strong> Sakya clan (hence called <em>Sakyamuni</em>).</li>
+<li><strong>The Four Sights:</strong> An old man, a sick man, a dead body, and an ascetic. Led to his renunciation (<em>Mahabhinishkramana</em>).</li>
+<li><strong>Enlightenment:</strong> Attained <em>Nirvana</em> at age 35 under a Peepal tree (Bodhi Tree) in Bodh Gaya.</li>
+<li><strong>First Sermon:</strong> At Sarnath (Deer Park). Known as <em>Dharmachakra Pravartana</em> (Turning of the Wheel of Law).</li>
+<li><strong>Death:</strong> Attained <em>Mahaparinirvana</em> at Kushinagar at age 80.</li>
+</ul>
+<h3>2. Doctrines of Buddhism</h3>
+<ul>
+<li><strong>The Four Noble Truths (Arya Satya):</strong>
+<ol>
+<li>World is full of sorrow (<em>Dukkha</em>).</li>
+<li>The cause of sorrow is desire (<em>Dukkha Samudaya/Tanha</em>).</li>
+<li>Sorrow can be stopped (<em>Dukkha Nirodha</em>).</li>
+<li>The path to stop sorrow is the Eightfold Path (<em>Magga</em>).</li>
+</ol></li>
+<li><strong>The Eightfold Path (Ashtangika Marga):</strong>
+<ul>
+<li>Right View, Right Resolve, Right Speech, Right Action, Right Livelihood, Right Effort, Right Mindfulness, Right Concentration.</li>
+</ul></li>
+<li><strong>Key Concepts:</strong>
+<ul>
+<li><strong>Ahimsa:</strong> Non-violence (though less extreme than Jainism).</li>
+<li><strong>Madhyam Marg:</strong> The Middle Path (avoiding extremes of luxury and austerity).</li>
+<li><strong>Nirvana:</strong> Extinction of desire and liberation from the cycle of birth and death.</li>
+<li>Rejection of the authority of Vedas and the Soul (<em>Anatta</em>).</li>
+<li>Equality: Open to all castes and women.</li>
+</ul></li>
+</ul>
+<h3>3. Buddhist Literature (Pali Canon)</h3>
+<ul>
+<li><strong>Vinaya Pitaka:</strong> Rules of discipline for monks.</li>
+<li><strong>Sutta Pitaka:</strong> Buddha’s sermons/teachings (contains <em>Dhammapada</em>).</li>
+<li><strong>Abhidhamma Pitaka:</strong> Philosophical interpretations.</li>
+<li><strong>Jatakas:</strong> Stories of Buddha's previous births.</li>
+</ul>
+<h3>4. Buddhist Councils</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Council</th>
+<th style="text-align: left;">Place</th>
+<th style="text-align: left;">Patron</th>
+<th style="text-align: left;">President</th>
+<th style="text-align: left;">Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>1st</strong></td>
+<td style="text-align: left;">Rajgir</td>
+<td style="text-align: left;">Ajatashatru</td>
+<td style="text-align: left;">Mahakassapa</td>
+<td style="text-align: left;">Compilation of Sutta and Vinaya Pitakas.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>2nd</strong></td>
+<td style="text-align: left;">Vaishali</td>
+<td style="text-align: left;">Kalashoka</td>
+<td style="text-align: left;">Sabakami</td>
+<td style="text-align: left;">Split into Sthaviravadins and Mahasanghikas.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>3rd</strong></td>
+<td style="text-align: left;">Pataliputra</td>
+<td style="text-align: left;">Ashoka</td>
+<td style="text-align: left;">Moggaliputta Tissa</td>
+<td style="text-align: left;">Compilation of Abhidhamma Pitaka. Missionaries sent abroad.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>4th</strong></td>
+<td style="text-align: left;">Kashmir</td>
+<td style="text-align: left;">Kanishka</td>
+<td style="text-align: left;">Vasumitra</td>
+<td style="text-align: left;">Division into <strong>Hinayana</strong> and <strong>Mahayana</strong>.</td>
+</tr>
+</tbody>
+</table>
+<h3>5. Sects</h3>
+<ul>
+<li><strong>Hinayana (Lesser Vehicle):</strong> Orthodox. Did not worship Buddha as God. Used Pali.</li>
+<li><strong>Mahayana (Greater Vehicle):</strong> Worshipped Buddha as God (Idol worship). Believed in Bodhisattvas. Used Sanskrit.</li>
+<li><strong>Vajrayana (Thunderbolt Vehicle):</strong> Tantric Buddhism; emerged later (7th century CE).</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/HIS291/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/HIS291/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

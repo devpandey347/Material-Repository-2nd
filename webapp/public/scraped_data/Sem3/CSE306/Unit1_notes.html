@@ -1,0 +1,702 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem3/CSE306">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSE306/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSE306/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE306</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: INTRODUCTION &amp; NETWORK MODELS</h1>
+<h2>1. Uses of Computer Networks</h2>
+<p>A computer network is a set of devices (nodes) connected by communication links. The fundamental purpose of a network is resource sharing.</p>
+<ul>
+<li><strong>Business Applications:</strong>
+<ul>
+<li><strong>Resource Sharing:</strong> Sharing physical resources (printers, scanners) and digital resources (databases, files) to reduce costs.</li>
+<li><strong>Communication:</strong> Email, VoIP (Voice over IP), and video conferencing allow for instant internal and external communication.</li>
+<li><strong>E-Commerce:</strong> Facilitating business-to-business (B2B) and business-to-consumer (B2C) transactions.</li>
+</ul></li>
+<li><strong>Home Applications:</strong>
+<ul>
+<li><strong>Access to Remote Information:</strong> Browsing the World Wide Web, accessing financial news, and digital libraries.</li>
+<li><strong>Person-to-Person Communication:</strong> Social media, instant messaging, and peer-to-peer file sharing.</li>
+<li><strong>Interactive Entertainment:</strong> Online gaming and Video on Demand (streaming services).</li>
+</ul></li>
+<li><strong>Mobile Users:</strong> Wireless connectivity allows access to data from anywhere (PDAs, Smartphones, Laptops), enabling the Internet of Things (IoT).</li>
+</ul>
+<hr/>
+<h2>2. Types of Networks</h2>
+<p>Networks are categorized based on their geographical span and scale.</p>
+<h3>A. PAN (Personal Area Network)</h3>
+<ul>
+<li><strong>Range:</strong> Smallest range (approx. 10 meters).</li>
+<li><strong>Purpose:</strong> Connects devices centered around an individual (e.g., connecting a mouse, keyboard, and headphones to a computer).</li>
+<li><strong>Technology:</strong> Bluetooth, ZigBee, USB.</li>
+</ul>
+<h3>B. LAN (Local Area Network)</h3>
+<ul>
+<li><strong>Range:</strong> Covers a limited area like a room, building, or campus (up to a few kilometers).</li>
+<li><strong>Ownership:</strong> Usually privately owned.</li>
+<li><strong>Characteristics:</strong> High data transfer rates, low error rates.</li>
+<li><strong>Technology:</strong> Ethernet (IEEE 802.3), Wi-Fi (IEEE 802.11).</li>
+</ul>
+<h3>C. MAN (Metropolitan Area Network)</h3>
+<ul>
+<li><strong>Range:</strong> Covers a city or a large campus.</li>
+<li><strong>Purpose:</strong> Interconnects several LANs.</li>
+<li><strong>Example:</strong> Cable television network, city-wide Wi-Fi mesh.</li>
+</ul>
+<h3>D. WAN (Wide Area Network)</h3>
+<ul>
+<li><strong>Range:</strong> Spans a large geographical area, often a country or continent.</li>
+<li><strong>Ownership:</strong> Can be private (enterprise WAN) or public (ISP networks).</li>
+<li><strong>Characteristics:</strong> Connects using leased telecommunication lines, satellites, or fiber optics. The Internet is the largest WAN.</li>
+</ul>
+<hr/>
+<h2>3. Network Hardware Architecture</h2>
+<h3>A. Network Topologies</h3>
+<p>Topology refers to the physical or logical layout of a network.</p>
+<ol>
+<li><strong>Mesh Topology:</strong>
+<ul>
+<li>Every device has a dedicated point-to-point link to every other device.</li>
+<li><strong>Links required:</strong> <span class="katex-inline" data-math="n(n-1)/2"></span> for <span class="katex-inline" data-math="n"></span> devices.</li>
+<li><strong>Pros:</strong> Robust (if one link fails, others work), secure/private.</li>
+<li><strong>Cons:</strong> Expensive cabling, difficult installation.</li>
+</ul></li>
+<li><strong>Star Topology:</strong>
+<ul>
+<li>All devices connect to a central controller (Hub or Switch).</li>
+<li><strong>Pros:</strong> Easy to install, easy fault identification, failure of one node doesn't affect others.</li>
+<li><strong>Cons:</strong> If the central hub fails, the whole network goes down.</li>
+</ul></li>
+<li><strong>Bus Topology:</strong>
+<ul>
+<li>One long cable (backbone) connects all devices. Drop lines and taps connect devices to the backbone.</li>
+<li><strong>Pros:</strong> Less cable required, easy to install.</li>
+<li><strong>Cons:</strong> If the backbone breaks, the network fails; heavy traffic slows performance; difficult fault isolation.</li>
+</ul></li>
+<li><strong>Ring Topology:</strong>
+<ul>
+<li>Each device has a dedicated connection with two devices on either side, forming a closed loop. Data travels in one direction.</li>
+<li><strong>Pros:</strong> Equal access to resources (often uses Token Passing).</li>
+<li><strong>Cons:</strong> Unidirectional traffic means a break in the ring disables the network.</li>
+</ul></li>
+<li><strong>Tree/Hybrid Topology:</strong>
+<ul>
+<li>Combinations of the above (e.g., Star-Bus). Used to scale networks efficiently.</li>
+</ul></li>
+</ol>
+<h3>B. Network Connecting Devices</h3>
+<ol>
+<li><strong>HUB (Physical Layer Device):</strong>
+<ul>
+<li><strong>Function:</strong> A generic connection point. It does not inspect data.</li>
+<li><strong>Operation:</strong> When a packet arrives at one port, it is copied to <strong>all</strong> other ports (Broadcasting).</li>
+<li><strong>Drawback:</strong> High collision rate, security risks (everyone sees all data), wastes bandwidth.</li>
+</ul></li>
+<li><strong>SWITCH (Data Link Layer Device):</strong>
+<ul>
+<li><strong>Function:</strong> An intelligent device that filters and forwards packets.</li>
+<li><strong>Operation:</strong> Uses <strong>MAC Addresses</strong> to learn where devices are located. It sends data <em>only</em> to the intended receiver (Unicast).</li>
+<li><strong>Benefit:</strong> Reduces collisions, increases effective bandwidth.</li>
+</ul></li>
+<li><strong>ROUTER (Network Layer Device):</strong>
+<ul>
+<li><strong>Function:</strong> Connects different networks (e.g., LAN to WAN/Internet).</li>
+<li><strong>Operation:</strong> Uses <strong>IP Addresses</strong> to determine the best path for data to travel. It maintains a routing table.</li>
+<li><strong>Benefit:</strong> Performs traffic management, connects disparate network architectures.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>4. Network Software Architecture</h2>
+<p>Network software allows hardware to function effectively. It is structured using <strong>Protocol Hierarchies</strong>.</p>
+<h3>Protocol Hierarchies (Layering)</h3>
+<p>To reduce design complexity, networks are organized as a stack of layers or levels, each built upon the one below it.</p>
+<ul>
+<li><strong>Protocol:</strong> A set of rules that governs data communication.</li>
+<li><strong>Service:</strong> Operations a layer provides to the layer above it.</li>
+<li><strong>Interface:</strong> Defines primitive operations and services between adjacent layers.</li>
+</ul>
+<h3>Design Issues for Layers</h3>
+<ol>
+<li><strong>Addressing:</strong> Identifying the sender and receiver.</li>
+<li><strong>Error Control:</strong> Detecting and correcting physical communication errors.</li>
+<li><strong>Flow Control:</strong> Preventing a fast sender from swamping a slow receiver.</li>
+<li><strong>Multiplexing:</strong> Using one physical channel for multiple conversations.</li>
+<li><strong>Routing:</strong> Choosing the specific path for the data.</li>
+</ol>
+<h3>Connection Services</h3>
+<ul>
+<li><strong>Connection-Oriented:</strong> A logical path is established first (Handshake), data is sent, and the connection is released (e.g., TCP, Phone call). Reliable.</li>
+<li><strong>Connectionless:</strong> No setup. Data packets are sent independently (e.g., UDP, Postal mail). Faster but less reliable.</li>
+</ul>
+<hr/>
+<h2>5. Internet Basic Concepts</h2>
+<h3>The Internet</h3>
+<p>A global system of interconnected computer networks that use the standard Internet protocol suite (TCP/IP) to link billions of devices worldwide. It is a "network of networks."</p>
+<h3>Key Terminology</h3>
+<ul>
+<li><strong>Web Browser:</strong> Application software for accessing the World Wide Web. It translates HTML/CSS/JS code into a visual page (e.g., Chrome, Firefox).</li>
+<li><strong>Web Server:</strong> A computer utilizing specific software (Apache, Nginx) to store website files and serve them to users upon request via HTTP/HTTPS.</li>
+<li><strong>URL (Uniform Resource Locator):</strong> The address of a given unique resource on the Web.
+<ul>
+<li><em>Structure:</em> <code>Protocol://Domain:Port/Path</code></li>
+<li><em>Example:</em> <code>https://www.example.com/index.html</code></li>
+</ul></li>
+<li><strong>Domain Name:</strong> A human-readable label used to identify a network address (e.g., <code>google.com</code>). The <strong>DNS (Domain Name System)</strong> translates this name into a numerical IP address.</li>
+<li><strong>IP Address (Internet Protocol Address):</strong> A numerical label assigned to each device connected to a computer network using IP.
+<ul>
+<li><em>IPv4:</em> 32-bit (e.g., <code>192.168.1.1</code>)</li>
+<li><em>IPv6:</em> 128-bit (hexadecimal)</li>
+</ul></li>
+<li><strong>Packets:</strong> Small units of data. Large files are broken down into packets to be transmitted over the network and reassembled at the destination.</li>
+</ul>
+<hr/>
+<h2>6. Protocol Layering</h2>
+<p>Protocol layering creates a modular design where each layer solves specific problems.</p>
+<h3>Encapsulation</h3>
+<p>As data moves down the layers (from Application to Physical):</p>
+<ol>
+<li>Each layer adds its own <strong>Header</strong> (and sometimes a Trailer) to the data received from the layer above.</li>
+<li>The data from the upper layer becomes the "Payload" for the lower layer.</li>
+</ol>
+<h3>Decapsulation</h3>
+<p>As data moves up the layers (from Physical to Application):</p>
+<ol>
+<li>Each layer reads and removes the header intended for it.</li>
+<li>The remaining payload is passed up to the next layer.</li>
+</ol>
+<hr/>
+<h2>7. The OSI Model (Open Systems Interconnection)</h2>
+<p>Developed by ISO, this is a 7-layer logical reference model defining network communication.</p>
+<p><strong>Mnemonic:</strong> <strong>P</strong>lease <strong>D</strong>o <strong>N</strong>ot <strong>T</strong>hrow <strong>S</strong>ausage <strong>P</strong>izza <strong>A</strong>way (Physical to Application).</p>
+<h3>Layers (Bottom-Up)</h3>
+<ol>
+<li><strong>Physical Layer:</strong>
+<ul>
+<li><strong>Unit:</strong> Bits.</li>
+<li><strong>Function:</strong> Transmission of raw bits over a communication channel. Deals with voltage levels, cable types, and physical topology.</li>
+</ul></li>
+<li><strong>Data Link Layer (DLL):</strong>
+<ul>
+<li><strong>Unit:</strong> Frames.</li>
+<li><strong>Function:</strong> Node-to-node delivery. Handles <strong>Physical Addressing (MAC)</strong>, Error Control, and Flow Control. Divided into LLC (Logical Link Control) and MAC (Media Access Control).</li>
+</ul></li>
+<li><strong>Network Layer:</strong>
+<ul>
+<li><strong>Unit:</strong> Packets.</li>
+<li><strong>Function:</strong> Host-to-host delivery. Handles <strong>Logical Addressing (IP)</strong> and <strong>Routing</strong> (path determination).</li>
+</ul></li>
+<li><strong>Transport Layer:</strong>
+<ul>
+<li><strong>Unit:</strong> Segments (TCP) or Datagrams (UDP).</li>
+<li><strong>Function:</strong> End-to-end delivery of the complete message. Handles segmentation/reassembly, and service-point addressing (Ports). Ensures reliability (TCP) or speed (UDP).</li>
+</ul></li>
+<li><strong>Session Layer:</strong>
+<ul>
+<li><strong>Function:</strong> Dialog control. It establishes, maintains, and synchronizes the interaction between communicating systems (checkpoints).</li>
+</ul></li>
+<li><strong>Presentation Layer:</strong>
+<ul>
+<li><strong>Function:</strong> Syntax and semantics of information. Handles <strong>Translation</strong> (encoding), <strong>Encryption/Decryption</strong>, and <strong>Compression</strong>.</li>
+</ul></li>
+<li><strong>Application Layer:</strong>
+<ul>
+<li><strong>Function:</strong> Provides network services directly to the user application (e.g., Email, File Transfer).</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>8. TCP/IP Protocol Suite</h2>
+<p>TCP/IP is the practical implementation of the network model used in the Internet today. It has 4 layers (sometimes mapped as 5).</p>
+<h3>Layers and Protocols</h3>
+<ol>
+<li><strong>Network Access / Link Layer:</strong>
+<ul>
+<li>Equivalent to OSI Physical and Data Link layers.</li>
+<li>Handles physical interface with the cable and framing.</li>
+<li><em>Protocols:</em> Ethernet, Wi-Fi, ARP (Address Resolution Protocol).</li>
+</ul></li>
+<li><strong>Internet Layer:</strong>
+<ul>
+<li>Equivalent to OSI Network layer.</li>
+<li>Handles logical addressing and routing.</li>
+<li><em>Protocols:</em> <strong>IP (Internet Protocol)</strong>, ICMP (Ping), IGMP.</li>
+</ul></li>
+<li><strong>Transport Layer:</strong>
+<ul>
+<li>Equivalent to OSI Transport layer.</li>
+<li>Handles end-to-end communication.</li>
+<li><em>Protocols:</em>
+<ul>
+<li><strong>TCP (Transmission Control Protocol):</strong> Connection-oriented, reliable, heavy (used for Web, Email).</li>
+<li><strong>UDP (User Datagram Protocol):</strong> Connectionless, unreliable, fast (used for Gaming, Streaming).</li>
+</ul></li>
+</ul></li>
+<li><strong>Application Layer:</strong>
+<ul>
+<li>Combines OSI Session, Presentation, and Application layers.</li>
+<li><em>Protocols:</em>
+<ul>
+<li><strong>HTTP/HTTPS:</strong> Web browsing.</li>
+<li><strong>SMTP/POP3/IMAP:</strong> Email.</li>
+<li><strong>FTP:</strong> File Transfer.</li>
+<li><strong>DNS:</strong> Domain Name resolution.</li>
+<li><strong>SSH/Telnet:</strong> Remote login.</li>
+</ul></li>
+</ul></li>
+</ol>
+<h3>Summary Comparison: OSI vs TCP/IP</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">OSI Model</th>
+<th style="text-align: left;">TCP/IP Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Type</strong></td>
+<td style="text-align: left;">Reference Model (Theoretical)</td>
+<td style="text-align: left;">Implementation Model (Practical)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Layers</strong></td>
+<td style="text-align: left;">7 Layers</td>
+<td style="text-align: left;">4 Layers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Development</strong></td>
+<td style="text-align: left;">Defined before protocols</td>
+<td style="text-align: left;">Protocols defined first</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Strictness</strong></td>
+<td style="text-align: left;">Strict layering</td>
+<td style="text-align: left;">Loose layering</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Usage</strong></td>
+<td style="text-align: left;">Rarely used mostly for education</td>
+<td style="text-align: left;">Used for the Internet</td>
+</tr>
+</tbody>
+</table> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem3/CSE306/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

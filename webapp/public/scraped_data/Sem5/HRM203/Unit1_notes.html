@@ -1,0 +1,639 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/HRM203">HRM203</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/HRM203">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/HRM203/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/HRM203/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>HRM203</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Strategic HRM</h1>
+<h2>1. Overview of Integrated HRM</h2>
+<p>Integrated Human Resource Management (IHRM) refers to a holistic approach where various HR functions are not only aligned with each other (Horizontal Integration) but also aligned with the overall strategic goals of the organization (Vertical Integration).</p>
+<h3>Key Components of Integration</h3>
+<ul>
+<li><strong>Vertical Integration (Strategic Alignment):</strong>
+<ul>
+<li>Ensures HR policies support the organizational strategy.</li>
+<li><em>Example:</em> If a company’s strategy is innovation, HR focuses on hiring creative talent and rewarding risk-taking.</li>
+</ul></li>
+<li><strong>Horizontal Integration (Internal Consistency):</strong>
+<ul>
+<li>Ensures synergy between different HR practices.</li>
+<li>Recruitment, compensation, performance management, and training must support one another.</li>
+<li><em>Example:</em> You cannot recruit high-performers but offer below-market compensation; the systems would be misaligned.</li>
+</ul></li>
+</ul>
+<h3>The Ecosystem of Integrated HRM</h3>
+<p>In an integrated model, HRM is treated as a system containing:</p>
+<ol>
+<li><strong>Input:</strong> Human resources (skills, knowledge, labor).</li>
+<li><strong>Process:</strong> Acquisition, development, motivation, maintenance.</li>
+<li><strong>Output:</strong> Quality of work life, productivity, readiness for change, goal achievement.</li>
+</ol>
+<hr/>
+<h2>2. Strategy Development in HRM</h2>
+<p>Strategic HRM (SHRM) is the proactive management of people to meet the organization's long-term objectives. Strategy development involves bridging the gap between where the organization is currently and where it wants to be.</p>
+<h3>The Strategic Management Process for HR</h3>
+<ol>
+<li><strong>Mission and Vision Analysis:</strong> Understanding the reason for the organization's existence.</li>
+<li><strong>Environmental Scanning (SWOT Analysis):</strong>
+<ul>
+<li><strong>Strengths:</strong> Internal capabilities (e.g., skilled workforce).</li>
+<li><strong>Weaknesses:</strong> Internal limitations (e.g., high turnover).</li>
+<li><strong>Opportunities:</strong> External chances (e.g., new technology).</li>
+<li><strong>Threats:</strong> External risks (e.g., labor shortages, changing labor laws).</li>
+</ul></li>
+<li><strong>Strategic Choice:</strong> Deciding on Cost Leadership, Differentiation, or Focus strategies and tailoring HR to fit.</li>
+<li><strong>Implementation:</strong> Executing the strategy through HR policies (hiring, training, restructuring).</li>
+<li><strong>Evaluation and Control:</strong> Monitoring KPIs (turnover rates, ROI per hire) to ensure the strategy is working.</li>
+</ol>
+<h3>Resource-Based View (RBV)</h3>
+<p>A critical theory in SHRM suggesting that an organization achieves a sustainable competitive advantage if its human resources are:</p>
+<ul>
+<li><strong>Valuable:</strong> They improve efficiency/effectiveness.</li>
+<li><strong>Rare:</strong> Competitors do not have them.</li>
+<li><strong>Inimitable:</strong> Hard to copy (due to culture or history).</li>
+<li><strong>Non-substitutable:</strong> Cannot be replaced by technology easily.</li>
+</ul>
+<hr/>
+<h2>3. Macro and Micro HR Planning</h2>
+<p>Human Resource Planning (HRP) operates on two distinct levels: the environmental level (Macro) and the organizational level (Micro).</p>
+<h3>Macro HR Planning (National/Industry Level)</h3>
+<p>This deals with the forecasting and utilization of human resources for a nation or a specific sector.</p>
+<ul>
+<li><strong>Focus:</strong> Population demographics, educational infrastructure, health standards, migration patterns, and government labor policies.</li>
+<li><strong>Objective:</strong> To ensure the country has enough skilled labor to support economic growth.</li>
+<li><strong>Factors:</strong>
+<ul>
+<li>Birth/Death rates.</li>
+<li>Literacy rates.</li>
+<li>Technological shifts in the economy (e.g., Shift from manufacturing to AI).</li>
+<li>Legal framework (Minimum wage, retirement age).</li>
+</ul></li>
+</ul>
+<h3>Micro HR Planning (Organizational Level)</h3>
+<p>This deals with the forecasting of demand and supply of human resources within a specific firm.</p>
+<ul>
+<li><strong>Focus:</strong> Organizational hierarchy, job descriptions, skill inventories, and succession planning.</li>
+<li><strong>Objective:</strong> To ensure the right people are in the right jobs at the right time.</li>
+<li><strong>Factors:</strong>
+<ul>
+<li>Business expansion or downsizing plans.</li>
+<li>Budgetary constraints.</li>
+<li>Retirement and attrition rates.</li>
+<li>New product launches.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>4. Objectives and Functions of HRM</h2>
+<h3>Objectives of HRM</h3>
+<ol>
+<li><strong>Societal Objectives:</strong> To be socially responsible to the needs and challenges of society (e.g., equal opportunity, creating employment).</li>
+<li><strong>Organizational Objectives:</strong> To assist the organization in achieving its primary goals (productivity, profitability).</li>
+<li><strong>Functional Objectives:</strong> To maintain the department’s contribution at a level appropriate to the organization’s needs (keeping HR costs within budget).</li>
+<li><strong>Personal Objectives:</strong> To assist employees in achieving their personal goals (career growth, fair pay, work-life balance).</li>
+</ol>
+<h3>Functions of HRM</h3>
+<p>HRM functions are broadly classified into two categories:</p>
+<h4>A. Managerial Functions</h4>
+<ul>
+<li><strong>Planning:</strong> Forecasting HR needs and defining strategies.</li>
+<li><strong>Organizing:</strong> Designing the structure of duties and responsibilities.</li>
+<li><strong>Directing:</strong> Motivating and leading employees.</li>
+<li><strong>Controlling:</strong> Checking performance against standards.</li>
+</ul>
+<h4>B. Operative Functions</h4>
+<ul>
+<li><strong>Procurement:</strong> Job analysis, recruitment, selection, placement, induction.</li>
+<li><strong>Development:</strong> Training, career planning, performance appraisal.</li>
+<li><strong>Compensation:</strong> Job evaluation, wages, bonuses, benefits.</li>
+<li><strong>Integration:</strong> Motivation, grievance redressal, collective bargaining.</li>
+<li><strong>Maintenance:</strong> Health, safety, social security, compliance.</li>
+</ul>
+<hr/>
+<h2>5. Activities Required for HR Planning (The HRP Process)</h2>
+<p>HR Planning is a systematic process. The core activities involved are:</p>
+<h3>Step 1: Analyzing Organizational Objectives</h3>
+<p>HR planners must understand the corporate plan (e.g., Are we merging? expanding? cutting costs?) to determine the implications for human resources.</p>
+<h3>Step 2: Forecasting HR Demand</h3>
+<p>Estimating the number and type of people required in the future.</p>
+<ul>
+<li><em>Techniques:</em> Trend analysis, Managerial judgment, Delphi technique, Work-load analysis.</li>
+</ul>
+<h3>Step 3: Forecasting HR Supply</h3>
+<p>Assessing the availability of current and potential employees.</p>
+<ul>
+<li><strong>Internal Supply:</strong> Present employees, skills inventory, potential for promotion/transfer.</li>
+<li><strong>External Supply:</strong> Labor market conditions, graduates entering the workforce, competitors' workforce.</li>
+</ul>
+<h3>Step 4: Gap Analysis</h3>
+<p>Comparing Demand and Supply.</p>
+<ul>
+<li><strong>Deficit:</strong> Demand &gt; Supply (Need to hire).</li>
+<li><strong>Surplus:</strong> Supply &gt; Demand (Need to downsize).</li>
+</ul>
+<h3>Step 5: HR Programming (Action Plan)</h3>
+<ul>
+<li><em>If Deficit:</em> Recruitment, outsourcing, overtime, retention strategies.</li>
+<li><em>If Surplus:</em> Layoffs, voluntary retirement schemes (VRS), hiring freeze, reducing hours.</li>
+</ul>
+<h3>Step 6: Implementation and Control</h3>
+<p>Executing the plan and monitoring it against actual numbers to adjust for deviations.</p>
+<hr/>
+<h2>6. Scope of HRM</h2>
+<p>The scope of HRM is vast and permeates all levels of the organization. The Indian Institute of Personnel Management describes the scope in three aspects:</p>
+<h3>1. The Personnel Aspect (Manpower Management)</h3>
+<p>Concerned with manpower planning, recruitment, selection, placement, transfer, promotion, training and development, layoff and retrenchment, remuneration, and productivity.</p>
+<h3>2. The Welfare Aspect (Employee Conditions)</h3>
+<p>Concerned with working conditions and amenities such as canteens, crèches, rest and lunchrooms, housing, transport, medical assistance, education, health and safety, and recreation facilities.</p>
+<h3>3. The Industrial Relations Aspect (Workplace Democracy)</h3>
+<p>Concerned with company-union relations, collective bargaining, grievance handling, disciplinary procedures, and settlement of industrial disputes to maintain peace in the organization.</p>
+<hr/>
+<h2>7. Application of Technology in Human Resource Planning</h2>
+<p>Technology has shifted HRP from administrative paperwork to strategic decision-making.</p>
+<h3>Key Technological Applications</h3>
+<ul>
+<li><strong>HRIS (Human Resource Information Systems):</strong> An integrated software solution for data entry, data tracking, and data information needs. It acts as a central repository for employee data.</li>
+<li><strong>e-HRM:</strong> The application of internet and web-based technologies to process HR transactions. It allows for "Self-Service" where employees update their own data, apply for leave, or access benefits.</li>
+<li><strong>ATS (Applicant Tracking Systems):</strong> Software that automates the recruitment process by filtering resumes based on keywords, scheduling interviews, and managing candidate communication.</li>
+<li><strong>Cloud Computing:</strong> Allows HR data to be stored remotely, enabling access from anywhere (essential for remote work planning) and reducing IT infrastructure costs.</li>
+</ul>
+<h3>Benefits of Tech in HRP</h3>
+<ul>
+<li><strong>Accuracy:</strong> Reduces human error in payroll and attendance.</li>
+<li><strong>Speed:</strong> Instant generation of reports (e.g., headcount, attrition rates).</li>
+<li><strong>Strategic Focus:</strong> Automating routine tasks frees up HR to focus on strategy.</li>
+</ul>
+<hr/>
+<h2>8. HR Analytics and Digital Tools</h2>
+<p>HR Analytics (People Analytics) is the application of statistics, modeling, and data mining to employee-related data to improve business outcomes.</p>
+<h3>Levels of HR Analytics</h3>
+<ol>
+<li><strong>Descriptive Analytics:</strong> <em>What happened?</em> (e.g., "Our turnover rate was 15% last year.")</li>
+<li><strong>Diagnostic Analytics:</strong> <em>Why did it happen?</em> (e.g., "Turnover was high because salaries in the engineering department are 10% below market rate.")</li>
+<li><strong>Predictive Analytics:</strong> <em>What will happen?</em> (e.g., "Based on current trends, 5 key managers are at risk of leaving in Q3.")</li>
+<li><strong>Prescriptive Analytics:</strong> <em>What should we do?</em> (e.g., "Implement a retention bonus and flexible hours for the at-risk group to reduce probability of exit.")</li>
+</ol>
+<h3>Digital Tools for HRP</h3>
+<h4>Data Visualization &amp; BI Tools</h4>
+<ul>
+<li><strong>Tableau / PowerBI:</strong> Used to create dashboards showing real-time workforce demographics, cost-per-hire, and diversity stats.</li>
+</ul>
+<h4>Analysis Platforms</h4>
+<ul>
+<li><strong>Python / R:</strong> Programming languages used for advanced regression analysis and predictive modeling in HR.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Example of a conceptual logic for Employee Churn Prediction
+# (Hypothetical logic flow for HR Analytics)
+
+def predict_employee_churn(employee_data):
+    risk_score = 0
+    
+    # Check tenure
+    if employee_data['years_at_company'] &gt; 2 and employee_data['promotion_received'] == False:
+        risk_score += 30
+        
+    # Check commute
+    if employee_data['commute_time_minutes'] &gt; 60:
+        risk_score += 20
+        
+    # Check market comparison
+    if employee_data['salary'] &lt; employee_data['market_median_salary']:
+        risk_score += 40
+        
+    if risk_score &gt; 70:
+        return "High Flight Risk"
+    else:
+        return "Stable"
+</code></pre></div></p>
+<h4>Specialized HR Suites</h4>
+<ul>
+<li><strong>Workday / Oracle HCM / SAP SuccessFactors:</strong> Enterprise-grade suites that combine planning, finance, and HR data into a single ecosystem.</li>
+<li><strong>BambooHR:</strong> Focuses on SMBs, streamlining hiring and onboarding.</li>
+<li><strong>LinkedIn Talent Insights:</strong> Uses external data to help companies understand the talent pool availability in different locations (Macro planning).</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/HRM203/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

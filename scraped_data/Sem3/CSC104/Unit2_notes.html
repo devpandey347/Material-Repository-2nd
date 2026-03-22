@@ -1,0 +1,702 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem3/CSC104">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSC104/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSC104/Unit2/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSC104/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSC104/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSC104</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Windows Security, User Management, and Networking</h1>
+<h2>1. User Accounts and Group Management</h2>
+<h3>Local vs. Domain Accounts</h3>
+<ul>
+<li><strong>SAM (Security Account Manager):</strong> A database file (<code>C:\Windows\System32\config\SAM</code>) that stores local user accounts and password hashes. These accounts exist only on the specific machine.</li>
+<li><strong>Active Directory (AD):</strong> Centralized management where user accounts exist on a Domain Controller. These users can log in to any machine joined to the domain.</li>
+</ul>
+<h3>Security Identifiers (SID)</h3>
+<p>Every account and group is assigned a unique alphanumeric string called a SID. Windows uses SIDs, not usernames, to control access.</p>
+<ul>
+<li><strong>Structure:</strong> <code>S-1-5-21-&lt;DomainID&gt;-&lt;RelativeID&gt;</code></li>
+<li><strong>Common SIDs:</strong>
+<ul>
+<li><code>...-500</code>: The built-in Administrator.</li>
+<li><code>...-501</code>: The Guest account.</li>
+</ul></li>
+</ul>
+<h3>User Account Types</h3>
+<ol>
+<li><strong>Administrator:</strong> Full control over the computer; can change security settings, install software, and access all files.</li>
+<li><strong>Standard User:</strong> Can use most software and change system settings that do not affect other users or the security of the computer.</li>
+<li><strong>Guest:</strong> Limited access; usually disabled by default for security.</li>
+<li><strong>System Accounts:</strong>
+<ul>
+<li><strong>LocalSystem:</strong> High privilege, used by OS services.</li>
+<li><strong>NetworkService / LocalService:</strong> Limited privilege accounts for background services.</li>
+</ul></li>
+</ol>
+<h3>Group Management</h3>
+<p>Groups allow administrators to apply permissions to multiple users simultaneously.</p>
+<ul>
+<li><strong>Administrators:</strong> Members have complete and unrestricted access.</li>
+<li><strong>Users:</strong> Members are prevented from making accidental or intentional system-wide changes.</li>
+<li><strong>Remote Desktop Users:</strong> Members are allowed to log on remotely.</li>
+</ul>
+<hr/>
+<h2>2. Authentication Methods</h2>
+<h3>NTLM (New Technology LAN Manager)</h3>
+<p>A legacy challenge-response authentication protocol.</p>
+<ul>
+<li><strong>Mechanism:</strong> The server sends a random challenge; the client encrypts it with their password hash and returns it.</li>
+<li><strong>Security Risk:</strong> Susceptible to "Pass-the-Hash" attacks; generally used only for local authentication or when Kerberos is unavailable.</li>
+</ul>
+<h3>Kerberos</h3>
+<p>The default authentication protocol for Active Directory environments.</p>
+<ul>
+<li><strong>Mechanism:</strong> Uses "Tickets" issued by a Key Distribution Center (KDC/Domain Controller). Mutual authentication (client verifies server, server verifies client).</li>
+<li><strong>Time Sensitivity:</strong> Relies heavily on time synchronization between client and server (Time skew usually &lt; 5 mins).</li>
+</ul>
+<h3>Windows Hello (Biometrics)</h3>
+<ul>
+<li>Replaces passwords with strong two-factor authentication.</li>
+<li>Uses a PIN, facial recognition, or fingerprint. Credentials are stored in the TPM (Trusted Platform Module) hardware, not sent over the network.</li>
+</ul>
+<hr/>
+<h2>3. Permissions and Access Control</h2>
+<h3>ACLs (Access Control Lists)</h3>
+<p>Every object (file, folder, printer) in Windows has an ACL.</p>
+<ol>
+<li><strong>DACL (Discretionary Access Control List):</strong> Determines <em>who</em> can access the object and <em>what</em> they can do (Read, Write, Full Control).</li>
+<li><strong>SACL (System Access Control List):</strong> Determines which access attempts are <em>audited</em> (logged) in the Security Event Log.</li>
+</ol>
+<h3>NTFS Permissions</h3>
+<p>Applied at the file system level. They apply whether the user accesses the file locally or over the network.</p>
+<ul>
+<li><strong>Full Control:</strong> Modify, add, move, delete, and change permissions.</li>
+<li><strong>Modify:</strong> View, modify, add, and delete. Cannot change permissions.</li>
+<li><strong>Read &amp; Execute:</strong> Run programs and scripts, view file contents.</li>
+<li><strong>List Folder Contents:</strong> See names of files/subfolders.</li>
+<li><strong>Read:</strong> View file contents only.</li>
+<li><strong>Write:</strong> Write to the file (save changes).</li>
+</ul>
+<h3>Permission Rules</h3>
+<ul>
+<li><strong>Inheritance:</strong> By default, files/subfolders inherit permissions from their parent folder.</li>
+<li><strong>Explicit vs. Inherited:</strong> Explicit permissions (set directly on the object) take precedence over inherited ones.</li>
+<li><strong>Cumulative:</strong> If a user is in "Group A" (Read) and "Group B" (Write), they get Read + Write.</li>
+<li><strong>Deny Trumps Allow:</strong> An explicit "Deny" permission overrides any "Allow" permission.</li>
+</ul>
+<hr/>
+<h2>4. Built-in Security Tools</h2>
+<h3>Windows Defender (Microsoft Defender Antivirus)</h3>
+<ul>
+<li><strong>Real-time Protection:</strong> Scans files as they are opened, downloaded, or copied.</li>
+<li><strong>Cloud-delivered protection:</strong> Uses Microsoft cloud data to identify new threats instantly.</li>
+<li><strong>Tamper Protection:</strong> Prevents malicious apps from changing Defender settings.</li>
+</ul>
+<h3>User Account Control (UAC)</h3>
+<p>A fundamental security component that runs most users (even Admins) with standard privileges until administrative rights are explicitly required.</p>
+<ul>
+<li><strong>Prompt:</strong> The "Dimmed desktop" (Secure Desktop) prevents software from automatically clicking "Yes."</li>
+<li><strong>Goal:</strong> Mitigates the impact of malware by preventing silent installation or system-wide changes.</li>
+</ul>
+<h3>Windows Firewall (Windows Defender Firewall)</h3>
+<p>A host-based stateful firewall filtering traffic based on rules.</p>
+<ul>
+<li><strong>Inbound Rules:</strong> Control traffic trying to enter the computer (e.g., Block Port 80).</li>
+<li><strong>Outbound Rules:</strong> Control traffic leaving the computer (e.g., Block malware calling home).</li>
+<li><strong>Network Profiles:</strong>
+<ul>
+<li><strong>Domain:</strong> Connected to a corporate DC (Least restrictive).</li>
+<li><strong>Private:</strong> Home/Trusted network (Network discovery on).</li>
+<li><strong>Public:</strong> Coffee shop/Airport (Most restrictive, discovery off).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>5. Windows Networking Basics</h2>
+<h3>Core Configuration</h3>
+<ul>
+<li><strong>IP Address:</strong> Unique identifier on the network (IPv4: 192.168.1.5).</li>
+<li><strong>Subnet Mask:</strong> Defines the size of the network (255.255.255.0).</li>
+<li><strong>Default Gateway:</strong> The router IP used to communicate outside the local network.</li>
+</ul>
+<h3>DNS (Domain Name System)</h3>
+<ul>
+<li>Translates human-readable names (www.google.com) into IP addresses.</li>
+<li><strong>Hosts File:</strong> Located at <code>C:\Windows\System32\drivers\etc\hosts</code>. Checked <em>before</em> querying a DNS server.</li>
+</ul>
+<h3>DHCP (Dynamic Host Configuration Protocol)</h3>
+<ul>
+<li>Automatically assigns IP addresses, subnet masks, gateways, and DNS servers to clients, preventing IP conflicts.</li>
+</ul>
+<h3>NetBIOS and LLMNR</h3>
+<ul>
+<li><strong>NetBIOS:</strong> Legacy protocol for local network file sharing and name resolution.</li>
+<li><strong>LLMNR (Link-Local Multicast Name Resolution):</strong> Protocol used to resolve names on a local subnet when DNS fails.</li>
+<li><em>Security Note:</em> Both are vulnerable to spoofing attacks (LLMNR/NBT-NS Poisoning).</li>
+</ul>
+<h3>SMB (Server Message Block)</h3>
+<ul>
+<li>Application-layer network protocol used for file sharing, printer sharing, and inter-process communication.</li>
+<li><strong>Ports:</strong> TCP 445 (Direct TCP), TCP 139 (NetBIOS over TCP/IP).</li>
+<li><strong>Versions:</strong> SMBv1 is insecure (WannaCry ransomware vector) and should be disabled. SMBv3 is the current standard with encryption.</li>
+</ul>
+<hr/>
+<h2>6. Shared Resources and Remote Access</h2>
+<h3>Shared Resource Management</h3>
+<ul>
+<li><strong>Share Permissions vs. NTFS Permissions:</strong>
+<ul>
+<li>Share permissions only apply when accessing over the network.</li>
+<li>NTFS permissions always apply.</li>
+<li><em>Rule:</em> The most restrictive permission applies when combining Share and NTFS.</li>
+</ul></li>
+<li><strong>Administrative Shares:</strong> Hidden shares created by the system, suffixed with <code>$</code>.
+<ul>
+<li><code>C$</code>: The root of the C drive.</li>
+<li><code>ADMIN$</code>: The Windows directory (used during remote administration).</li>
+<li><code>IPC$</code>: Inter-Process Communication (used for null sessions/authentication).</li>
+</ul></li>
+</ul>
+<h3>Remote Desktop Protocol (RDP)</h3>
+<ul>
+<li><strong>Port:</strong> TCP 3389.</li>
+<li>Allows a graphical user interface (GUI) connection to a remote computer.</li>
+<li>Requires the "Remote Desktop Users" group membership.</li>
+</ul>
+<h3>PsExec (Sysinternals)</h3>
+<ul>
+<li>A lightweight telnet-replacement that lets you execute processes on other systems.</li>
+<li>Does not require client software installation.</li>
+<li>Often used by admins for deployment and by attackers for lateral movement.</li>
+<li><strong>Syntax:</strong> <code>psexec \\remote-computer -u user -p password cmd.exe</code></li>
+</ul>
+<hr/>
+<h2>7. Windows Administrative Tools</h2>
+<h3>MMC (Microsoft Management Console)</h3>
+<ul>
+<li>A framework that hosts administrative tools called "snap-ins."</li>
+<li>Custom consoles can be created (e.g., combining Device Manager, Event Viewer, and Disk Management in one view).</li>
+</ul>
+<h3>Services (services.msc)</h3>
+<p>Manages background processes.</p>
+<ul>
+<li><strong>Startup Types:</strong>
+<ul>
+<li><em>Automatic:</em> Starts when Windows boots.</li>
+<li><em>Automatic (Delayed):</em> Starts shortly after boot to improve login speed.</li>
+<li><em>Manual:</em> Starts only when triggered by a user or application.</li>
+<li><em>Disabled:</em> Cannot start.</li>
+</ul></li>
+</ul>
+<h3>Group Policy Editor (gpedit.msc)</h3>
+<ul>
+<li>Used to configure settings for computers and users.</li>
+<li><strong>Local Group Policy (LGPO):</strong> Applies to the single computer.</li>
+<li><strong>Group Policy Objects (GPO):</strong> Used in Active Directory to push policies to thousands of machines.</li>
+<li>Examples: Disabling USB drives, enforcing password complexity, setting wallpaper.</li>
+</ul>
+<h3>Task Scheduler and Startup</h3>
+<ul>
+<li><strong>Task Scheduler:</strong> Automates scripts or programs based on triggers (time, logon, event ID).</li>
+<li><strong>Startup Items:</strong>
+<ul>
+<li>Folder: <code>shell:startup</code></li>
+<li>Registry Run Keys: <code>HKLM\Software\Microsoft\Windows\CurrentVersion\Run</code></li>
+<li>Managed via Task Manager -&gt; Startup tab.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>8. Incident Analysis and Auditing</h2>
+<h3>Windows Event Logs (Event Viewer)</h3>
+<p>Three main logs located in <code>C:\Windows\System32\winevt\Logs</code>:</p>
+<ol>
+<li><strong>System:</strong> Events from Windows components (drivers, boot processes).</li>
+<li><strong>Application:</strong> Events logged by applications (crashes, errors).</li>
+<li><strong>Security:</strong> Auditing events (logins, privilege use).</li>
+</ol>
+<h3>Key Security Event IDs</h3>
+<ul>
+<li><strong>4624:</strong> Successful Logon.</li>
+<li><strong>4625:</strong> Failed Logon (Brute force indicator).</li>
+<li><strong>4720:</strong> User Account Created.</li>
+<li><strong>4672:</strong> Special Privileges Assigned (Administrator logon).</li>
+<li><strong>1102:</strong> Audit Log Cleared (Suspicious activity).</li>
+</ul>
+<h3>Audit Policies</h3>
+<ul>
+<li>configured in <code>secpol.msc</code> (Local Security Policy).</li>
+<li>Must be enabled to generate logs in the Security Event Viewer.</li>
+<li>Categories: Audit Logon Events, Audit Object Access, Audit Privilege Use.</li>
+</ul>
+<hr/>
+<h2>9. Enumeration and Reconnaissance (CLI Tools)</h2>
+<p>Basic command-line tools used for troubleshooting and initial system reconnaissance.</p>
+<h3>User &amp; Privilege Enumeration</h3>
+<ul>
+<li><code>whoami</code>: Displays current user and domain.
+<ul>
+<li><code>whoami /priv</code>: Shows current privileges.</li>
+<li><code>whoami /groups</code>: Shows group memberships.</li>
+</ul></li>
+<li><code>net user</code>: Lists all user accounts.
+<ul>
+<li><code>net user &lt;username&gt;</code>: Details about a specific user (last logon, password expiry).</li>
+</ul></li>
+<li><code>net localgroup</code>: Lists groups.
+<ul>
+<li><code>net localgroup administrators</code>: Shows who is an admin.</li>
+</ul></li>
+</ul>
+<h3>Network Enumeration</h3>
+<ul>
+<li><code>ipconfig /all</code>: Detailed IP, MAC address, DNS, and DHCP info.</li>
+<li><code>netstat</code>: Network statistics.
+<ul>
+<li><code>netstat -an</code>: Show all connections and listening ports numerically.</li>
+<li><code>netstat -b</code>: Show the executable involved in the connection (requires Admin).</li>
+<li><code>netstat -r</code>: Displays the routing table.</li>
+</ul></li>
+<li><code>arp -a</code>: Displays the ARP cache (mapping IP addresses to MAC addresses).</li>
+</ul>
+<h3>Process and System Enumeration</h3>
+<ul>
+<li><code>tasklist</code>: Displays all running processes and their Process IDs (PIDs).
+<ul>
+<li><code>tasklist /svc</code>: Maps processes to the services hosting them.</li>
+</ul></li>
+<li><code>systeminfo</code>: Comprehensive system details (OS version, Hotfixes/Patches installed, Boot time).</li>
+<li><code>wmic</code>: Windows Management Instrumentation Command-line (powerful query tool).
+<ul>
+<li><code>wmic product get name,version</code>: Lists installed software.</li>
+</ul></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem3/CSC104/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem3/CSC104/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

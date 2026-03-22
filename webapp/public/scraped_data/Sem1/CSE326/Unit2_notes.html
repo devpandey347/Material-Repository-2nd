@@ -1,0 +1,721 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem1/CSE326">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem1/CSE326/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/CSE326/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/CSE326/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE326</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            5 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Expanding HTML Knowledge</h1>
+<h2>1. Working with Lists</h2>
+<p>HTML lists are used to group a set of related items. There are three main types of lists in HTML.</p>
+<h3>A. Unordered Lists (<code>&lt;ul&gt;</code>)</h3>
+<p>Used for items where the order does not matter. Items are typically marked with bullet points.</p>
+<ul>
+<li><strong>Tag:</strong> <code>&lt;ul&gt;</code> starts the list, <code>&lt;/ul&gt;</code> ends it.</li>
+<li><strong>List Item:</strong> <code>&lt;li&gt;</code> defines each item.</li>
+<li><strong>Attributes:</strong> <code>type</code> (values: <code>disc</code>, <code>circle</code>, <code>square</code>). <em>Note: CSS <code>list-style-type</code> is preferred in modern development.</em></li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;ul&gt;
+  &lt;li&gt;HTML&lt;/li&gt;
+  &lt;li&gt;CSS&lt;/li&gt;
+  &lt;li&gt;JavaScript&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre></div></p>
+<h3>B. Ordered Lists (<code>&lt;ol&gt;</code>)</h3>
+<p>Used for items where the order is important. Items are marked with numbers or letters.</p>
+<ul>
+<li><strong>Tag:</strong> <code>&lt;ol&gt;</code> starts the list, <code>&lt;/ol&gt;</code> ends it.</li>
+<li><strong>Attributes:</strong>
+<ul>
+<li><code>type</code>: Defines the numbering style.
+<ul>
+<li><code>1</code>: Numbers (Default)</li>
+<li><code>A</code>: Uppercase letters</li>
+<li><code>a</code>: Lowercase letters</li>
+<li><code>I</code>: Uppercase Roman numerals</li>
+<li><code>i</code>: Lowercase Roman numerals</li>
+</ul></li>
+<li><code>start</code>: Specifies the start value of the ordered list.</li>
+</ul></li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;ol type="A" start="3"&gt;
+  &lt;li&gt;Step 1 (Labeled C)&lt;/li&gt;
+  &lt;li&gt;Step 2 (Labeled D)&lt;/li&gt;
+&lt;/ol&gt;
+</code></pre></div></p>
+<h3>C. Definition Lists (<code>&lt;dl&gt;</code>)</h3>
+<p>Used to display a list of terms and their descriptions (like a glossary).</p>
+<ul>
+<li><strong><code>&lt;dl&gt;</code>:</strong> Defines the description list.</li>
+<li><strong><code>&lt;dt&gt;</code>:</strong> Defines the term (name).</li>
+<li><strong><code>&lt;dd&gt;</code>:</strong> Defines the data (description).</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;dl&gt;
+  &lt;dt&gt;HTTP&lt;/dt&gt;
+  &lt;dd&gt;HyperText Transfer Protocol&lt;/dd&gt;
+  &lt;dt&gt;FTP&lt;/dt&gt;
+  &lt;dd&gt;File Transfer Protocol&lt;/dd&gt;
+&lt;/dl&gt;
+</code></pre></div></p>
+<hr/>
+<h2>2. Hyperlinks (Anchor Tag)</h2>
+<p>Hyperlinks allow users to navigate from one page to another or to specific parts of the same page.</p>
+<ul>
+<li><strong>Tag:</strong> <code>&lt;a&gt;</code></li>
+<li><strong>Key Attributes:</strong>
+<ul>
+<li><code>href</code>: The URL (destination) of the link.</li>
+<li><code>target</code>: Specifies where to open the link.
+<ul>
+<li><code>_self</code>: Default (same window).</li>
+<li><code>_blank</code>: New tab/window.</li>
+</ul></li>
+<li><code>title</code>: Tooltip text when hovering.</li>
+</ul></li>
+</ul>
+<p><strong>Code Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;a href="https://www.google.com" target="_blank" title="Go to Google"&gt;Visit Google&lt;/a&gt;
+</code></pre></div></p>
+<hr/>
+<h2>3. Inserting Images</h2>
+<p>Images are embedding using the <code>&lt;img&gt;</code> tag. This is a <strong>void element</strong> (it has no closing tag).</p>
+<ul>
+<li><strong>Tag:</strong> <code>&lt;img&gt;</code></li>
+<li><strong>Key Attributes:</strong>
+<ul>
+<li><code>src</code> (Source): The path to the image file (relative or absolute URL).</li>
+<li><code>alt</code> (Alternative Text): Text displayed if the image fails to load; crucial for screen readers (accessibility).</li>
+<li><code>width</code> / <code>height</code>: Defines the size in pixels.</li>
+</ul></li>
+</ul>
+<p><strong>Code Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;img src="logo.png" alt="Company Logo" width="200" height="100"&gt;
+</code></pre></div></p>
+<hr/>
+<h2>4. Embedding Media</h2>
+<p>HTML5 introduced native tags to embed audio and video files without requiring external plugins like Flash.</p>
+<h3>A. Audio</h3>
+<ul>
+<li><strong>Tag:</strong> <code>&lt;audio&gt;</code></li>
+<li><strong>Attributes:</strong> <code>controls</code> (play/pause buttons), <code>autoplay</code>, <code>loop</code>, <code>muted</code>.</li>
+<li><strong>Source:</strong> Can use the <code>src</code> attribute or nested <code>&lt;source&gt;</code> tags for multiple format support (mp3, ogg, wav).</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;audio controls&gt;
+  &lt;source src="music.mp3" type="audio/mpeg"&gt;
+  Your browser does not support the audio element.
+&lt;/audio&gt;
+</code></pre></div></p>
+<h3>B. Video</h3>
+<ul>
+<li><strong>Tag:</strong> <code>&lt;video&gt;</code></li>
+<li><strong>Attributes:</strong> <code>controls</code>, <code>width</code>, <code>height</code>, <code>poster</code> (thumbnail image), <code>loop</code>.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;video width="320" height="240" controls poster="thumbnail.jpg"&gt;
+  &lt;source src="movie.mp4" type="video/mp4"&gt;
+  Your browser does not support the video tag.
+&lt;/video&gt;
+</code></pre></div></p>
+<hr/>
+<h2>5. HTML Favicon</h2>
+<p>A favicon (favorite icon) is a small image displayed next to the page title in the browser tab.</p>
+<ul>
+<li><strong>Implementation:</strong> Placed inside the <code>&lt;head&gt;</code> section using the <code>&lt;link&gt;</code> tag.</li>
+<li><strong>Standard Format:</strong> <code>.ico</code> (though <code>.png</code> and <code>.jpg</code> are widely supported now).</li>
+</ul>
+<p><strong>Code Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;head&gt;
+  &lt;title&gt;My Page&lt;/title&gt;
+  &lt;link rel="icon" type="image/x-icon" href="/images/favicon.ico"&gt;
+&lt;/head&gt;
+</code></pre></div></p>
+<hr/>
+<h2>6. HTML Div (<code>&lt;div&gt;</code>)</h2>
+<p>The <code>&lt;div&gt;</code> tag defines a <strong>division</strong> or a <strong>section</strong> in an HTML document.</p>
+<ul>
+<li>It is a <strong>Block-level</strong> element (starts on a new line and takes up the full width).</li>
+<li>It has no specific semantic meaning but is strictly used as a container for other HTML elements, usually to apply CSS styling or layout grouping.</li>
+</ul>
+<p><strong>Code Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;div style="background-color: lightgray; padding: 20px;"&gt;
+  &lt;h3&gt;Section Title&lt;/h3&gt;
+  &lt;p&gt;This paragraph is inside a div container.&lt;/p&gt;
+&lt;/div&gt;
+</code></pre></div></p>
+<hr/>
+<h2>7. HTML Text Formatting</h2>
+<p>HTML offers tags to format text for visual styling or semantic importance.</p>
+<ul>
+<li><strong><code>&lt;b&gt;</code></strong>: Bold text (visual only).</li>
+<li><strong><code>&lt;strong&gt;</code></strong>: Important text (semantic bold).</li>
+<li><strong><code>&lt;i&gt;</code></strong>: Italic text (visual only).</li>
+<li><strong><code>&lt;em&gt;</code></strong>: Emphasized text (semantic italic).</li>
+<li><strong><code>&lt;mark&gt;</code></strong>: Highlighted text (usually yellow background).</li>
+<li><strong><code>&lt;small&gt;</code></strong>: Smaller text.</li>
+<li><strong><code>&lt;del&gt;</code></strong>: Deleted text (strikethrough).</li>
+<li><strong><code>&lt;sub&gt;</code></strong>: Subscript (e.g., H<sub>2</sub>O).</li>
+<li><strong><code>&lt;sup&gt;</code></strong>: Superscript (e.g., X<sup>2</sup>).</li>
+</ul>
+<hr/>
+<h2>8. Working with Tables</h2>
+<p>Tables are used to arrange data into rows and columns.</p>
+<h3>Basic Structure</h3>
+<ul>
+<li><code>&lt;table&gt;</code>: Container for the table.</li>
+<li><code>&lt;tr&gt;</code>: Table Row.</li>
+<li><code>&lt;th&gt;</code>: Table Header (Bold and centered by default).</li>
+<li><code>&lt;td&gt;</code>: Table Data (Standard cell).</li>
+</ul>
+<h3>Merging Cells (Colspan and Rowspan)</h3>
+<ul>
+<li><strong>Colspan:</strong> Merges cells horizontally (across columns).
+<ul>
+<li>Attribute: <code>colspan="n"</code> where n is the number of columns to merge.</li>
+</ul></li>
+<li><strong>Rowspan:</strong> Merges cells vertically (across rows).
+<ul>
+<li>Attribute: <code>rowspan="n"</code> where n is the number of rows to merge.</li>
+</ul></li>
+</ul>
+<p><strong>Code Example (Colspan &amp; Rowspan):</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;table border="1"&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Name&lt;/th&gt;
+    &lt;th colspan="2"&gt;Contact Details&lt;/th&gt; &lt;!-- Merges 2 columns --&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td rowspan="2"&gt;John Doe&lt;/td&gt; &lt;!-- Merges 2 rows --&gt;
+    &lt;td&gt;Email: john@example.com&lt;/td&gt;
+    &lt;td&gt;Phone: 555-1234&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td colspan="2"&gt;Address: 123 Main St&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+</code></pre></div></p>
+<hr/>
+<h2>9. Working with Forms</h2>
+<p>Forms are used to collect user input and send it to a server for processing.</p>
+<h3>A. The <code>&lt;form&gt;</code> Tag Attributes</h3>
+<ol>
+<li><strong><code>action</code></strong>: Defines the URL where the form data is sent when submitted (e.g., <code>login.php</code>).</li>
+<li><strong><code>method</code></strong>: Defines the HTTP method used to send data.
+<ul>
+<li><strong>GET</strong>: Appends form data to the URL (e.g., <code>page.php?name=John</code>). NOT secure. Used for queries/search.</li>
+<li><strong>POST</strong>: Sends form data in the HTTP request body. Secure. Used for passwords/sensitive data.</li>
+</ul></li>
+</ol>
+<h3>B. Form Elements and Controls</h3>
+<h4>1. Text Input Controls (<code>&lt;input&gt;</code>)</h4>
+<p>The <code>&lt;input&gt;</code> element varies based on the <code>type</code> attribute.</p>
+<ul>
+<li><code>type="text"</code>: Single-line text field.</li>
+<li><code>type="password"</code>: Masks characters (dots/asterisks).</li>
+<li><code>type="email"</code>: Validates for email format.</li>
+<li><strong>Common Attributes:</strong> <code>placeholder</code>, <code>name</code>, <code>required</code>, <code>value</code>.</li>
+</ul>
+<h4>2. TextArea (<code>&lt;textarea&gt;</code>)</h4>
+<p>Used for multi-line text input (e.g., comments, address).</p>
+<ul>
+<li><strong>Attributes:</strong> <code>rows</code> (height), <code>cols</code> (width).</li>
+<li><strong>Note:</strong> Closing tag is required.</li>
+</ul>
+<h4>3. Buttons</h4>
+<ul>
+<li><code>&lt;input type="submit"&gt;</code>: Submits the form data to the <code>action</code> URL.</li>
+<li><code>&lt;input type="reset"&gt;</code>: Resets all form values to default.</li>
+<li><code>&lt;input type="button"&gt;</code>: A clickable button (usually triggered by JavaScript).</li>
+<li><code>&lt;button&gt;</code>: More flexible HTML5 button tag.</li>
+</ul>
+<h4>4. Checkboxes</h4>
+<p>Allows selection of <strong>zero or more</strong> options from a set.</p>
+<ul>
+<li><code>type="checkbox"</code></li>
+<li>Attributes: <code>checked</code> (pre-selects the box).</li>
+</ul>
+<h4>5. Radio Buttons</h4>
+<p>Allows selection of <strong>only one</strong> option from a set.</p>
+<ul>
+<li><code>type="radio"</code></li>
+<li><strong>Important:</strong> All radio buttons in a group must share the same <code>name</code> attribute to function as a toggle.</li>
+</ul>
+<h4>6. Select (Dropdown Box)</h4>
+<p>Creates a drop-down list.</p>
+<ul>
+<li><code>&lt;select&gt;</code>: Wrapper element.</li>
+<li><code>&lt;option&gt;</code>: Defines items in the list.</li>
+<li>Attributes: <code>selected</code> (on <code>&lt;option&gt;</code>), <code>multiple</code> (allows multiple selections).</li>
+</ul>
+<h4>7. File Select</h4>
+<p>Allows users to upload files.</p>
+<ul>
+<li><code>type="file"</code></li>
+<li><strong>Requirement:</strong> The <code>&lt;form&gt;</code> tag must have <code>enctype="multipart/form-data"</code> for file uploads to work correctly.</li>
+</ul>
+<h3>Comprehensive Form Example</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;form action="/submit-data" method="POST" enctype="multipart/form-data"&gt;
+    &lt;!-- Text Input --&gt;
+    &lt;label for="fname"&gt;First Name:&lt;/label&gt;
+    &lt;input type="text" id="fname" name="firstname" placeholder="Enter name" required&gt;&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- Password --&gt;
+    &lt;label for="pwd"&gt;Password:&lt;/label&gt;
+    &lt;input type="password" id="pwd" name="password"&gt;&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- Radio Buttons (Gender) --&gt;
+    &lt;label&gt;Gender:&lt;/label&gt;
+    &lt;input type="radio" name="gender" value="male"&gt; Male
+    &lt;input type="radio" name="gender" value="female"&gt; Female&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- Checkboxes (Interests) --&gt;
+    &lt;label&gt;Interests:&lt;/label&gt;
+    &lt;input type="checkbox" name="coding" value="yes"&gt; Coding
+    &lt;input type="checkbox" name="design" value="yes"&gt; Design&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- Dropdown Select --&gt;
+    &lt;label for="country"&gt;Country:&lt;/label&gt;
+    &lt;select name="country" id="country"&gt;
+        &lt;option value="usa"&gt;USA&lt;/option&gt;
+        &lt;option value="uk"&gt;UK&lt;/option&gt;
+        &lt;option value="india" selected&gt;India&lt;/option&gt;
+    &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- Text Area --&gt;
+    &lt;label for="msg"&gt;Message:&lt;/label&gt;&lt;br&gt;
+    &lt;textarea name="message" rows="4" cols="30"&gt;&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- File Upload --&gt;
+    &lt;label&gt;Upload CV:&lt;/label&gt;
+    &lt;input type="file" name="cv_upload"&gt;&lt;br&gt;&lt;br&gt;
+
+    &lt;!-- Buttons --&gt;
+    &lt;input type="submit" value="Submit"&gt;
+    &lt;input type="reset" value="Clear Form"&gt;
+&lt;/form&gt;
+</code></pre></div></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem1/CSE326/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem1/CSE326/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

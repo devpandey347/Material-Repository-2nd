@@ -1,0 +1,2111 @@
+﻿{
+    "generatedAt":  "2026-03-22T19:30:42",
+    "subjects":  [
+                     {
+                         "code":  "BOOKS",
+                         "fileCount":  6,
+                         "groups":  [
+                                        {
+                                            "name":  "General",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "C Language CheatSheet",
+                                                              "fileName":  "C Language CheatSheet.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/Books/C Language CheatSheet.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "JavaScript Cheatsheet",
+                                                              "fileName":  "JavaScript Cheatsheet.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/Books/JavaScript Cheatsheet.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "JavaScript-JS-Cheat-Sheet",
+                                                              "fileName":  "JavaScript-JS-Cheat-Sheet.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/Books/JavaScript-JS-Cheat-Sheet.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "PostgreSQLNotesForProfessionals",
+                                                              "fileName":  "PostgreSQLNotesForProfessionals.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/Books/PostgreSQLNotesForProfessionals.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "The Ultimate C Handbook",
+                                                              "fileName":  "The Ultimate C Handbook.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/Books/The Ultimate C Handbook.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "The Ultimate Python Handbook_copy",
+                                                              "fileName":  "The Ultimate Python Handbook_copy.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/Books/The Ultimate Python Handbook_copy.pdf"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "CHE110",
+                         "fileCount":  15,
+                         "groups":  [
+                                        {
+                                            "name":  "General",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "1.Introduction",
+                                                              "fileName":  "1.Introduction.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/1.Introduction.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "2.sustainable_development",
+                                                              "fileName":  "2.sustainable_development.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/2.sustainable_development.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "3.Land RESOURCES",
+                                                              "fileName":  "3.Land RESOURCES.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/3.Land RESOURCES.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "4.WATER RESOURCE",
+                                                              "fileName":  "4.WATER RESOURCE.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/4.WATER RESOURCE.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "5.forest and energy resources",
+                                                              "fileName":  "5.forest and energy resources.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/5.forest and energy resources.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "6.ECOLOGY-1",
+                                                              "fileName":  "6.ECOLOGY-1.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/6.ECOLOGY-1.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "7.ECOLOGY-2",
+                                                              "fileName":  "7.ECOLOGY-2.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/7.ECOLOGY-2.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "8. Biodiversity",
+                                                              "fileName":  "8. Biodiversity.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/8. Biodiversity.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "8.BIODIVERSITY Full",
+                                                              "fileName":  "8.BIODIVERSITY Full.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CHE110/8.BIODIVERSITY Full.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "10.Pollution-2",
+                                                              "fileName":  "10.Pollution-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CHE110/10.Pollution-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "11.EnvironmentalActs",
+                                                              "fileName":  "11.EnvironmentalActs.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CHE110/11.EnvironmentalActs.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "12.u6-1",
+                                                              "fileName":  "12.u6-1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CHE110/12.u6-1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "13.u6-2",
+                                                              "fileName":  "13.u6-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CHE110/13.u6-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "14.U6-3",
+                                                              "fileName":  "14.U6-3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CHE110/14.U6-3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Pollution-1",
+                                                              "fileName":  "Pollution-1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CHE110/Pollution-1.pptx"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "CSE121",
+                         "fileCount":  6,
+                         "groups":  [
+                                        {
+                                            "name":  "CSE121 PPTs",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Unit1-DataScienceandBigdata",
+                                                              "fileName":  "Unit1-DataScienceandBigdata.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CSE121/CSE121 PPTs/Unit1-DataScienceandBigdata.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit2AIML",
+                                                              "fileName":  "Unit2AIML.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CSE121/CSE121 PPTs/Unit2AIML.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit3CyberSecurity",
+                                                              "fileName":  "Unit3CyberSecurity.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CSE121/CSE121 PPTs/Unit3CyberSecurity.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit4-DevOps",
+                                                              "fileName":  "Unit4-DevOps.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/CSE121/CSE121 PPTs/Unit4-DevOps.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit5-Cloud",
+                                                              "fileName":  "Unit5-Cloud.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CSE121/CSE121 PPTs/Unit5-Cloud.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit6-web development",
+                                                              "fileName":  "Unit6-web development.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/CSE121/CSE121 PPTs/Unit6-web development.pptx"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "CSE320",
+                         "fileCount":  27,
+                         "groups":  [
+                                        {
+                                            "name":  "General",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "1.fundamentals of testing",
+                                                              "fileName":  "1.fundamentals of testing.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/1.fundamentals of testing.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "1.Project managment",
+                                                              "fileName":  "1.Project managment.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/1.Project managment.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "1.Quality management",
+                                                              "fileName":  "1.Quality management.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/1.Quality management.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "2. control and planning",
+                                                              "fileName":  "2. control and planning.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/2. control and planning.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "2.Black box testing techniques",
+                                                              "fileName":  "2.Black box testing techniques.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/2.Black box testing techniques.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "2.ISO and SEI CMMI",
+                                                              "fileName":  "2.ISO and SEI CMMI.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/2.ISO and SEI CMMI.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "3.cost estimation",
+                                                              "fileName":  "3.cost estimation.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/3.cost estimation.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "3.PSP and six sigma",
+                                                              "fileName":  "3.PSP and six sigma.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/3.PSP and six sigma.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "3.white box testing techniques",
+                                                              "fileName":  "3.white box testing techniques.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/3.white box testing techniques.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "4. Computer aided software engg",
+                                                              "fileName":  "4. Computer aided software engg.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/4. Computer aided software engg.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "4.levels of testing",
+                                                              "fileName":  "4.levels of testing.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/4.levels of testing.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "4.Project scheduling using PERT and GANTT charts",
+                                                              "fileName":  "4.Project scheduling using PERT and GANTT charts.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/4.Project scheduling using PERT and GANTT charts.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "5.Software configuration management",
+                                                              "fileName":  "5.Software configuration management.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/5.Software configuration management.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "5.Software maintenance",
+                                                              "fileName":  "5.Software maintenance.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/5.Software maintenance.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "5.Test cases",
+                                                              "fileName":  "5.Test cases.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/5.Test cases.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "6. software reuse",
+                                                              "fileName":  "6. software reuse.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/6. software reuse.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "6.Introduction to selenium Feature of selenium",
+                                                              "fileName":  "6.Introduction to selenium Feature of selenium.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/6.Introduction to selenium Feature of selenium.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "7.Component based software",
+                                                              "fileName":  "7.Component based software.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/7.Component based software.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "7.Versions of selenium",
+                                                              "fileName":  "7.Versions of selenium.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/7.Versions of selenium.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "8. Record and play back",
+                                                              "fileName":  "8. Record and play back.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/8. Record and play back.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "8_Advance_techniques_of_software_engineering_Agile_development_methodology",
+                                                              "fileName":  "8_Advance_techniques_of_software_engineering_Agile_development_methodology.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/8_Advance_techniques_of_software_engineering_Agile_development_methodology.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "9.scrum",
+                                                              "fileName":  "9.scrum.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/9.scrum.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "10.aspect oriented programming",
+                                                              "fileName":  "10.aspect oriented programming.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/10.aspect oriented programming.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "11.Extreme programming",
+                                                              "fileName":  "11.Extreme programming.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/11.Extreme programming.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "12.adaptive software development",
+                                                              "fileName":  "12.adaptive software development.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/12.adaptive software development.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "13.radpid application development",
+                                                              "fileName":  "13.radpid application development.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/13.radpid application development.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "14. Software coloning",
+                                                              "fileName":  "14. Software coloning.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/CSE320/14. Software coloning.pdf"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "ECE249",
+                         "fileCount":  30,
+                         "groups":  [
+                                        {
+                                            "name":  "General",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Lecture1-2_31059_Zero Lecture PPT_edu_compressed",
+                                                              "fileName":  "Lecture1-2_31059_Zero Lecture PPT_edu_compressed.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/ECE249/Lecture1-2_31059_Zero Lecture PPT_edu_compressed.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture3-3_31059_Lecture2-3_Unit-1",
+                                                              "fileName":  "Lecture3-3_31059_Lecture2-3_Unit-1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture3-3_31059_Lecture2-3_Unit-1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture4-4_31059_Lecture4-4_Unit-1",
+                                                              "fileName":  "Lecture4-4_31059_Lecture4-4_Unit-1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture4-4_31059_Lecture4-4_Unit-1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture5-6_31059_Lecture5-6_Unit-1",
+                                                              "fileName":  "Lecture5-6_31059_Lecture5-6_Unit-1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture5-6_31059_Lecture5-6_Unit-1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture7-7_31059_Lecture7-7_Unit-1",
+                                                              "fileName":  "Lecture7-7_31059_Lecture7-7_Unit-1.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/ECE249/Lecture7-7_31059_Lecture7-7_Unit-1.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture8-8_31059_Lecture8-8_Unit-2",
+                                                              "fileName":  "Lecture8-8_31059_Lecture8-8_Unit-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture8-8_31059_Lecture8-8_Unit-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture9-9_31059_Lecture9-10_Unit-2",
+                                                              "fileName":  "Lecture9-9_31059_Lecture9-10_Unit-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture9-9_31059_Lecture9-10_Unit-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture10-10_31059_Lecture9-10_Unit-2",
+                                                              "fileName":  "Lecture10-10_31059_Lecture9-10_Unit-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture10-10_31059_Lecture9-10_Unit-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture10-11_31059_Lecture11-11_Unit-2",
+                                                              "fileName":  "Lecture10-11_31059_Lecture11-11_Unit-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture10-11_31059_Lecture11-11_Unit-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture12-12_31059_Lecture12-12_Unit-2",
+                                                              "fileName":  "Lecture12-12_31059_Lecture12-12_Unit-2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture12-12_31059_Lecture12-12_Unit-2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture13-14_31059_Lecture13-14_16384_lec-1_unit3",
+                                                              "fileName":  "Lecture13-14_31059_Lecture13-14_16384_lec-1_unit3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture13-14_31059_Lecture13-14_16384_lec-1_unit3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture15-15_31059_Lecture15-15_16384_lec-2_unit3",
+                                                              "fileName":  "Lecture15-15_31059_Lecture15-15_16384_lec-2_unit3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture15-15_31059_Lecture15-15_16384_lec-2_unit3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture16-16_31059_Lecture16-16_16384_lec-3_unit3",
+                                                              "fileName":  "Lecture16-16_31059_Lecture16-16_16384_lec-3_unit3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture16-16_31059_Lecture16-16_16384_lec-3_unit3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture17-17_31059_Lecture17-17_16384_lec-4_unit3",
+                                                              "fileName":  "Lecture17-17_31059_Lecture17-17_16384_lec-4_unit3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture17-17_31059_Lecture17-17_16384_lec-4_unit3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture18-18_31059_Lecture18-18_16384_lec-5_unit3",
+                                                              "fileName":  "Lecture18-18_31059_Lecture18-18_16384_lec-5_unit3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture18-18_31059_Lecture18-18_16384_lec-5_unit3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture19-19_31059_Lecture19-19_16384_lec-6-7_unit3",
+                                                              "fileName":  "Lecture19-19_31059_Lecture19-19_16384_lec-6-7_unit3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture19-19_31059_Lecture19-19_16384_lec-6-7_unit3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture22-23_31059_Lecture21-22_16384_Lec_1_unit4",
+                                                              "fileName":  "Lecture22-23_31059_Lecture21-22_16384_Lec_1_unit4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture22-23_31059_Lecture21-22_16384_Lec_1_unit4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture22-23_31059_Lecture23-23_16384_Lec_2_unit4",
+                                                              "fileName":  "Lecture22-23_31059_Lecture23-23_16384_Lec_2_unit4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture22-23_31059_Lecture23-23_16384_Lec_2_unit4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture24-24_31059_Lecture24-24_16384_Lec_3_unit4",
+                                                              "fileName":  "Lecture24-24_31059_Lecture24-24_16384_Lec_3_unit4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture24-24_31059_Lecture24-24_16384_Lec_3_unit4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture25-26_31059_Lecture25-26_16384_Lec_4_unit4",
+                                                              "fileName":  "Lecture25-26_31059_Lecture25-26_16384_Lec_4_unit4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture25-26_31059_Lecture25-26_16384_Lec_4_unit4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture27-27_31059_Lecture27-27_16384_Lec_5_unit4",
+                                                              "fileName":  "Lecture27-27_31059_Lecture27-27_16384_Lec_5_unit4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture27-27_31059_Lecture27-27_16384_Lec_5_unit4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture28-28_31059_Lecture28-28_16384_Lecture 1_unit-5",
+                                                              "fileName":  "Lecture28-28_31059_Lecture28-28_16384_Lecture 1_unit-5.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture28-28_31059_Lecture28-28_16384_Lecture 1_unit-5.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture29-30_31059_Lecture29-30_16384_Lecture 3_unit-5",
+                                                              "fileName":  "Lecture29-30_31059_Lecture29-30_16384_Lecture 3_unit-5.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture29-30_31059_Lecture29-30_16384_Lecture 3_unit-5.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture31-32_31059_Lecture31-31_16384_Lecture 5_unit-5",
+                                                              "fileName":  "Lecture31-32_31059_Lecture31-31_16384_Lecture 5_unit-5.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture31-32_31059_Lecture31-31_16384_Lecture 5_unit-5.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture31-32_31059_Lecture32-32_16384_Lecture 7_unit-5",
+                                                              "fileName":  "Lecture31-32_31059_Lecture32-32_16384_Lecture 7_unit-5.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture31-32_31059_Lecture32-32_16384_Lecture 7_unit-5.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture33-34_31059_Lecture33-34_16384_Register_unit-6",
+                                                              "fileName":  "Lecture33-34_31059_Lecture33-34_16384_Register_unit-6.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture33-34_31059_Lecture33-34_16384_Register_unit-6.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture35-36_31059_Lecture35-36_16384_Asynchronous Counter_unit-6",
+                                                              "fileName":  "Lecture35-36_31059_Lecture35-36_16384_Asynchronous Counter_unit-6.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture35-36_31059_Lecture35-36_16384_Asynchronous Counter_unit-6.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture37-38_31059_Lecture37-38_16384_Synchronous Counter - Copy",
+                                                              "fileName":  "Lecture37-38_31059_Lecture37-38_16384_Synchronous Counter - Copy.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture37-38_31059_Lecture37-38_16384_Synchronous Counter - Copy.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture39-39_31059_Lecture39-40_16384_Johnson and Ring Counter",
+                                                              "fileName":  "Lecture39-39_31059_Lecture39-40_16384_Johnson and Ring Counter.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture39-39_31059_Lecture39-40_16384_Johnson and Ring Counter.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture40-40_31059_Lecture39-40_16384_Johnson and Ring Counter",
+                                                              "fileName":  "Lecture40-40_31059_Lecture39-40_16384_Johnson and Ring Counter.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/ECE249/Lecture40-40_31059_Lecture39-40_16384_Johnson and Ring Counter.pptx"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "ECE279",
+                         "fileCount":  64,
+                         "groups":  [
+                                        {
+                                            "name":  "ECE LAB",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "EXP 1 TO 6",
+                                                              "fileName":  "EXP 1 TO 6.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/ECE279/ECE LAB/EXP 1 TO 6.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "EXP 7 8",
+                                                              "fileName":  "EXP 7 8.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/ECE279/ECE LAB/EXP 7 8.pdf"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PYQs",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0014",
+                                                              "fileName":  "IMG-20240412-WA0014.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0014.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0015",
+                                                              "fileName":  "IMG-20240412-WA0015.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0015.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0017",
+                                                              "fileName":  "IMG-20240412-WA0017.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0017.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0018",
+                                                              "fileName":  "IMG-20240412-WA0018.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0018.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0019",
+                                                              "fileName":  "IMG-20240412-WA0019.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0019.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0020",
+                                                              "fileName":  "IMG-20240412-WA0020.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0020.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0021",
+                                                              "fileName":  "IMG-20240412-WA0021.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0021.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0022",
+                                                              "fileName":  "IMG-20240412-WA0022.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0022.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0023",
+                                                              "fileName":  "IMG-20240412-WA0023.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0023.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0024",
+                                                              "fileName":  "IMG-20240412-WA0024.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0024.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0025",
+                                                              "fileName":  "IMG-20240412-WA0025.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0025.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0026",
+                                                              "fileName":  "IMG-20240412-WA0026.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0026.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0027",
+                                                              "fileName":  "IMG-20240412-WA0027.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0027.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0028",
+                                                              "fileName":  "IMG-20240412-WA0028.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0028.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0029",
+                                                              "fileName":  "IMG-20240412-WA0029.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0029.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0030",
+                                                              "fileName":  "IMG-20240412-WA0030.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0030.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0031",
+                                                              "fileName":  "IMG-20240412-WA0031.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0031.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0032",
+                                                              "fileName":  "IMG-20240412-WA0032.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0032.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0033",
+                                                              "fileName":  "IMG-20240412-WA0033.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0033.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0036",
+                                                              "fileName":  "IMG-20240412-WA0036.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0036.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0037",
+                                                              "fileName":  "IMG-20240412-WA0037.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0037.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0038",
+                                                              "fileName":  "IMG-20240412-WA0038.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0038.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0039",
+                                                              "fileName":  "IMG-20240412-WA0039.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0039.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0040",
+                                                              "fileName":  "IMG-20240412-WA0040.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0040.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0041",
+                                                              "fileName":  "IMG-20240412-WA0041.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0041.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0043",
+                                                              "fileName":  "IMG-20240412-WA0043.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0043.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0045",
+                                                              "fileName":  "IMG-20240412-WA0045.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0045.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0046",
+                                                              "fileName":  "IMG-20240412-WA0046.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0046.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0048",
+                                                              "fileName":  "IMG-20240412-WA0048.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0048.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0049",
+                                                              "fileName":  "IMG-20240412-WA0049.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0049.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0050",
+                                                              "fileName":  "IMG-20240412-WA0050.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0050.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0051",
+                                                              "fileName":  "IMG-20240412-WA0051.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0051.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0052",
+                                                              "fileName":  "IMG-20240412-WA0052.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0052.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0053",
+                                                              "fileName":  "IMG-20240412-WA0053.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0053.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0054",
+                                                              "fileName":  "IMG-20240412-WA0054.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0054.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0055",
+                                                              "fileName":  "IMG-20240412-WA0055.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0055.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0056",
+                                                              "fileName":  "IMG-20240412-WA0056.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0056.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0057",
+                                                              "fileName":  "IMG-20240412-WA0057.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0057.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0058",
+                                                              "fileName":  "IMG-20240412-WA0058.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0058.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0059",
+                                                              "fileName":  "IMG-20240412-WA0059.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0059.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0060",
+                                                              "fileName":  "IMG-20240412-WA0060.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0060.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0061",
+                                                              "fileName":  "IMG-20240412-WA0061.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0061.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0062",
+                                                              "fileName":  "IMG-20240412-WA0062.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0062.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0063",
+                                                              "fileName":  "IMG-20240412-WA0063.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0063.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240412-WA0064",
+                                                              "fileName":  "IMG-20240412-WA0064.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240412-WA0064.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0036",
+                                                              "fileName":  "IMG-20240424-WA0036.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0036.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0037",
+                                                              "fileName":  "IMG-20240424-WA0037.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0037.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0038",
+                                                              "fileName":  "IMG-20240424-WA0038.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0038.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0039",
+                                                              "fileName":  "IMG-20240424-WA0039.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0039.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0040",
+                                                              "fileName":  "IMG-20240424-WA0040.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0040.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0041",
+                                                              "fileName":  "IMG-20240424-WA0041.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0041.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0042",
+                                                              "fileName":  "IMG-20240424-WA0042.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0042.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0043",
+                                                              "fileName":  "IMG-20240424-WA0043.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0043.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0044",
+                                                              "fileName":  "IMG-20240424-WA0044.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0044.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0045",
+                                                              "fileName":  "IMG-20240424-WA0045.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0045.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0046",
+                                                              "fileName":  "IMG-20240424-WA0046.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0046.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "IMG-20240424-WA0047",
+                                                              "fileName":  "IMG-20240424-WA0047.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/IMG-20240424-WA0047.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-04-24 at 21.36.50_07713de6",
+                                                              "fileName":  "WhatsApp Image 2024-04-24 at 21.36.50_07713de6.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/WhatsApp Image 2024-04-24 at 21.36.50_07713de6.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-04-24 at 21.36.51_9413fab3",
+                                                              "fileName":  "WhatsApp Image 2024-04-24 at 21.36.51_9413fab3.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/WhatsApp Image 2024-04-24 at 21.36.51_9413fab3.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-04-24 at 21.36.51_d2c65a08",
+                                                              "fileName":  "WhatsApp Image 2024-04-24 at 21.36.51_d2c65a08.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/WhatsApp Image 2024-04-24 at 21.36.51_d2c65a08.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-04-24 at 21.36.53_35df7020",
+                                                              "fileName":  "WhatsApp Image 2024-04-24 at 21.36.53_35df7020.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/WhatsApp Image 2024-04-24 at 21.36.53_35df7020.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-04-24 at 21.36.54_5356a1eb",
+                                                              "fileName":  "WhatsApp Image 2024-04-24 at 21.36.54_5356a1eb.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/ECE279/PYQs/WhatsApp Image 2024-04-24 at 21.36.54_5356a1eb.jpg"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "INT306",
+                         "fileCount":  29,
+                         "groups":  [
+                                        {
+                                            "name":  "INT306/CGPA Booster/Chapter 1",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "A91684064_19372_31_2020_introduction",
+                                                              "fileName":  "A91684064_19372_31_2020_introduction.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 1/A91684064_19372_31_2020_introduction.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Datamodels",
+                                                              "fileName":  "Datamodels.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 1/Datamodels.ppt"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "INT306/CGPA Booster/Chapter 2",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "1_DDL",
+                                                              "fileName":  "1_DDL.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 2/1_DDL.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "2_DML",
+                                                              "fileName":  "2_DML.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 2/2_DML.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "3_Select_Joins",
+                                                              "fileName":  "3_Select_Joins.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 2/3_Select_Joins.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "4_DCL_TCL",
+                                                              "fileName":  "4_DCL_TCL.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 2/4_DCL_TCL.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "RELATIONAL ALGEBRA 1",
+                                                              "fileName":  "RELATIONAL ALGEBRA 1.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 2/RELATIONAL ALGEBRA 1.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "SQLviews",
+                                                              "fileName":  "SQLviews.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 2/SQLviews.pptx"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "INT306/CGPA Booster/Chapter 3",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Normalization",
+                                                              "fileName":  "Normalization.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 3/Normalization.ppt"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "INT306/CGPA Booster/Chapter 4",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "CONCURRENCY CONTROL 1",
+                                                              "fileName":  "CONCURRENCY CONTROL 1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 4/CONCURRENCY CONTROL 1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Transaction Processing II 2",
+                                                              "fileName":  "Transaction Processing II 2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 4/Transaction Processing II 2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "TRANSACTION PROCESSING",
+                                                              "fileName":  "TRANSACTION PROCESSING.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/CGPA Booster/Chapter 4/TRANSACTION PROCESSING.pptx"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "INT306/DBMS",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "1. Introductory lecture INT306",
+                                                              "fileName":  "1. Introductory lecture INT306.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/1. Introductory lecture INT306.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "2. Data Models",
+                                                              "fileName":  "2. Data Models.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/2. Data Models.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "3. Data Models complete",
+                                                              "fileName":  "3. Data Models complete.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/3. Data Models complete.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "4. Structured Query Language_Half",
+                                                              "fileName":  "4. Structured Query Language_Half.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/4. Structured Query Language_Half.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "5. DBMS Queries Overview",
+                                                              "fileName":  "5. DBMS Queries Overview.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/5. DBMS Queries Overview.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "6. Structured Query Language",
+                                                              "fileName":  "6. Structured Query Language.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/6. Structured Query Language.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "7. joins",
+                                                              "fileName":  "7. joins.txt",
+                                                              "extension":  ".txt",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/7. joins.txt"
+                                                          },
+                                                          {
+                                                              "displayName":  "8. constraints",
+                                                              "fileName":  "8. constraints.txt",
+                                                              "extension":  ".txt",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/8. constraints.txt"
+                                                          },
+                                                          {
+                                                              "displayName":  "9. NormalizationNew1",
+                                                              "fileName":  "9. NormalizationNew1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/9. NormalizationNew1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "10. ques1 (1)",
+                                                              "fileName":  "10. ques1 (1).pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/10. ques1 (1).pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "11. view serial",
+                                                              "fileName":  "11. view serial.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/11. view serial.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "12. conflict",
+                                                              "fileName":  "12. conflict.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/12. conflict.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "13. TP my",
+                                                              "fileName":  "13. TP my.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/13. TP my.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "14. PLSQL introduction 1",
+                                                              "fileName":  "14. PLSQL introduction 1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/14. PLSQL introduction 1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "15. Data Indexing PresentationMy",
+                                                              "fileName":  "15. Data Indexing PresentationMy.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/15. Data Indexing PresentationMy.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "16. BIG DATA FOUNDATIOand NoSQL",
+                                                              "fileName":  "16. BIG DATA FOUNDATIOand NoSQL.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/16. BIG DATA FOUNDATIOand NoSQL.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "17. Database Unit 6",
+                                                              "fileName":  "17. Database Unit 6.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/INT306/INT306/DBMS/17. Database Unit 6.pdf"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "MEC136",
+                         "fileCount":  35,
+                         "groups":  [
+                                        {
+                                            "name":  "MEC136",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "playlists",
+                                                              "fileName":  "playlists.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/playlists.pdf"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "MEC136/all units",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "2. Instruments",
+                                                              "fileName":  "2. Instruments.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/2. Instruments.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "3. Line Types",
+                                                              "fileName":  "3. Line Types.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/3. Line Types.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "4. Dimensioning",
+                                                              "fileName":  "4. Dimensioning.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/4. Dimensioning.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "5. Letter writing",
+                                                              "fileName":  "5. Letter writing.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/5. Letter writing.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "6. Scales",
+                                                              "fileName":  "6. Scales.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/6. Scales.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Autodesk_AutoCAD_2024_en-US_setup_webinstall",
+                                                              "fileName":  "Autodesk_AutoCAD_2024_en-US_setup_webinstall.exe",
+                                                              "extension":  ".exe",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Autodesk_AutoCAD_2024_en-US_setup_webinstall.exe"
+                                                          },
+                                                          {
+                                                              "displayName":  "Isometric Projection PPT",
+                                                              "fileName":  "Isometric Projection PPT.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Isometric Projection PPT.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Isometric Projection",
+                                                              "fileName":  "Isometric Projection.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Isometric Projection.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "mec syll",
+                                                              "fileName":  "mec syll.aspx",
+                                                              "extension":  ".aspx",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/mec syll.aspx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Orthographic Projection UPLOAD",
+                                                              "fileName":  "Orthographic Projection UPLOAD.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Orthographic Projection UPLOAD.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Projections of Line FOR UPLOAD",
+                                                              "fileName":  "Projections of Line FOR UPLOAD.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Projections of Line FOR UPLOAD.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Projections of Line",
+                                                              "fileName":  "Projections of Line.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Projections of Line.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Projections of Point upload",
+                                                              "fileName":  "Projections of Point upload.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Projections of Point upload.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Projections of Point",
+                                                              "fileName":  "Projections of Point.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Projections of Point.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Rapid Prototypingsss",
+                                                              "fileName":  "Rapid Prototypingsss.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Rapid Prototypingsss.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 3 Sectional Orthographic Projection",
+                                                              "fileName":  "Unit 3 Sectional Orthographic Projection.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit 3 Sectional Orthographic Projection.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Development of Surfaces",
+                                                              "fileName":  "Unit 4 Development of Surfaces.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit 4 Development of Surfaces.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 5 and 6 1",
+                                                              "fileName":  "Unit 5 and 6 1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit 5 and 6 1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 5_Mec 136",
+                                                              "fileName":  "Unit 5_Mec 136.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit 5_Mec 136.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 6 with example",
+                                                              "fileName":  "Unit 6 with example.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit 6 with example.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 6_MEC 136",
+                                                              "fileName":  "Unit 6_MEC 136.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit 6_MEC 136.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit3",
+                                                              "fileName":  "Unit3.ppt",
+                                                              "extension":  ".ppt",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit3.ppt"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit6 Notes 1",
+                                                              "fileName":  "Unit6 Notes 1.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MEC136/MEC136/all units/Unit6 Notes 1.pdf"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PYQs",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "ete",
+                                                              "fileName":  "ete.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/ete.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_2024-05-08_08-02-19",
+                                                              "fileName":  "photo_2024-05-08_08-02-19.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/photo_2024-05-08_08-02-19.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.06.18_1936aab4",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.06.18_1936aab4.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.06.18_1936aab4.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.06.47_4b3ce981",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.06.47_4b3ce981.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.06.47_4b3ce981.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.06.47_bdb01163",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.06.47_bdb01163.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.06.47_bdb01163.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.06.47_d70f22d0",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.06.47_d70f22d0.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.06.47_d70f22d0.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.09.03_a4d2f99e",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.09.03_a4d2f99e.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.09.03_a4d2f99e.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.10.11_fc8789a4",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.10.11_fc8789a4.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.10.11_fc8789a4.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.10.12_1381c05a",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.10.12_1381c05a.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.10.12_1381c05a.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.10.12_a7b54471",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.10.12_a7b54471.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.10.12_a7b54471.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "WhatsApp Image 2024-05-08 at 08.10.12_f94077c3",
+                                                              "fileName":  "WhatsApp Image 2024-05-08 at 08.10.12_f94077c3.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/MEC136/PYQs/WhatsApp Image 2024-05-08 at 08.10.12_f94077c3.jpg"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "MTH166",
+                         "fileCount":  42,
+                         "groups":  [
+                                        {
+                                            "name":  "MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Lecture 1 Exact Differential Equations",
+                                                              "fileName":  "Lecture 1 Exact Differential Equations.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 1 Exact Differential Equations.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 2-Equations Reducible to Exact Form-I",
+                                                              "fileName":  "Lecture 2-Equations Reducible to Exact Form-I.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 2-Equations Reducible to Exact Form-I.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 3-Equations Reducible to Exact Form-II",
+                                                              "fileName":  "Lecture 3-Equations Reducible to Exact Form-II.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 3-Equations Reducible to Exact Form-II.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 4-Equations of First Order and Higher Degree",
+                                                              "fileName":  "Lecture 4-Equations of First Order and Higher Degree.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 4-Equations of First Order and Higher Degree.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 5-Clairaut Equation",
+                                                              "fileName":  "Lecture 5-Clairaut Equation.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 5-Clairaut Equation.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 6-Revision of Unit-1 and MCQ Practice",
+                                                              "fileName":  "Lecture 6-Revision of Unit-1 and MCQ Practice.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 6-Revision of Unit-1 and MCQ Practice.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 7-Linear Differential Equations-I",
+                                                              "fileName":  "Lecture 7-Linear Differential Equations-I.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 7-Linear Differential Equations-I.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 8-Linear Differential Equations-II",
+                                                              "fileName":  "Lecture 8-Linear Differential Equations-II.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 8-Linear Differential Equations-II.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 9Solution of 2nd order Homogeneous LDE with Constant coefficients I",
+                                                              "fileName":  "Lecture 9Solution of 2nd order Homogeneous LDE with Constant coefficients I.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 9Solution of 2nd order Homogeneous LDE with Constant coefficients I.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 10Solution of 2nd order Homogeneous LDE with Constant coefficients II",
+                                                              "fileName":  "Lecture 10Solution of 2nd order Homogeneous LDE with Constant coefficients II.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 10Solution of 2nd order Homogeneous LDE with Constant coefficients II.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 11Solution of Higher order Homogeneous LDE with Constant coefficients I",
+                                                              "fileName":  "Lecture 11Solution of Higher order Homogeneous LDE with Constant coefficients I.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 11Solution of Higher order Homogeneous LDE with Constant coefficients I.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 12-Solution of Higher order Homogeneous LDE with Constant coefficients -II",
+                                                              "fileName":  "Lecture 12-Solution of Higher order Homogeneous LDE with Constant coefficients -II.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 12-Solution of Higher order Homogeneous LDE with Constant coefficients -II.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 13Solution of NonHomogeneous LDE with Constant coefficients Using Operaor MethodI",
+                                                              "fileName":  "Lecture 13Solution of NonHomogeneous LDE with Constant coefficients Using Operaor MethodI.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 13Solution of NonHomogeneous LDE with Constant coefficients Using Operaor MethodI.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 14Solution of NonHomogeneous LDE with Constant coefficients Using Operaor MethodII",
+                                                              "fileName":  "Lecture 14Solution of NonHomogeneous LDE with Constant coefficients Using Operaor MethodII.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 14Solution of NonHomogeneous LDE with Constant coefficients Using Operaor MethodII.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 15 Method of Variation of Parameters",
+                                                              "fileName":  "Lecture 15 Method of Variation of Parameters.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 15 Method of Variation of Parameters.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 16 Method of Undeterminant Coefficients",
+                                                              "fileName":  "Lecture 16 Method of Undeterminant Coefficients.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/Lecture 16 Method of Undeterminant Coefficients.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "lecture 17",
+                                                              "fileName":  "lecture 17.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 01 to 03/lecture 17.pdf"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Lecture 18Partial Differential Equations",
+                                                              "fileName":  "Lecture 18Partial Differential Equations.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 18Partial Differential Equations.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 19Separation of Variables Solution of PDE",
+                                                              "fileName":  "Lecture 19Separation of Variables Solution of PDE.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 19Separation of Variables Solution of PDE.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 20Solution of Wave Equation",
+                                                              "fileName":  "Lecture 20Solution of Wave Equation.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 20Solution of Wave Equation.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 21Solution of Heat Equation",
+                                                              "fileName":  "Lecture 21Solution of Heat Equation.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 21Solution of Heat Equation.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 22Solution of Laplace Equation",
+                                                              "fileName":  "Lecture 22Solution of Laplace Equation.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 22Solution of Laplace Equation.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 23Revision of Unit4 and MCQ Practice",
+                                                              "fileName":  "Lecture 23Revision of Unit4 and MCQ Practice.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 23Revision of Unit4 and MCQ Practice.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 24Level Surfaces and Parametric Equation of a Straight Line",
+                                                              "fileName":  "Lecture 24Level Surfaces and Parametric Equation of a Straight Line.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 24Level Surfaces and Parametric Equation of a Straight Line.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 25Length of Space Curve and Parametric Equation of Tangent Line",
+                                                              "fileName":  "Lecture 25Length of Space Curve and Parametric Equation of Tangent Line.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 25Length of Space Curve and Parametric Equation of Tangent Line.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 26Gradient of a scalar field",
+                                                              "fileName":  "Lecture 26Gradient of a scalar field.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 26Gradient of a scalar field.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 27Directional Derivatives",
+                                                              "fileName":  "Lecture 27Directional Derivatives.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 27Directional Derivatives.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 28Divergence and Curl of a Vector Field",
+                                                              "fileName":  "Lecture 28Divergence and Curl of a Vector Field.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 28Divergence and Curl of a Vector Field.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 29Revision of Unit5 and MCQ Practice",
+                                                              "fileName":  "Lecture 29Revision of Unit5 and MCQ Practice.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 29Revision of Unit5 and MCQ Practice.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 30Line Integral",
+                                                              "fileName":  "Lecture 30Line Integral.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 30Line Integral.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 31Greens Theorem",
+                                                              "fileName":  "Lecture 31Greens Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 31Greens Theorem.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 32Surface Area and Surface Integral",
+                                                              "fileName":  "Lecture 32Surface Area and Surface Integral.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 32Surface Area and Surface Integral.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 33Stokes Theorem",
+                                                              "fileName":  "Lecture 33Stokes Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 33Stokes Theorem.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 34 Gausss Divergence Theorem",
+                                                              "fileName":  "Lecture 34 Gausss Divergence Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 34 Gausss Divergence Theorem.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 34 Line Integral",
+                                                              "fileName":  "Lecture 34 Line Integral.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 34 Line Integral.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 35 Greens Theorem",
+                                                              "fileName":  "Lecture 35 Greens Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 35 Greens Theorem.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 35Revision of Unit6 and MCQ Practice",
+                                                              "fileName":  "Lecture 35Revision of Unit6 and MCQ Practice.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 35Revision of Unit6 and MCQ Practice.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 36Surface area and surface integral",
+                                                              "fileName":  "Lecture 36Surface area and surface integral.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 36Surface area and surface integral.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 37 Stokes Theorem",
+                                                              "fileName":  "Lecture 37 Stokes Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 37 Stokes Theorem.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 38 StokesTheorem... Continued",
+                                                              "fileName":  "Lecture 38 StokesTheorem... Continued.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 38 StokesTheorem... Continued.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 39 Gausss Divergence Theorem",
+                                                              "fileName":  "Lecture 39 Gausss Divergence Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 39 Gausss Divergence Theorem.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Lecture 40 Gausss Divergence Theorem",
+                                                              "fileName":  "Lecture 40 Gausss Divergence Theorem.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/MTH166/MTH166   Differential Equation And Vector Calculus/PPT Unit 04 to 06/Lecture 40 Gausss Divergence Theorem.pdf"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "PEL121-125",
+                         "fileCount":  21,
+                         "groups":  [
+                                        {
+                                            "name":  "PEL125_ALL PPT+MCQs",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "UNIT 3 Lecture2 Tenses",
+                                                              "fileName":  "UNIT 3 Lecture2 Tenses.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 3 Lecture2 Tenses.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT 5 Modals 23536",
+                                                              "fileName":  "UNIT 5 Modals 23536.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 5 Modals 23536.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT 6 Confusing words  23536",
+                                                              "fileName":  "UNIT 6 Confusing words  23536.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 6 Confusing words  23536.pptx"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PEL125_ALL PPT+MCQs/MCQS",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Apostrophes Practice Quiz",
+                                                              "fileName":  "Apostrophes Practice Quiz.docx",
+                                                              "extension":  ".docx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/Apostrophes Practice Quiz.docx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Commas Practice Quiz",
+                                                              "fileName":  "Commas Practice Quiz.docx",
+                                                              "extension":  ".docx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/Commas Practice Quiz.docx"
+                                                          },
+                                                          {
+                                                              "displayName":  "pel-ete-previous-year-paper",
+                                                              "fileName":  "pel-ete-previous-year-paper.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/pel-ete-previous-year-paper.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Punctuations MCQS paragraphs",
+                                                              "fileName":  "Punctuations MCQS paragraphs.docx",
+                                                              "extension":  ".docx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/Punctuations MCQS paragraphs.docx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Semicolons  practice quiz",
+                                                              "fileName":  "Semicolons  practice quiz.docx",
+                                                              "extension":  ".docx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/Semicolons  practice quiz.docx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Tutorial  UNIT1PART OF SPEECH3",
+                                                              "fileName":  "Tutorial  UNIT1PART OF SPEECH3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/Tutorial  UNIT1PART OF SPEECH3.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "TUTORIAL UNIT1PART OF SPEECH 2",
+                                                              "fileName":  "TUTORIAL UNIT1PART OF SPEECH 2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/TUTORIAL UNIT1PART OF SPEECH 2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "TUTORIAL UNIT1PART OF SPEECH4",
+                                                              "fileName":  "TUTORIAL UNIT1PART OF SPEECH4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/TUTORIAL UNIT1PART OF SPEECH4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "TutorialUNIT 5MODALS",
+                                                              "fileName":  "TutorialUNIT 5MODALS.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/TutorialUNIT 5MODALS.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "TutorialUNIT 6CONFUSING WORDS",
+                                                              "fileName":  "TutorialUNIT 6CONFUSING WORDS.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/TutorialUNIT 6CONFUSING WORDS.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit  4  REV Phrases _ Clauses  Sentence Tutorial",
+                                                              "fileName":  "Unit  4  REV Phrases _ Clauses  Sentence Tutorial.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/MCQS/Unit  4  REV Phrases _ Clauses  Sentence Tutorial.pptx"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PEL125_ALL PPT+MCQs/UNIT 1",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "UNIT1 PART of speech 1",
+                                                              "fileName":  "UNIT1 PART of speech 1.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 1/UNIT1 PART of speech 1.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT1PART of speech PART 4",
+                                                              "fileName":  "UNIT1PART of speech PART 4.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 1/UNIT1PART of speech PART 4.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT1PART of speech2",
+                                                              "fileName":  "UNIT1PART of speech2.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 1/UNIT1PART of speech2.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT1Parts of speechPART 3",
+                                                              "fileName":  "UNIT1Parts of speechPART 3.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 1/UNIT1Parts of speechPART 3.pptx"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PEL125_ALL PPT+MCQs/UNIT 4",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Unit  4  REV Phrases _ Clauses  Sentence Tutorial",
+                                                              "fileName":  "Unit  4  REV Phrases _ Clauses  Sentence Tutorial.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 4/Unit  4  REV Phrases _ Clauses  Sentence Tutorial.pptx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit  4 Lecture1 Phrases  Clauses",
+                                                              "fileName":  "Unit  4 Lecture1 Phrases  Clauses.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 4/Unit  4 Lecture1 Phrases  Clauses.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit  4 Lecture2 Sentence",
+                                                              "fileName":  "Unit  4 Lecture2 Sentence.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PEL121-125/PEL125_ALL PPT+MCQs/UNIT 4/Unit  4 Lecture2 Sentence.pdf"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     },
+                     {
+                         "code":  "PHY110",
+                         "fileCount":  45,
+                         "groups":  [
+                                        {
+                                            "name":  "PHY110/handwritten notes",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "unit 1-1 (1)",
+                                                              "fileName":  "unit 1-1 (1).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/handwritten notes/unit 1-1 (1).pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "unit 2-1",
+                                                              "fileName":  "unit 2-1.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/handwritten notes/unit 2-1.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT 3 (NOTES)",
+                                                              "fileName":  "UNIT 3 (NOTES).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/handwritten notes/UNIT 3 (NOTES).pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT 4 (NOTES)",
+                                                              "fileName":  "UNIT 4 (NOTES).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/handwritten notes/UNIT 4 (NOTES).pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "UNIT 5 (NOTES)",
+                                                              "fileName":  "UNIT 5 (NOTES).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/handwritten notes/UNIT 5 (NOTES).pdf"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PHY110/NOTES",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "Fiber Optics",
+                                                              "fileName":  "Fiber Optics.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Fiber Optics.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "HK Malik_Engineering Physics",
+                                                              "fileName":  "HK Malik_Engineering Physics.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/HK Malik_Engineering Physics.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "laser1",
+                                                              "fileName":  "laser1.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/laser1.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "laser2",
+                                                              "fileName":  "laser2.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/laser2.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "laser3",
+                                                              "fileName":  "laser3.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/laser3.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "phy syll",
+                                                              "fileName":  "phy syll.aspx",
+                                                              "extension":  ".aspx",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/phy syll.aspx"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantum Mechanics Lecture 1",
+                                                              "fileName":  "Unit 4 Quantum Mechanics Lecture 1.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantum Mechanics Lecture 1.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantum Mechanics Lecture 2",
+                                                              "fileName":  "Unit 4 Quantum Mechanics Lecture 2.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantum Mechanics Lecture 2.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantum Mechanics Lecture 3",
+                                                              "fileName":  "Unit 4 Quantum Mechanics Lecture 3.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantum Mechanics Lecture 3.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantum Mechanics Lecture 4",
+                                                              "fileName":  "Unit 4 Quantum Mechanics Lecture 4.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantum Mechanics Lecture 4.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantum Mechanics Lecture 6",
+                                                              "fileName":  "Unit 4 Quantum Mechanics Lecture 6.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantum Mechanics Lecture 6.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantume Mechanics Lecture 5 (1)",
+                                                              "fileName":  "Unit 4 Quantume Mechanics Lecture 5 (1).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantume Mechanics Lecture 5 (1).pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantume Mechanics Lecture 5 (2)",
+                                                              "fileName":  "Unit 4 Quantume Mechanics Lecture 5 (2).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantume Mechanics Lecture 5 (2).pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit 4 Quantume Mechanics Lecture 5",
+                                                              "fileName":  "Unit 4 Quantume Mechanics Lecture 5.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit 4 Quantume Mechanics Lecture 5.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Unit6",
+                                                              "fileName":  "Unit6.pptx",
+                                                              "extension":  ".pptx",
+                                                              "relativePath":  "files/PHY110/PHY110/NOTES/Unit6.pptx"
+                                                          }
+                                                      ]
+                                        },
+                                        {
+                                            "name":  "PHY110/PYQs",
+                                            "files":  [
+                                                          {
+                                                              "displayName":  "DOC-20221111-WA0012.",
+                                                              "fileName":  "DOC-20221111-WA0012..pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/DOC-20221111-WA0012..pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "DOC-20221111-WA0013.",
+                                                              "fileName":  "DOC-20221111-WA0013..pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/DOC-20221111-WA0013..pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "DOC-20221111-WA0014.",
+                                                              "fileName":  "DOC-20221111-WA0014..pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/DOC-20221111-WA0014..pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Free Electron Theory",
+                                                              "fileName":  "Free Electron Theory.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/Free Electron Theory.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "Laser and Fiber Optics-MCQS",
+                                                              "fileName":  "Laser and Fiber Optics-MCQS.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/Laser and Fiber Optics-MCQS.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "mcq last year answer (2)",
+                                                              "fileName":  "mcq last year answer (2).pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/mcq last year answer (2).pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "mcq last year answer",
+                                                              "fileName":  "mcq last year answer.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/mcq last year answer.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "MCQ_Physics_part 2",
+                                                              "fileName":  "MCQ_Physics_part 2.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/MCQ_Physics_part 2.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "MCQ_Unit_I_PHY110",
+                                                              "fileName":  "MCQ_Unit_I_PHY110.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/MCQ_Unit_I_PHY110.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "MCQ_Unit_II_PHY110",
+                                                              "fileName":  "MCQ_Unit_II_PHY110.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/MCQ_Unit_II_PHY110.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "MCQ_Unit_III_PHY110",
+                                                              "fileName":  "MCQ_Unit_III_PHY110.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/MCQ_Unit_III_PHY110.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_1_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_1_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_1_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_1_2024-05-14_08-28-49",
+                                                              "fileName":  "photo_1_2024-05-14_08-28-49.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_1_2024-05-14_08-28-49.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_2_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_2_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_2_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_2_2024-05-14_08-28-49",
+                                                              "fileName":  "photo_2_2024-05-14_08-28-49.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_2_2024-05-14_08-28-49.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_3_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_3_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_3_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_4_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_4_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_4_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_5_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_5_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_5_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_6_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_6_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_6_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_7_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_7_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_7_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_8_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_8_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_8_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_9_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_9_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_9_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "photo_10_2024-05-14_08-28-38",
+                                                              "fileName":  "photo_10_2024-05-14_08-28-38.jpg",
+                                                              "extension":  ".jpg",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/photo_10_2024-05-14_08-28-38.jpg"
+                                                          },
+                                                          {
+                                                              "displayName":  "Tutorial_Unit_II_PHY110",
+                                                              "fileName":  "Tutorial_Unit_II_PHY110.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/Tutorial_Unit_II_PHY110.pdf"
+                                                          },
+                                                          {
+                                                              "displayName":  "unit 4 mcq phy110",
+                                                              "fileName":  "unit 4 mcq phy110.pdf",
+                                                              "extension":  ".pdf",
+                                                              "relativePath":  "files/PHY110/PHY110/PYQs/unit 4 mcq phy110.pdf"
+                                                          }
+                                                      ]
+                                        }
+                                    ]
+                     }
+                 ]
+}

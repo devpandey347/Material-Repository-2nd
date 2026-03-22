@@ -1,0 +1,527 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/ENG607">ENG607</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 6</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/ENG607">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/ENG607/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/ENG607/Unit6/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/ENG607/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ENG607</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            10 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: T.S.Eliot: The Hollow Men and The Love Song of J. Alfred Prufrock</h1>
+<h2>Introduction to T.S. Eliot and Modernism</h2>
+<p>Thomas Stearns Eliot (1888-1965) was a seminal figure of the Modernist movement. His poetry reflects the profound sense of disillusionment, spiritual crisis, and fragmentation that characterized the early 20th century, particularly in the wake of World War I. Modernism as a literary movement rejected the certainties and conventions of the Victorian era, opting instead for experimental forms, complex psychological exploration, and a focus on the alienated individual within a decaying urban landscape. Eliot’s work is known for its intellectual depth, allusive complexity, and innovative techniques that capture the fractured consciousness of the modern age.</p>
+<hr/>
+<h2>The Love Song of J. Alfred Prufrock (1915)</h2>
+<h3>A. Synopsis</h3>
+<p>"The Love Song of J. Alfred Prufrock" is a dramatic monologue that presents the inner thoughts of its protagonist, Prufrock. He is an educated, articulate, but emotionally sterile and socially anxious man. The poem follows his stream of consciousness as he contemplates attending a social gathering and making a declaration of love or some other "overwhelming question." However, paralyzed by self-doubt, fear of rejection, and a profound sense of inadequacy, he ultimately fails to act, retreating into a world of fantasy and regret. The title is deeply ironic; it is not a song of love, but a lament of inaction and emotional paralysis.</p>
+<h3>B. Analysis through Key Topics</h3>
+<h4>1. Themes of Alienation and Isolation</h4>
+<ul>
+<li><strong>Internal vs. External World:</strong> Prufrock is profoundly isolated within his own mind. The entire poem is an internal monologue, suggesting a disconnect from the external world. The opening invitation, "Let us go then, you and I," is not to a companion but likely to a part of his own divided self, highlighting his internal fragmentation and loneliness.</li>
+<li><strong>Social Alienation:</strong> Prufrock feels like an outsider in the social settings he inhabits. The recurring line, "In the room the women come and go / Talking of Michelangelo," depicts a world of superficial, cultured conversation from which he feels excluded. He is an observer, not a participant.</li>
+<li><strong>Objectification and Scrutiny:</strong> He feels scrutinized and judged by others, imagining their critical gazes. This fear is captured in the agonizing image of being a scientific specimen:
+<blockquote>
+<p>And when I am formulated, sprawling on a pin,<br/>
+When I am pinned and wriggling on the wall,<br/>
+Then how should I begin...</p>
+</blockquote></li>
+<li><strong>Inability to Communicate:</strong> His central conflict is the inability to translate his internal feelings into external action or speech. He rehearses what he might say ("Should I, after tea and cakes and ices, / Have the strength to force the moment to its crisis?") but is crippled by the fear of being misunderstood: "That is not what I meant at all. / That is not it, at all."</li>
+</ul>
+<h4>2. The Use of Fragmentation and Ambiguity</h4>
+<ul>
+<li><strong>Structural Fragmentation:</strong> The poem lacks a linear, narrative structure. It moves fluidly and disjointedly between Prufrock's observations of the city, his anxieties, his memories, and his self-deprecating thoughts. This formal fragmentation mirrors the fractured state of his consciousness.</li>
+<li><strong>Ambiguity of the "Overwhelming Question":</strong> The central purpose of Prufrock's potential action—the "overwhelming question"—is never explicitly stated. It could be a marriage proposal, a philosophical query about the meaning of life, or a simple attempt at genuine connection. This ambiguity universalizes Prufrock's dilemma, making it a symbol of all un-dared actions and un-spoken truths.</li>
+<li><strong>Juxtaposition of Images:</strong> Eliot juxtaposes the mundane with the profound. Prufrock measures out his life "with coffee spoons" and worries about his bald spot while simultaneously contemplating cosmic questions. This creates an ironic and fragmented portrait of a man trapped between his trivial concerns and his deeper spiritual yearnings.</li>
+</ul>
+<h4>3. The Quest for Meaning and Identity</h4>
+<ul>
+<li><strong>A Failed Quest:</strong> Prufrock is on a quest for meaning and a coherent identity, but it is a quest he is destined to fail. He constantly asks questions ("Do I dare?" "And how should I presume?") but can find no satisfying answers.</li>
+<li><strong>Unheroic Identity:</strong> He defines himself by what he is not. He is "not Prince Hamlet, nor was meant to be," but rather a secondary character, "an attendant lord," or even "the Fool." This rejection of a heroic identity reflects a modern sense of anti-heroism and insignificance.</li>
+<li><strong>Time and Indecision:</strong> Time is a source of immense anxiety. Prufrock feels there is "time for a hundred indecisions," yet this abundance of time only serves to enable his procrastination. He ultimately feels time has passed him by, leading to a state of regret: "I have grown old . . . I have grown old . . . / I shall wear the bottoms of my trousers rolled."</li>
+</ul>
+<h4>4. The Influence of Modernist Context</h4>
+<ul>
+<li><strong>The Urban Landscape:</strong> The poem is set in a sordid, decaying city. The "half-deserted streets," "one-night cheap hotels," and "sawdust restaurants" create a backdrop of alienation and spiritual emptiness, a key feature of Modernist literature.</li>
+<li><strong>Psychological Depth:</strong> Influenced by Freudian psychology, the poem delves deep into the subconscious, exploring Prufrock's neuroses, anxieties, and repressed desires through the stream of consciousness technique.</li>
+<li><strong>Disillusionment:</strong> Prufrock embodies the post-Victorian sense of disillusionment. He is an intellectual man who finds that his education and sensitivity are not assets but burdens in the modern world, leading to paralysis rather than action.</li>
+<li><strong>Allusion:</strong> The poem is rich with allusions to the Bible (John the Baptist), Shakespeare (Hamlet), and Dante's <em>Inferno</em>. This technique places Prufrock’s personal, modern struggle within a grand, historical context, while simultaneously highlighting his inability to live up to these epic precedents.</li>
+</ul>
+<h4>5. Symbolism and Imagery</h4>
+<ul>
+<li><strong>The Yellow Fog:</strong> The fog is described as a timid, cat-like creature that "rubs its back upon the window-panes." It is a powerful symbol of Prufrock's own psyche: passive, suffocating, and obscuring reality. It blankets the city in a paralyzing haze, mirroring the internal fog of his indecision.</li>
+<li><strong>The Mermaids:</strong> The mermaids at the end of the poem represent a world of beauty, vitality, and connection that is inaccessible to Prufrock. They sing "each to each," but "I do not think that they will sing to me." Their song is the call of life and love, which he can only hear from a distance before "human voices wake us, and we drown."</li>
+<li><strong>The Patient Etherised Upon a Table:</strong> This shocking opening simile sets the tone for the entire poem. It equates the evening sky with a patient awaiting surgery, suggesting passivity, sickness, and a sterile, lifeless state that reflects Prufrock's own emotional condition.</li>
+<li><strong>Coffee Spoons:</strong> The image of measuring out one's life "with coffee spoons" symbolizes a life lived in small, trivial, and meaningless increments. It represents the mundane and repetitive social rituals that have consumed Prufrock's existence.</li>
+</ul>
+<hr/>
+<h2>The Hollow Men (1925)</h2>
+<h3>A. Synopsis</h3>
+<p>"The Hollow Men" is a bleak, spectral poem depicting a group of spiritually dead men trapped in a limbo-like state. They are "hollow" and "stuffed," defined by their lack of will, faith, and substance. Existing in a desolate "cactus land," they are unable to act, pray, or connect with a transcendent reality, which is symbolized by "the eyes." The poem culminates in a fragmented, nursery-rhyme-like chant that breaks down into the famous, chilling conclusion about "the Shadow" falling between intention and action, ending not with a "bang" but a "whimper."</p>
+<h3>B. Analysis through Key Topics</h3>
+<h4>1. Themes of Alienation and Isolation</h4>
+<ul>
+<li><strong>Spiritual Alienation:</strong> The hollow men are alienated from God and spiritual salvation. They cannot meet the gaze of "the eyes," which represent divine judgment and truth. They are trapped "In this last of meeting places," a purgatory of their own making.</li>
+<li><strong>Communal Isolation:</strong> Though they exist as a "we," their community is one of shared emptiness. Their voices are "quiet and meaningless / As wind in dry grass." There is no genuine connection, only a collective whispering in a state of shared paralysis.</li>
+<li><strong>Existential Isolation:</strong> They are isolated from both the dead who had faith ("Those who have crossed / With direct eyes, to death's other Kingdom") and the living. They occupy a twilight world, a "dead land," unable to fully exist or fully cease to exist.</li>
+</ul>
+<h4>2. The Use of Fragmentation and Ambiguity</h4>
+<ul>
+<li><strong>Structural Fragmentation:</strong> The poem is composed of five disconnected sections, reflecting the shattered state of the modern world and the fragmented psyche of its inhabitants. The lines are short, the stanzas are uneven, and there are frequent breaks and ellipses.</li>
+<li><strong>Fragmented Language:</strong> The language itself breaks down. The hollow men are unable to complete their prayers or thoughts. The final section is a masterpiece of fragmentation:
+<blockquote>
+<p>Between the idea<br/>
+And the reality<br/>
+Between the motion<br/>
+And the act<br/>
+Falls the Shadow</p>
+</blockquote></li>
+<li><strong>Twisted Nursery Rhyme:</strong> The use of a corrupted children's rhyme ("Here we go round the prickly pear / Prickly pear prickly pear") is deeply unsettling. It suggests a culture whose most basic forms of expression and innocence have become barren and meaningless.</li>
+<li><strong>Epigraphs:</strong> The two epigraphs—one referencing Kurtz from Conrad's <em>Heart of Darkness</em> and the other the Guy Fawkes effigy—create ambiguity. Is their hollowness a result of a soul consumed by darkness (like Kurtz), or are they merely empty effigies, never having had substance to begin with?</li>
+</ul>
+<h4>3. The Quest for Meaning and Identity</h4>
+<ul>
+<li><strong>The Absence of Identity:</strong> The hollow men have no identity. They are defined by what they lack: "Shape without form, shade without colour, / Paralysed force, gesture without motion." They are effigies, "stuffed men," filled with straw, not spirit or will.</li>
+<li><strong>A Paralyzed Quest:</strong> Their quest for meaning is completely static. They wait passively in the "valley of dying stars," hoping for a sign (the "eyes") but are too afraid to actively seek it. Their will is paralyzed, making any form of spiritual progress impossible.</li>
+<li><strong>Failure of Faith:</strong> The poem depicts the failure of the quest for religious meaning. The hollow men's attempt at the Lord's Prayer disintegrates, symbolizing the inability of modern humanity to access traditional frameworks of faith and salvation.</li>
+</ul>
+<h4>4. The Influence of Modernist Context</h4>
+<ul>
+<li><strong>Post-War Despair:</strong> Written in the aftermath of WWI, the poem is a powerful expression of the spiritual exhaustion and moral vacuum that pervaded Europe. The "waste land" of Eliot's earlier poem has become the "dead land" of the hollow men.</li>
+<li><strong>Anthropological Influence:</strong> The poem is influenced by Sir James Frazer's <em>The Golden Bough</em>, with its exploration of fertility rites, dying gods, and barren lands. The "cactus land" is a classic symbol of a spiritually sterile world awaiting renewal that will never come.</li>
+<li><strong>Collapse of Tradition:</strong> The fragmentation of prayer and nursery rhymes points to the collapse of cultural and religious traditions. Without these structures to provide meaning, all that remains is a "whimper."</li>
+</ul>
+<h4>5. Symbolism and Imagery</h4>
+<ul>
+<li><strong>The Eyes:</strong> The dominant symbol of the poem. They represent God, truth, judgment, and direct spiritual experience. The hollow men fear and avoid them, preferring "broken stone" and "rat's coat" to the searing clarity of this divine gaze.</li>
+<li><strong>The Desert Landscape:</strong> The "cactus land" or "dead land" is the central setting and symbol. It is a landscape of sterility, drought, and spiritual barrenness. Nothing can grow here. It is Purgatory without the hope of Paradise.</li>
+<li><strong>The Shadow:</strong> The "Shadow" is the abstract force of paralysis that intervenes between all aspects of life: idea and reality, motion and act, conception and creation. It represents the spiritual impotence, doubt, and fear that prevents the hollow men from achieving any form of completion or salvation.</li>
+<li><strong>Stars and the Rose:</strong> The "fading star," "dying star," and "perpetual star" are symbols of a distant, disappearing, or unattainable spiritual hope. The "multifoliate rose" is a direct allusion to Dante's <em>Paradiso</em>, representing divine love and salvation, a reality the hollow men can only dream of as "the hope only / Of empty men."</li>
+<li><strong>Scarecrows:</strong> The image of "headpiece filled with straw" and "leaning together" directly evokes scarecrows. This symbolizes their lack of intellect and will, their passivity, and their inhuman, substanceless existence.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem6/ENG607/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,663 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT363">INT363</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT363">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT363/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT363/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT363/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT363</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Deploying Microservices</h1>
+<h2>1. Containerization with Docker</h2>
+<h3>1.1 Introduction to Containerization</h3>
+<p>Containerization is a form of operating system virtualization. Instead of simulating hardware (like Virtual Machines), containers sit on top of a physical server and its host OS. Each container shares the host OS kernel and, usually, the binaries and libraries, too.</p>
+<ul>
+<li><strong>Isolation:</strong> Containers are isolated from one another and from the host system.</li>
+<li><strong>Portability:</strong> A container includes everything needed to run an application (code, runtime, system tools, system libraries, and settings), ensuring it works uniformly across development, testing, and production environments.</li>
+<li><strong>Efficiency:</strong> Containers are lightweight and start almost instantly compared to VMs, which require a full OS boot.</li>
+</ul>
+<h3>1.2 Virtual Machines (VMs) vs. Containers</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Virtual Machines</th>
+<th style="text-align: left;">Containers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Architecture</strong></td>
+<td style="text-align: left;">Hypervisor-based (Hardware Virtualization)</td>
+<td style="text-align: left;">OS-level Virtualization</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OS</strong></td>
+<td style="text-align: left;">Each VM has its own Guest OS</td>
+<td style="text-align: left;">Share the Host OS Kernel</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Size</strong></td>
+<td style="text-align: left;">Heavyweight (Gigabytes)</td>
+<td style="text-align: left;">Lightweight (Megabytes)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Boot Time</strong></td>
+<td style="text-align: left;">Minutes</td>
+<td style="text-align: left;">Seconds/Milliseconds</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Performance</strong></td>
+<td style="text-align: left;">Lower (due to overhead)</td>
+<td style="text-align: left;">Native performance</td>
+</tr>
+</tbody>
+</table>
+<h3>1.3 Docker Core Concepts</h3>
+<p>Docker is the standard platform for developing, shipping, and running applications in containers.</p>
+<ul>
+<li><strong>Docker Engine:</strong> The core software that hosts the containers.</li>
+<li><strong>Docker Daemon (<code>dockerd</code>):</strong> A background service that manages Docker objects (images, containers, networks, volumes).</li>
+<li><strong>Docker Client (<code>docker</code>):</strong> The Command Line Interface (CLI) used by users to interact with the Docker Daemon.</li>
+<li><strong>Docker Registry:</strong> A storage location for Docker images (e.g., Docker Hub, AWS ECR).</li>
+</ul>
+<hr/>
+<h2>2. Dockerfile and Container Image Creation</h2>
+<h3>2.1 The Docker Image</h3>
+<p>A Docker image is a read-only template that contains a set of instructions for creating a container that can run on the Docker platform. It is built from a series of layers.</p>
+<h3>2.2 The Dockerfile</h3>
+<p>A <code>Dockerfile</code> is a text document that contains all the commands a user could call on the command line to assemble an image.</p>
+<h4>Key Dockerfile Instructions</h4>
+<ul>
+<li><code>FROM</code>: Initializes a new build stage and sets the Base Image (e.g., <code>FROM python:3.9</code>).</li>
+<li><code>WORKDIR</code>: Sets the working directory for any subsequent RUN, CMD, ENTRYPOINT, COPY and ADD instructions.</li>
+<li><code>COPY</code>: Copies new files or directories from the source to the filesystem of the container.</li>
+<li><code>RUN</code>: Executes any commands in a new layer on top of the current image and commits the results (used for installing packages).</li>
+<li><code>EXPOSE</code>: Informs Docker that the container listens on the specified network ports at runtime.</li>
+<li><code>CMD</code>: Provides defaults for an executing container. There can only be one CMD instruction in a Dockerfile.</li>
+</ul>
+<h3>2.3 Example: Dockerizing a Node.js Microservice</h3>
+<p><strong>1. Create the Dockerfile:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">DOCKERFILE</span></div><pre><code class="language-dockerfile"># Step 1: Specify the base image
+FROM node:14-alpine
+
+# Step 2: Set the working directory inside the container
+WORKDIR /usr/src/app
+
+# Step 3: Copy package files to install dependencies
+COPY package*.json ./
+
+# Step 4: Install dependencies
+RUN npm install
+
+# Step 5: Copy the rest of the application code
+COPY . .
+
+# Step 6: Expose the port the app runs on
+EXPOSE 8080
+
+# Step 7: Define the command to run the app
+CMD ["node", "app.js"]
+</code></pre></div></p>
+<p><strong>2. Build the Image:</strong><br/>
+Command to build the image from the Dockerfile in the current directory (<code>.</code>), tagging it as <code>my-microservice</code>:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">docker build -t my-microservice .
+</code></pre></div></p>
+<p><strong>3. Run the Container:</strong><br/>
+Command to run the container, mapping host port 3000 to container port 8080:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">docker run -d -p 3000:8080 --name service-instance my-microservice
+</code></pre></div></p>
+<h3>2.4 Image Layering and Caching</h3>
+<p>Docker uses a union file system. Each instruction in a Dockerfile creates a layer. When rebuilding an image, Docker reuses existing layers from the cache if the instruction hasn't changed. This makes builds significantly faster.</p>
+<hr/>
+<h2>3. Container Orchestration</h2>
+<h3>3.1 Definition</h3>
+<p>Container orchestration is the automated management of container deployments, scaling, networking, and lifecycle. While Docker manages a single container, orchestration manages clusters of containers across multiple hosts.</p>
+<h3>3.2 Why Orchestration is Needed</h3>
+<p>Running microservices in production involves hundreds or thousands of containers. Managing them manually is impossible due to:</p>
+<ul>
+<li><strong>High Availability:</strong> If a container crashes, it must be restarted immediately.</li>
+<li><strong>Scaling:</strong> If traffic spikes, new instances must be spun up; if traffic drops, they must be removed.</li>
+<li><strong>Networking:</strong> Containers need to discover and communicate with each other across different hosts.</li>
+<li><strong>Resource Allocation:</strong> Placing containers on servers with adequate CPU/RAM.</li>
+</ul>
+<h3>3.3 Common Orchestration Tools</h3>
+<ul>
+<li><strong>Kubernetes (K8s):</strong> The industry standard (Google-born, CNCF maintained).</li>
+<li><strong>Docker Swarm:</strong> Native clustering for Docker (simpler, but less feature-rich than K8s).</li>
+<li><strong>Apache Mesos:</strong> An abstraction of CPU, memory, storage, and other compute resources.</li>
+</ul>
+<hr/>
+<h2>4. Overview of Kubernetes and Architecture</h2>
+<h3>4.1 What is Kubernetes (K8s)?</h3>
+<p>Kubernetes is an open-source platform for automating deployment, scaling, and operations of application containers across clusters of hosts.</p>
+<h3>4.2 Kubernetes Architecture</h3>
+<p>A Kubernetes cluster consists of two main types of resources: The <strong>Control Plane</strong> (Master) and <strong>Worker Nodes</strong>.</p>
+<h4>A. The Control Plane (Master Node)</h4>
+<p>The brain of the cluster. It makes global decisions (e.g., scheduling) and detects/responds to cluster events.</p>
+<ol>
+<li><strong>API Server (<code>kube-apiserver</code>):</strong> The front end of the Kubernetes control plane. It exposes the Kubernetes API. All tools (kubectl, dashboard) communicate via this component.</li>
+<li><strong>etcd:</strong> A consistent and highly-available key-value store used as Kubernetes' backing store for all cluster data. It is the "source of truth."</li>
+<li><strong>Scheduler (<code>kube-scheduler</code>):</strong> Watches for newly created Pods with no assigned node and selects a node for them to run on based on resource requirements and constraints.</li>
+<li><strong>Controller Manager (<code>kube-controller-manager</code>):</strong> Runs controller processes (e.g., Node Controller, ReplicaSet Controller) that regulate the state of the system, trying to move the current state toward the desired state.</li>
+</ol>
+<h4>B. The Worker Nodes</h4>
+<p>The machines (VMs or physical servers) that run the applications.</p>
+<ol>
+<li><strong>Kubelet:</strong> An agent that runs on each node. It ensures that containers are running in a Pod. It communicates with the API server.</li>
+<li><strong>Kube-proxy:</strong> Maintains network rules on nodes. It enables network communication to your Pods from network sessions inside or outside of your cluster.</li>
+<li><strong>Container Runtime:</strong> The software responsible for running containers (e.g., Docker, containerd, CRI-O).</li>
+</ol>
+<h3>4.3 Key Kubernetes Objects</h3>
+<ul>
+<li><strong>Pod:</strong> The smallest deployable unit. A Pod represents a single instance of a running process in your cluster. It usually contains one container (sometimes helper containers/sidecars) and shares storage/network.</li>
+<li><strong>Service:</strong> An abstraction that defines a logical set of Pods and a policy by which to access them (Load Balancing). It provides a stable IP address.</li>
+<li><strong>ReplicaSet:</strong> Ensures a specified number of pod replicas are running at any given time.</li>
+<li><strong>Deployment:</strong> A higher-level abstraction that manages ReplicaSets and provides declarative updates (e.g., rolling updates) to Pods.</li>
+<li><strong>Namespace:</strong> Provides a mechanism for isolating groups of resources within a single cluster.</li>
+</ul>
+<hr/>
+<h2>5. Deploying Microservices</h2>
+<h3>5.1 Deployment Strategies</h3>
+<p>When updating microservices, downtime must be minimized.</p>
+<ol>
+<li>
+<p><strong>Rolling Update (Default in K8s):</strong></p>
+<ul>
+<li>Instances of the new version replace instances of the old version one by one.</li>
+<li><em>Pros:</em> No downtime, slow rollout allows monitoring.</li>
+<li><em>Cons:</em> Both versions run simultaneously for a period.</li>
+</ul>
+</li>
+<li>
+<p><strong>Blue/Green Deployment:</strong></p>
+<ul>
+<li>Two identical environments (Blue = old/live, Green = new).</li>
+<li>Traffic is switched strictly from Blue to Green once Green is verified.</li>
+<li><em>Pros:</em> Instant rollback, easy testing.</li>
+<li><em>Cons:</em> Requires double the resources (costly).</li>
+</ul>
+</li>
+<li>
+<p><strong>Canary Deployment:</strong></p>
+<ul>
+<li>A small percentage of traffic (e.g., 10%) is routed to the new version (the canary).</li>
+<li>If metrics are healthy, the percentage increases until 100% traffic is moved.</li>
+<li><em>Pros:</em> Lowest risk, impacts few users if bugs exist.</li>
+</ul>
+</li>
+</ol>
+<h3>5.2 Service Discovery</h3>
+<p>In microservices, containers are ephemeral (IPs change on restart).</p>
+<ul>
+<li><strong>Client-Side Discovery:</strong> The client queries a Service Registry (like Netflix Eureka) to get the address of a service instance.</li>
+<li><strong>Server-Side Discovery:</strong> The client calls a Load Balancer (like Kubernetes Service or AWS ELB), which queries the registry and routes the traffic. Kubernetes handles this natively via DNS and Services.</li>
+</ul>
+<h3>5.3 Configuration Management</h3>
+<ul>
+<li><strong>Externalized Configuration:</strong> Never hardcode configs (DB URLs, API keys) in the container image.</li>
+<li><strong>Environment Variables:</strong> Pass configs at runtime.</li>
+<li><strong>Kubernetes ConfigMaps &amp; Secrets:</strong> Store non-sensitive data in ConfigMaps and sensitive data (passwords) in Secrets, mounted as files or environment variables in the Pod.</li>
+</ul>
+<hr/>
+<h2>6. Continuous Integration (CI) Principles</h2>
+<h3>6.1 Definition</h3>
+<p>Continuous Integration (CI) is a development practice where developers integrate code into a shared repository frequently (preferably several times a day). Each integration can then be verified by an automated build and automated tests.</p>
+<h3>6.2 Key CI Principles</h3>
+<ol>
+<li><strong>Maintain a Single Source Repository:</strong> Use version control (Git) to track all code, configuration, and scripts.</li>
+<li><strong>Automate the Build:</strong> The build process (compiling, linking, packaging) should happen via a single command or trigger.</li>
+<li><strong>Make the Build Self-Testing:</strong> Once built, the code must be tested automatically (Unit tests, Integration tests). If tests fail, the build fails.</li>
+<li><strong>Commit Early, Commit Often:</strong> Reduces merge conflicts and makes it easier to isolate errors.</li>
+<li><strong>Every Commit Should Build the Mainline:</strong> The Continuous Integration server (e.g., Jenkins, GitLab CI, GitHub Actions) monitors the repo and builds every commit.</li>
+<li><strong>Fix Broken Builds Immediately:</strong> If the main branch breaks, fixing it is the highest priority.</li>
+</ol>
+<h3>6.3 Benefits of CI in Microservices</h3>
+<ul>
+<li><strong>Early Bug Detection:</strong> Failures are caught minutes after code is committed, not weeks later.</li>
+<li><strong>Reduced Integration Hell:</strong> Frequent merges prevent the "merge hell" that occurs right before a release.</li>
+<li><strong>Feedback Loop:</strong> Developers get immediate feedback on the quality and compatibility of their code.</li>
+<li><strong>Deployment Readiness:</strong> Since the code is constantly built and tested, the software is always in a deployable state.</li>
+</ul>
+<h3>6.4 The CI/CD Pipeline Workflow</h3>
+<ol>
+<li><strong>Code:</strong> Developer commits code to Git.</li>
+<li><strong>Trigger:</strong> CI Server detects changes.</li>
+<li><strong>Build:</strong> CI Server compiles code and builds Docker Image.</li>
+<li><strong>Test:</strong> CI Server runs unit and integration tests.</li>
+<li><strong>Push:</strong> If successful, the Docker Image is pushed to the Container Registry.</li>
+<li><strong>Deploy (CD):</strong> The orchestration tool (Kubernetes) pulls the new image and updates the microservice.</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT363/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT363/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

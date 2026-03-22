@@ -1,0 +1,712 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/INT255">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT255/Unit5/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/INT255/Unit5/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT255/Unit4/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/INT255/Unit6/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 5 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT255</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            15 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 5: Mathematical Foundations of Support Vector Machines</h1>
+<h2>1. Geometric Interpretation of Classification Margins</h2>
+<p>The core idea of a Support Vector Machine (SVM) is to find an optimal separating hyperplane between classes. This optimality is defined by maximizing the "margin" of separation.</p>
+<h3>The Hyperplane</h3>
+<p>For a binary classification problem with data points in an n-dimensional space (ℝⁿ), a hyperplane is an (n-1)-dimensional subspace that divides the space into two half-spaces.</p>
+<ul>
+<li>
+<p><strong>Equation of a Hyperplane:</strong> A hyperplane can be defined by the set of points <strong>x</strong> satisfying:</p>
+<p><code>w^T x + b = 0</code></p>
+<p>where:</p>
+<ul>
+<li><code>w</code> is the normal vector to the hyperplane (a non-zero vector perpendicular to the hyperplane). The orientation of the hyperplane is determined by <code>w</code>.</li>
+<li><code>b</code> is a scalar bias term. It determines the offset of the hyperplane from the origin.</li>
+</ul>
+</li>
+<li>
+<p><strong>Classification Rule:</strong> Once we have a hyperplane (<code>w</code>, <code>b</code>), we can classify a new data point <code>x</code> using the sign of <code>f(x) = w^T x + b</code>:</p>
+<ul>
+<li>If <code>w^T x + b &gt; 0</code>, classify <code>x</code> as class +1.</li>
+<li>If <code>w^T x + b &lt; 0</code>, classify <code>x</code> as class -1.</li>
+</ul>
+</li>
+</ul>
+<h3>Defining the Margin</h3>
+<p>The margin is the "street" or "cushion" between the separating hyperplane and the closest data points from either class.</p>
+<ol>
+<li>
+<p><strong>Functional Margin:</strong> The functional margin of a data point (<code>x_i</code>, <code>y_i</code>), where <code>y_i ∈ {-1, 1}</code>, with respect to a hyperplane (<code>w</code>, <code>b</code>) is given by:</p>
+<p><code>γ̂_i = y_i (w^T x_i + b)</code></p>
+<p>A correct classification means <code>γ̂_i &gt; 0</code>. However, the functional margin can be arbitrarily increased by scaling <code>w</code> and <code>b</code> (e.g., replacing them with <code>2w</code> and <code>2b</code>) without changing the hyperplane itself. This makes it unsuitable for optimization.</p>
+</li>
+<li>
+<p><strong>Geometric Margin:</strong> The geometric margin is the actual perpendicular distance from a data point <code>x_i</code> to the hyperplane <code>w^T x + b = 0</code>. This distance is given by:</p>
+<p><code>γ_i = (y_i (w^T x_i + b)) / ||w||</code></p>
+<p>where <code>||w||</code> is the Euclidean norm (L2 norm) of <code>w</code>, i.e., <code>||w|| = sqrt(w_1^2 + w_2^2 + ... + w_n^2)</code>.</p>
+<p>The geometric margin is invariant to the scaling of <code>w</code> and <code>b</code>, making it a suitable metric for optimization.</p>
+</li>
+</ol>
+<h3>The Optimal Hyperplane (Maximal Margin Classifier)</h3>
+<p>The goal of an SVM is to find the hyperplane (<code>w</code>, <code>b</code>) that maximizes the geometric margin for the entire dataset. This is the hyperplane that is farthest from the closest training points of both classes.</p>
+<ul>
+<li>The margin of the classifier is <code>γ = min_i γ_i</code>.</li>
+<li>The objective is to maximize this <code>γ</code>.</li>
+<li>The points that lie on the edge of the margin (the closest points to the separating hyperplane) are called <strong>support vectors</strong>. They are critical because they alone define the position and orientation of the optimal hyperplane.</li>
+</ul>
+<h2>2. Hard Margin vs. Soft Margin SVM</h2>
+<h3>Hard Margin SVM (Linearly Separable Case)</h3>
+<p>The hard margin SVM assumes that the training data is <strong>perfectly linearly separable</strong>. It finds a hyperplane that separates all data points with no misclassifications.</p>
+<h4>Formulation (Primal Problem)</h4>
+<p>To find the maximal margin hyperplane, we solve the following optimization problem:</p>
+<p><code>max_(w,b) γ</code><br/>
+subject to: <code>y_i (w^T x_i + b) / ||w|| ≥ γ</code> for all <code>i=1, ..., m</code></p>
+<p>This is a complex problem. We can simplify it. We know the geometric margin <code>γ</code> is scale-invariant. So, we can fix the functional margin of the support vectors to 1. This means for the closest points, <code>y_i (w^T x_i + b) = 1</code>.</p>
+<p>This constraint implies that <code>γ = 1 / ||w||</code>. Now, maximizing <code>γ</code> is equivalent to maximizing <code>1 / ||w||</code>, which is in turn equivalent to <strong>minimizing</strong> <code>||w||</code>, or more conveniently, <strong>minimizing</strong> <code>(1/2)||w||^2</code> (the <code>1/2</code> and the square are for mathematical convenience during differentiation).</p>
+<p>The final optimization problem for the <strong>Hard Margin SVM</strong> is:</p>
+<p><code>min_(w,b) (1/2) ||w||^2</code><br/>
+subject to: <code>y_i (w^T x_i + b) ≥ 1</code> for all <code>i=1, ..., m</code></p>
+<p>This is a convex quadratic programming problem with linear constraints.</p>
+<h4>Support Vectors</h4>
+<p>Support vectors are the training data points <code>x_i</code> for which the constraint is active (i.e., the equality holds):</p>
+<p><code>y_i (w^T x_i + b) = 1</code></p>
+<p>These points lie exactly on the margin boundaries. The optimal hyperplane is determined <em>only</em> by these support vectors.</p>
+<h4>Limitations</h4>
+<ol>
+<li><strong>Requires Linear Separability:</strong> It fails if the data cannot be perfectly separated by a hyperplane.</li>
+<li><strong>Sensitivity to Outliers:</strong> A single outlier can drastically change the position of the optimal hyperplane and reduce the margin significantly.</li>
+</ol>
+<h3>Soft Margin SVM (Non-Linearly Separable Case)</h3>
+<p>The soft margin SVM relaxes the strict assumption of linear separability. It allows for some data points to be misclassified or to fall inside the margin.</p>
+<h4>Introducing Slack Variables</h4>
+<p>To allow for violations, we introduce a non-negative <strong>slack variable</strong> <code>ξ_i ≥ 0</code> for each data point <code>x_i</code>.</p>
+<ul>
+<li>If <code>ξ_i = 0</code>, the point <code>x_i</code> is correctly classified and is on or outside the margin.</li>
+<li>If <code>0 &lt; ξ_i ≤ 1</code>, the point <code>x_i</code> is correctly classified but lies <em>inside</em> the margin.</li>
+<li>If <code>ξ_i &gt; 1</code>, the point <code>x_i</code> is misclassified (it's on the wrong side of the hyperplane).</li>
+</ul>
+<p>The constraint is modified to: <code>y_i (w^T x_i + b) ≥ 1 - ξ_i</code></p>
+<h4>Formulation (Primal Problem)</h4>
+<p>We want to find a balance between maximizing the margin (minimizing <code>||w||^2</code>) and minimizing the classification errors (minimizing the sum of slack variables <code>Σ ξ_i</code>). This trade-off is controlled by a hyperparameter <code>C</code>.</p>
+<p>The optimization problem for the <strong>Soft Margin SVM</strong> is:</p>
+<p><code>min_(w,b,ξ) (1/2) ||w||^2 + C * Σ_(i=1)^m ξ_i</code><br/>
+subject to:</p>
+<ol>
+<li><code>y_i (w^T x_i + b) ≥ 1 - ξ_i</code> for all <code>i=1, ..., m</code></li>
+<li><code>ξ_i ≥ 0</code> for all <code>i=1, ..., m</code></li>
+</ol>
+<h4>The Role of the Hyperparameter C</h4>
+<p><code>C &gt; 0</code> is a regularization parameter that controls the trade-off:</p>
+<ul>
+<li><strong>Large C:</strong> A large <code>C</code> places a heavy penalty on misclassification (<code>Σ ξ_i</code>). The optimizer will try very hard to classify all points correctly, leading to a smaller margin and a more complex decision boundary. This can lead to overfitting.</li>
+<li><strong>Small C:</strong> A small <code>C</code> places less penalty on misclassification. The optimizer will prioritize a larger margin, even if it means misclassifying some points. This can lead to underfitting.</li>
+</ul>
+<h2>3. Primal and Dual Optimization Problems</h2>
+<h3>The Primal Problem (Recap)</h3>
+<p>The formulations derived above are known as the <strong>primal problems</strong>.</p>
+<ul>
+<li><strong>Hard Margin Primal:</strong> <code>min_(w,b) (1/2) ||w||^2</code> s.t. <code>y_i (w^T x_i + b) ≥ 1</code>.</li>
+<li><strong>Soft Margin Primal:</strong> <code>min_(w,b,ξ) (1/2) ||w||^2 + C Σ ξ_i</code> s.t. <code>y_i (w^T x_i + b) ≥ 1 - ξ_i</code> and <code>ξ_i ≥ 0</code>.</li>
+</ul>
+<h3>The Need for the Dual Problem</h3>
+<p>While the primal problem can be solved directly, converting it to its <strong>dual form</strong> offers significant advantages:</p>
+<ol>
+<li><strong>The Kernel Trick:</strong> The dual formulation expresses the optimization problem in terms of dot products of the input data points (<code>x_i^T x_j</code>). This allows us to use the kernel trick to handle non-linear data efficiently.</li>
+<li><strong>Computational Efficiency:</strong> For datasets where the number of features (<code>n</code>) is much larger than the number of samples (<code>m</code>), the dual problem can be much faster to solve.</li>
+<li><strong>Identifies Support Vectors:</strong> The solution to the dual problem directly gives us the support vectors.</li>
+</ol>
+<h3>The Dual Problem Formulation</h3>
+<p>The process of deriving the dual problem involves the <strong>Lagrangian formulation</strong>. The final dual problem (for the soft margin case) is:</p>
+<p><code>max_α Σ_(i=1)^m α_i - (1/2) Σ_(i=1)^m Σ_(j=1)^m y_i y_j α_i α_j (x_i^T x_j)</code><br/>
+subject to:</p>
+<ol>
+<li><code>Σ_(i=1)^m α_i y_i = 0</code></li>
+<li><code>0 ≤ α_i ≤ C</code> for all <code>i=1, ..., m</code></li>
+</ol>
+<p>Here, <code>α_i</code> are the Lagrange multipliers.</p>
+<h2>4. The Lagrangian Formulation: Bridging Primal and Dual</h2>
+<h3>Constrained Optimization and Lagrange Multipliers</h3>
+<p>The Lagrangian is a technique used to solve constrained optimization problems. We convert a constrained problem into an unconstrained one by introducing <strong>Lagrange multipliers</strong> (one for each constraint).</p>
+<h3>Constructing the Lagrangian for Hard Margin SVM</h3>
+<p>Let's start with the simpler hard margin case.<br/>
+Primal Problem: <code>min_(w,b) (1/2) ||w||^2</code><br/>
+Constraint: <code>y_i (w^T x_i + b) ≥ 1</code>  which can be rewritten as <code>1 - y_i (w^T x_i + b) ≤ 0</code>.</p>
+<p>We introduce a Lagrange multiplier <code>α_i ≥ 0</code> for each constraint. The Lagrangian function <code>L</code> is:</p>
+<p><code>L(w, b, α) = (1/2) ||w||^2 - Σ_(i=1)^m α_i [y_i (w^T x_i + b) - 1]</code></p>
+<p>The primal problem is equivalent to solving <code>min_(w,b) max_(α≥0) L(w, b, α)</code>. The dual problem is found by swapping the min and max: <code>max_(α≥0) min_(w,b) L(w, b, α)</code>.</p>
+<h3>Deriving the Dual Problem</h3>
+<h4>Step 1: Minimize L with respect to <code>w</code> and <code>b</code></h4>
+<p>To find the minimum of <code>L</code> with respect to the primal variables <code>w</code> and <code>b</code>, we take the partial derivatives and set them to zero.</p>
+<ul>
+<li>
+<p><strong>Derivative w.r.t. <code>w</code>:</strong></p>
+<p><code>∂L / ∂w = w - Σ_(i=1)^m α_i y_i x_i = 0</code></p>
+<p>This gives us a crucial result: <code>w = Σ_(i=1)^m α_i y_i x_i</code></p>
+<p>This shows that the optimal weight vector <code>w</code> is a linear combination of the input data points <code>x_i</code>. Only the points for which <code>α_i &gt; 0</code> contribute to <code>w</code>. These are the support vectors.</p>
+</li>
+<li>
+<p><strong>Derivative w.r.t. <code>b</code>:</strong></p>
+<p><code>∂L / ∂b = - Σ_(i=1)^m α_i y_i = 0</code></p>
+<p>This gives us a constraint on the <code>α</code>'s: <code>Σ_(i=1)^m α_i y_i = 0</code></p>
+</li>
+</ul>
+<h4>Step 2: Substitute back into the Lagrangian</h4>
+<p>Now we substitute these two results back into the original Lagrangian <code>L</code> to eliminate <code>w</code> and <code>b</code>, leaving a problem that only depends on <code>α</code>.</p>
+<p><code>L(α) = (1/2) (Σ_i α_i y_i x_i)^T (Σ_j α_j y_j x_j) - Σ_i α_i y_i ( (Σ_j α_j y_j x_j)^T x_i + b ) + Σ_i α_i</code></p>
+<p>Simplifying this using <code>Σ_i α_i y_i = 0</code> and expanding the dot products:</p>
+<p><code>L(α) = Σ_(i=1)^m α_i - (1/2) Σ_(i=1)^m Σ_(j=1)^m y_i y_j α_i α_j (x_i^T x_j)</code></p>
+<p>This is the objective function for the dual problem. We need to maximize it subject to the constraints we found (<code>Σ α_i y_i = 0</code>) and the original constraint on the multipliers (<code>α_i ≥ 0</code>).</p>
+<h3>The Lagrangian for Soft Margin SVM</h3>
+<p>The derivation is similar but includes the slack variables <code>ξ_i</code> and their constraints.<br/>
+The Lagrangian for the soft margin primal is:</p>
+<p><code>L(w, b, ξ, α, μ) = (1/2) ||w||^2 + C Σ_i ξ_i - Σ_i α_i [y_i (w^T x_i + b) - 1 + ξ_i] - Σ_i μ_i ξ_i</code></p>
+<p>where both <code>α_i ≥ 0</code> and <code>μ_i ≥ 0</code> are Lagrange multipliers. After taking derivatives w.r.t <code>w</code>, <code>b</code>, and <code>ξ</code>, and substituting back, we arrive at the same dual objective function, but with a different constraint on <code>α</code>: <code>0 ≤ α_i ≤ C</code>.</p>
+<h3>Karush-Kuhn-Tucker (KKT) Conditions</h3>
+<p>The KKT conditions are the necessary conditions for the solution of a constrained optimization problem to be optimal. For the SVM dual problem, they provide powerful insights into the solution. For the soft margin SVM, the key KKT conditions are:</p>
+<ol>
+<li><code>α_i ≥ 0</code> (Lagrange multiplier for margin constraint)</li>
+<li><code>μ_i ≥ 0</code> (Lagrange multiplier for slack constraint)</li>
+<li><code>y_i (w^T x_i + b) - 1 + ξ_i ≥ 0</code> (Primal feasibility)</li>
+<li><code>ξ_i ≥ 0</code> (Primal feasibility)</li>
+<li><code>α_i [y_i (w^T x_i + b) - 1 + ξ_i] = 0</code> (Complementary slackness)</li>
+<li><code>μ_i ξ_i = 0</code> (Complementary slackness)</li>
+<li><code>C - α_i - μ_i = 0</code> (From <code>∂L/∂ξ_i = 0</code>)</li>
+</ol>
+<p>From these conditions, we can deduce the nature of the support vectors:</p>
+<ul>
+<li>If <code>α_i = 0</code>: The point <code>x_i</code> is not a support vector and is correctly classified outside the margin.</li>
+<li>If <code>0 &lt; α_i &lt; C</code>: Then <code>μ_i &gt; 0</code>, which implies <code>ξ_i = 0</code>. This means <code>y_i (w^T x_i + b) = 1</code>. The point <code>x_i</code> is a <strong>margin support vector</strong>; it lies exactly on the margin.</li>
+<li>If <code>α_i = C</code>: Then <code>μ_i = 0</code>. This implies <code>ξ_i ≥ 0</code>. The point <code>x_i</code> is a <strong>non-margin support vector</strong>. It is either inside the margin or misclassified.</li>
+</ul>
+<p>The bias <code>b</code> can be calculated using any margin support vector (<code>0 &lt; α_i &lt; C</code>): <code>b = y_i - w^T x_i = y_i - Σ_j α_j y_j (x_j^T x_i)</code>.</p>
+<h2>5. The Kernel Trick and Kernel Functions</h2>
+<h3>The Motivation: Non-Linear Decision Boundaries</h3>
+<p>Many real-world datasets are not linearly separable. The kernel trick is an elegant mathematical technique that allows SVMs to learn complex, non-linear decision boundaries.</p>
+<p>The core idea is to map the data from its original input space <code>X</code> to a higher-dimensional feature space <code>F</code> where the data becomes linearly separable.<br/>
+<code>φ: X -&gt; F</code></p>
+<p>We could then run the SVM algorithm in this new feature space <code>F</code>. The decision boundary would be linear in <code>F</code> but would correspond to a non-linear boundary back in the original space <code>X</code>. However, computing this mapping <code>φ(x)</code> for high-dimensional spaces can be computationally infeasible.</p>
+<h3>The "Trick" in the Dual Formulation</h3>
+<p>Let's look at the SVM dual objective function and the prediction function:</p>
+<ul>
+<li><strong>Dual Objective:</strong> <code>max_α Σ α_i - (1/2) Σ_i Σ_j y_i y_j α_i α_j (x_i^T x_j)</code></li>
+<li><strong>Prediction:</strong> <code>f(x) = w^T x + b = (Σ_i α_i y_i x_i)^T x + b = Σ_i α_i y_i (x_i^T x) + b</code></li>
+</ul>
+<p>Notice that the data points <code>x_i</code> only ever appear inside a dot product. If we map the data to the feature space <code>F</code> using <code>φ</code>, these dot products become <code>φ(x_i)^T φ(x_j)</code>.</p>
+<p>The <strong>kernel trick</strong> is to define a <strong>kernel function</strong> <code>K(x_i, x_j)</code> that computes this dot product in the high-dimensional space <em>without ever explicitly computing the mapping φ</em>.</p>
+<p><code>K(x_i, x_j) = φ(x_i)^T φ(x_j)</code></p>
+<h3>Formalizing the Kernel Function</h3>
+<p>By replacing <code>x_i^T x_j</code> with <code>K(x_i, x_j)</code>, we can operate in the high-dimensional space implicitly.</p>
+<ul>
+<li>
+<p><strong>Kernelized Dual Objective:</strong><br/>
+<code>max_α Σ α_i - (1/2) Σ_i Σ_j y_i y_j α_i α_j K(x_i, x_j)</code><br/>
+subject to <code>Σ α_i y_i = 0</code> and <code>0 ≤ α_i ≤ C</code>.</p>
+</li>
+<li>
+<p><strong>Kernelized Prediction Function:</strong><br/>
+<code>f(x) = Σ_(i ∈ SV) α_i y_i K(x_i, x) + b</code><br/>
+(where SV is the set of support vectors)</p>
+</li>
+</ul>
+<h3>Common Kernel Functions</h3>
+<ol>
+<li>
+<p><strong>Linear Kernel:</strong></p>
+<ul>
+<li><code>K(x, z) = x^T z</code></li>
+<li>This is the standard SVM, operating in the original feature space. It's equivalent to no transformation.</li>
+</ul>
+</li>
+<li>
+<p><strong>Polynomial Kernel:</strong></p>
+<ul>
+<li><code>K(x, z) = (γ * x^T z + r)^d</code></li>
+<li><code>d</code> is the degree of the polynomial, <code>γ</code> is a scaling factor, and <code>r</code> is a constant offset.</li>
+<li>This implicitly maps the data to a feature space of polynomial combinations of the original features up to degree <code>d</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Radial Basis Function (RBF) Kernel (or Gaussian Kernel):</strong></p>
+<ul>
+<li><code>K(x, z) = exp(-γ ||x - z||^2)</code></li>
+<li><code>γ</code> (gamma) is a parameter that controls the width of the Gaussian. A small <code>γ</code> means a wide influence, leading to a smoother decision boundary. A large <code>γ</code> means a narrow influence, leading to a more complex, potentially overfit boundary.</li>
+<li>This kernel is very powerful as it corresponds to an infinite-dimensional feature space. It is a popular default choice.</li>
+</ul>
+</li>
+<li>
+<p><strong>Sigmoid Kernel:</strong></p>
+<ul>
+<li><code>K(x, z) = tanh(γ * x^T z + r)</code></li>
+<li>This kernel is related to neural networks with a sigmoid activation function.</li>
+</ul>
+</li>
+</ol>
+<h3>Mercer's Theorem</h3>
+<p>Not every function <code>K(x, z)</code> can be used as a kernel. A function is a valid kernel if it corresponds to some dot product in a feature space. Mercer's theorem provides the condition for this: a symmetric function <code>K(x, z)</code> is a valid kernel if and only if the kernel matrix <code>K</code> (where <code>K_ij = K(x_i, x_j)</code>) is positive semi-definite for any set of points <code>{x_1, ..., x_m}</code>.</p>
+<h2>6. Optimization Perspective of SVM Training</h2>
+<h3>SVM as a Quadratic Programming (QP) Problem</h3>
+<p>Training an SVM is fundamentally an optimization task. The primal and dual formulations are both instances of a <strong>Quadratic Programming (QP)</strong> problem.</p>
+<p>A QP problem has the form:<br/>
+<code>min_u (1/2) u^T P u + q^T u</code><br/>
+subject to:<br/>
+<code>G u ≤ h</code><br/>
+<code>A u = b</code></p>
+<ul>
+<li>The objective function is quadratic (<code>u^T P u</code>).</li>
+<li>The constraints are linear (<code>G u ≤ h</code>, <code>A u = b</code>).</li>
+</ul>
+<p>The SVM dual problem fits this form perfectly:</p>
+<ul>
+<li><code>u</code> is the vector of <code>α</code>'s.</li>
+<li>The objective <code>Σ α_i - (1/2) Σ_i Σ_j y_i y_j α_i α_j K(x_i, x_j)</code> is quadratic in <code>α</code>.</li>
+<li>The constraints <code>Σ α_i y_i = 0</code> and <code>0 ≤ α_i ≤ C</code> are linear.</li>
+</ul>
+<p>Because the objective function is convex (the kernel matrix is positive semi-definite), this QP problem has a unique global minimum, which means we are guaranteed to find the optimal solution.</p>
+<h3>Solving the QP Problem: Sequential Minimal Optimization (SMO)</h3>
+<p>General-purpose QP solvers can be slow for large datasets. The <strong>Sequential Minimal Optimization (SMO)</strong> algorithm is a highly efficient algorithm specifically for training SVMs.</p>
+<ul>
+<li><strong>Idea:</strong> SMO breaks down the large QP problem into a series of the smallest possible QP sub-problems.</li>
+<li><strong>Process:</strong> In each step, SMO selects two Lagrange multipliers (<code>α_i</code>, <code>α_j</code>) to optimize jointly, while keeping all other multipliers fixed.</li>
+<li><strong>Advantage:</strong> The sub-problem involving just two multipliers can be solved analytically, which is extremely fast and avoids complex numerical QP optimization in the inner loop. SMO iterates through the multipliers until the solution converges.</li>
+</ul>
+<h3>The Hinge Loss Formulation (An alternative perspective)</h3>
+<p>The soft margin SVM primal problem can be re-written from a loss minimization perspective, which connects it to other machine learning models.</p>
+<p>The objective <code>min (1/2) ||w||^2 + C Σ ξ_i</code> can be seen as:</p>
+<p><code>min_(w,b) [ (1/λ) ||w||^2 + Σ_i max(0, 1 - y_i (w^T x_i + b)) ]</code></p>
+<p>where <code>λ</code> is related to <code>1/C</code>. This formulation consists of two parts:</p>
+<ol>
+<li><strong>Regularization Term:</strong> <code>(1/λ) ||w||^2</code>. This is an L2 regularization term that penalizes large weights, promoting a simpler model and a larger margin.</li>
+<li><strong>Loss Term:</strong> <code>Σ_i max(0, 1 - y_i (w^T x_i + b))</code>. This is the <strong>Hinge Loss</strong>.
+<ul>
+<li>If a point is correctly classified and outside the margin (<code>y_i f(x_i) ≥ 1</code>), the loss is 0.</li>
+<li>If a point is inside the margin or misclassified (<code>y_i f(x_i) &lt; 1</code>), the loss is a linear penalty <code>1 - y_i f(x_i)</code>.</li>
+</ul></li>
+</ol>
+<p>This perspective frames SVM as a model that minimizes the sum of a regularization term (to control complexity and margin size) and a loss function (to penalize classification errors).</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/INT255/Unit4/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/INT255/Unit6/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 6</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

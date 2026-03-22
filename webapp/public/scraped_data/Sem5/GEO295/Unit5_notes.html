@@ -1,0 +1,721 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">GEO295</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 5</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/GEO295/Unit5/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit4/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit6/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 5 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>GEO295</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 5: Biogeography</h1>
+<h2>1. Genesis of Soils (Pedogenesis)</h2>
+<p>Pedogenesis is the process of soil formation, regulated by the effects of place, environment, and history. The fundamental equation of soil formation, proposed by Hans Jenny (1941), is:</p>
+<p><span class="math-display" data-math="S = f(cl, o, r, p, t, ...)"></span></p>
+<p>Where:</p>
+<ul>
+<li><strong>S</strong> = Soil properties</li>
+<li><strong>cl</strong> = Climate</li>
+<li><strong>o</strong> = Organisms (Biota)</li>
+<li><strong>r</strong> = Relief (Topography)</li>
+<li><strong>p</strong> = Parent material</li>
+<li><strong>t</strong> = Time</li>
+</ul>
+<h3>Factors Influencing Soil Formation</h3>
+<ol>
+<li><strong>Parent Material:</strong> The underlying geological material (bedrock or drift deposits) from which soil horizons form. It determines the mineralogical composition, texture, and initial chemical properties.
+<ul>
+<li><em>Example:</em> Granite weathers into sandy soil; Basalt weathers into clay-rich soil.</li>
+</ul></li>
+<li><strong>Climate:</strong> The most active factor. Temperature and precipitation control the rate of weathering and organic decomposition.
+<ul>
+<li><em>Precipitation:</em> Drives leaching (removal of soluble materials).</li>
+<li><em>Temperature:</em> For every 10°C rise, chemical weathering rates roughly double (Van 't Hoff's rule).</li>
+</ul></li>
+<li><strong>Biota (Organisms):</strong> Vegetation, microbes, and soil animals.
+<ul>
+<li>Plants contribute organic matter (humus).</li>
+<li>Microorganisms (bacteria/fungi) decompose organic matter.</li>
+<li>Macro-organisms (earthworms/termites) mix the soil (bioturbation) and improve aeration.</li>
+</ul></li>
+<li><strong>Relief (Topography):</strong> Influences drainage and erosion.
+<ul>
+<li><em>Steep slopes:</em> Thin, immature soils due to high erosion.</li>
+<li><em>Flat/Lowlands:</em> Thick, deeper soils; potentially waterlogged.</li>
+</ul></li>
+<li><strong>Time:</strong> Soil formation is a slow process. It takes thousands of years to develop a mature soil profile with distinct horizons.</li>
+</ol>
+<h3>Specific Soil Forming Processes</h3>
+<ul>
+<li><strong>Laterization:</strong> Occurs in hot, wet tropical climates. Intense leaching removes silica, leaving behind iron and aluminum oxides, resulting in hard, red soil (Latosols).</li>
+<li><strong>Podzolization:</strong> Occurs in cool, humid climates (coniferous forests). Acidic humus induces leaching of iron and aluminum from the topsoil, leaving a grey, silica-rich horizon.</li>
+<li><strong>Calcification:</strong> Occurs in arid/semi-arid regions. Accumulation of calcium carbonate in the B-horizon due to insufficient rain to wash it away.</li>
+<li><strong>Gleization:</strong> Occurs in waterlogged conditions (tundra or swamps). Low oxygen leads to the reduction of iron, creating blue-grey soil colors.</li>
+</ul>
+<hr/>
+<h2>2. Soil Profile</h2>
+<p>A soil profile is a vertical cross-section of the soil extending from the surface to the parent rock, displaying distinct layers known as horizons.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Horizon</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Characteristics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>O Horizon</strong></td>
+<td style="text-align: left;">Organic Layer</td>
+<td style="text-align: left;">The surface layer composed of fresh and decomposing organic matter (leaf litter, humus). Prominent in forests, absent in deserts.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>A Horizon</strong></td>
+<td style="text-align: left;">Topsoil</td>
+<td style="text-align: left;">Mineral soil mixed with humus. Dark in color. The zone of maximum biological activity.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>E Horizon</strong></td>
+<td style="text-align: left;">Eluvial Layer</td>
+<td style="text-align: left;">The zone of <strong>Leaching</strong> (Eluviation). Minerals (Fe, Al) and clay are washed out by downward percolating water. Usually light-colored/bleached.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>B Horizon</strong></td>
+<td style="text-align: left;">Subsoil</td>
+<td style="text-align: left;">The zone of <strong>Accumulation</strong> (Illuviation). Materials leached from A and E horizons (clay, iron, aluminum, carbonates) deposit here. Denser than topsoil.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>C Horizon</strong></td>
+<td style="text-align: left;">Parent Material</td>
+<td style="text-align: left;">Partially weathered bedrock (Regolith). Little organic matter. Resembles the bedrock more than the soil above.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>R Horizon</strong></td>
+<td style="text-align: left;">Bedrock</td>
+<td style="text-align: left;">Unweathered, solid rock mass.</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>3. Classification and Distribution of Soils</h2>
+<h3>The Zonal Classification System (Traditional)</h3>
+<ol>
+<li><strong>Zonal Soils:</strong> Mature soils determined primarily by climate and vegetation (e.g., Podzols, Chernozems, Laterites).</li>
+<li><strong>Azonal Soils:</strong> Immature soils lacking well-defined horizons, usually due to lack of time or constant erosion/deposition (e.g., Alluvial soils, Lithosols).</li>
+<li><strong>Intrazonal Soils:</strong> Soils reflecting the dominance of local factors like relief or parent material over climate (e.g., Bog soils, Saline soils).</li>
+</ol>
+<h3>USDA Soil Taxonomy (Modern 12 Orders)</h3>
+<p>This is the most widely accepted scientific classification.</p>
+<ol>
+<li><strong>Oxisols:</strong> Highly weathered, red, tropical soils rich in iron/aluminum oxides. Low fertility. (Amazon Basin, Congo).</li>
+<li><strong>Aridisols:</strong> Dry soils of deserts. Low organic matter, accumulation of salts/carbonates. (Sahara, Australian Outback).</li>
+<li><strong>Mollisols:</strong> Grassland soils. Thick, dark, organic-rich A-horizon. Very fertile. (Great Plains of USA, Steppes of Ukraine).</li>
+<li><strong>Alfisols:</strong> Moderately weathered forest soils. High base saturation. Productive for agriculture. (Western Europe, Eastern India).</li>
+<li><strong>Spodosols:</strong> Acidic soils with a subsurface accumulation of humus and aluminum/iron. Found in coniferous forests. (Scandinavia, Canada).</li>
+<li><strong>Ultisols:</strong> Strongly leached, acidic forest soils in older, stable landscapes. Red clay subsoils. (SE USA, SE Asia).</li>
+<li><strong>Gelisols:</strong> Soils containing permafrost. Cryoturbation (frost churning) occurs. (Tundra regions).</li>
+<li><strong>Andisols:</strong> Soils formed from volcanic ash. High fertility and water-holding capacity. (Pacific Ring of Fire).</li>
+<li><strong>Vertisols:</strong> Clay-rich soils that shrink and crack when dry and swell when wet. (Deccan Plateau, India).</li>
+<li><strong>Histosols:</strong> Organic soils (peat/muck). Formed in wetlands where decomposition is slow. (Bogs, Marshes).</li>
+<li><strong>Entisols:</strong> Recent soils with little to no profile development. (River deltas, Sand dunes).</li>
+<li><strong>Inceptisols:</strong> Young soils with weak profile development. More developed than Entisols. (Steep slopes, mountain regions).</li>
+</ol>
+<hr/>
+<h2>4. Soil Erosion, Degradation, and Conservation</h2>
+<h3>Soil Erosion</h3>
+<p>The detachment and removal of soil particles by water and wind.</p>
+<ul>
+<li><strong>Water Erosion:</strong>
+<ul>
+<li><em>Splash Erosion:</em> Raindrops hitting bare soil.</li>
+<li><em>Sheet Erosion:</em> Uniform removal of a thin layer of topsoil.</li>
+<li><em>Rill Erosion:</em> Formation of small channels.</li>
+<li><em>Gully Erosion:</em> Rills enlarge into deep channels (ravines).</li>
+</ul></li>
+<li><strong>Wind Erosion:</strong> Common in arid regions.
+<ul>
+<li><em>Saltation:</em> Bouncing of particles.</li>
+<li><em>Suspension:</em> Fine dust carried in the air.</li>
+<li><em>Surface Creep:</em> Rolling of larger particles.</li>
+</ul></li>
+</ul>
+<h3>Soil Degradation</h3>
+<p>The decline in soil quality and productivity.</p>
+<ul>
+<li><strong>Physical:</strong> Compaction, crusting, waterlogging.</li>
+<li><strong>Chemical:</strong>
+<ul>
+<li><em>Salinization:</em> Accumulation of soluble salts (often due to irrigation in dry areas).</li>
+<li><em>Acidification:</em> Drop in pH due to fertilizers or acid rain.</li>
+<li><em>Nutrient Depletion:</em> Exhaustion of N, P, K due to over-farming.</li>
+</ul></li>
+<li><strong>Biological:</strong> Loss of soil biodiversity and organic matter.</li>
+</ul>
+<h3>Soil Conservation</h3>
+<p>Methodologies to maintain soil fertility and prevent erosion.</p>
+<p><strong>1. Agronomic Measures:</strong></p>
+<ul>
+<li><strong>Contour Farming:</strong> Plowing along the contour lines of a slope to slow water runoff.</li>
+<li><strong>Mulching:</strong> Covering soil with organic residues to retain moisture and prevent splash erosion.</li>
+<li><strong>Crop Rotation:</strong> Alternating crops (e.g., legumes with cereals) to replenish nitrogen.</li>
+<li><strong>Strip Cropping:</strong> Alternating strips of erosion-resistant crops (grass) with cultivated crops.</li>
+</ul>
+<p><strong>2. Mechanical Measures:</strong></p>
+<ul>
+<li><strong>Terracing:</strong> Cutting steps into steep slopes to reduce runoff velocity.</li>
+<li><strong>Check Dams:</strong> Small barriers built across gullies to slow water and trap sediment.</li>
+</ul>
+<p><strong>3. Agrostological Measures:</strong></p>
+<ul>
+<li><strong>Afforestation:</strong> Planting trees to bind soil with roots.</li>
+<li><strong>Shelterbelts/Windbreaks:</strong> Rows of trees planted perpendicular to wind direction to reduce wind speed.</li>
+</ul>
+<hr/>
+<h2>5. Factors Influencing World Distribution of Plants and Animals</h2>
+<p>Biogeography analyzes the spatial distribution of biodiversity. The distribution is controlled by abiotic and biotic factors.</p>
+<h3>A. Climatic Factors (Most Critical)</h3>
+<ol>
+<li><strong>Temperature:</strong> Controls metabolic rates and growing seasons.
+<ul>
+<li><em>Megatherms:</em> Plants requiring high heat (Tropical rainforests).</li>
+<li><em>Microtherms:</em> Plants adapted to low temperatures (Taiga/Tundra).</li>
+<li><em>Allen’s Rule:</em> Animals in colder climates have shorter limbs/ears to conserve heat.</li>
+</ul></li>
+<li><strong>Moisture/Precipitation:</strong>
+<ul>
+<li><em>Hydrophytes:</em> Water-loving plants (Water lily).</li>
+<li><em>Xerophytes:</em> Drought-resistant plants (Cactus).</li>
+<li><em>Mesophytes:</em> Moderate water needs (Deciduous trees).</li>
+</ul></li>
+<li><strong>Light (Photoperiodism):</strong>
+<ul>
+<li>Influences photosynthesis, flowering, and animal migration/breeding cycles.</li>
+<li>Differentiation between <em>Heliophytes</em> (sun-loving) and <em>Sciophytes</em> (shade-loving).</li>
+</ul></li>
+</ol>
+<h3>B. Edaphic Factors (Soil)</h3>
+<ul>
+<li><strong>Acidity (pH):</strong> Blueberries require acidic soil; legumes prefer neutral/alkaline soil.</li>
+<li><strong>Texture:</strong> Sandy soils drain fast (supporting xerophytes); clay soils hold water.</li>
+<li><strong>Nutrients:</strong> Availability of Nitrogen and Phosphorus determines biomass.</li>
+</ul>
+<h3>C. Topographic Factors</h3>
+<ul>
+<li><strong>Altitude:</strong> Temperature decreases with height (Lapse rate). Vegetation changes from tropical <span class="katex-inline" data-math="\to"></span> temperate <span class="katex-inline" data-math="\to"></span> alpine <span class="katex-inline" data-math="\to"></span> tundra as altitude increases.</li>
+<li><strong>Aspect:</strong> The direction a slope faces.
+<ul>
+<li>In the Northern Hemisphere, south-facing slopes receive more sun (warmer/drier) than north-facing slopes.</li>
+</ul></li>
+</ul>
+<h3>D. Biotic Factors</h3>
+<ul>
+<li><strong>Competition:</strong> Interspecific (between species) and intraspecific (same species) competition for resources.</li>
+<li><strong>Symbiosis:</strong> Mutual dependence (e.g., pollinators and flowers).</li>
+<li><strong>Dispersal Barriers:</strong> Oceans, deserts, and mountain ranges prevent species migration.</li>
+</ul>
+<hr/>
+<h2>6. Problems of Deforestation and Conservation Measures</h2>
+<h3>Problems of Deforestation</h3>
+<p>Deforestation is the permanent removal of trees to make room for something besides forest.</p>
+<ol>
+<li><strong>Loss of Biodiversity:</strong> Extinction of species due to habitat destruction (70% of land animals/plants live in forests).</li>
+<li><strong>Disruption of Water Cycle:</strong> Trees release water vapor via transpiration. Removal leads to drier climates and desertification.</li>
+<li><strong>Soil Erosion:</strong> Without roots to anchor soil, topsoil washes away, leading to siltation of rivers.</li>
+<li><strong>Climate Change:</strong> Forests act as carbon sinks. Cutting/burning them releases stored <span class="katex-inline" data-math="CO_2"></span>, accelerating the greenhouse effect.</li>
+<li><strong>Economic Loss:</strong> Loss of timber, non-timber forest products, and tourism potential.</li>
+</ol>
+<h3>Conservation Measures</h3>
+<ol>
+<li><strong>Sustainable Logging:</strong> Selective cutting (removing only mature trees) rather than clear-cutting.</li>
+<li><strong>Reforestation &amp; Afforestation:</strong> Replanting areas that were logged and planting trees on barren land.</li>
+<li><strong>Protected Areas:</strong> Establishing National Parks, Wildlife Sanctuaries, and Biosphere Reserves to strictly limit human activity.</li>
+<li><strong>Legislation and Policy:</strong>
+<ul>
+<li><em>CITES:</em> Convention on International Trade in Endangered Species.</li>
+<li>Strict enforcement of forest laws against illegal logging.</li>
+</ul></li>
+<li><strong>Certification:</strong> Using wood products certified by organizations like the <strong>FSC</strong> (Forest Stewardship Council).</li>
+<li><strong>Joint Forest Management (JFM):</strong> Involving local communities in protection efforts in exchange for a share of forest produce.</li>
+</ol>
+<hr/>
+<h2>7. Social Forestry</h2>
+<h3>Definition</h3>
+<p>Social forestry refers to the management and protection of forests and afforestation on barren lands with the purpose of helping in the environmental, social, and rural development. It is "Forestry of the people, by the people, and for the people."</p>
+<h3>Objectives</h3>
+<ul>
+<li>To provide fuel wood, fodder, timber, and minor forest products to rural populations.</li>
+<li>To protect agricultural fields from wind and erosion.</li>
+<li>To utilize wasteland and maximize land use.</li>
+<li>To generate rural employment.</li>
+</ul>
+<h3>Components/Types of Social Forestry</h3>
+<ol>
+<li>
+<p><strong>Farm Forestry:</strong></p>
+<ul>
+<li>Individual farmers plant trees on their own farmland (bunds, boundaries) for commercial or domestic use.</li>
+<li>Integrates trees into existing farming systems.</li>
+</ul>
+</li>
+<li>
+<p><strong>Community Forestry:</strong></p>
+<ul>
+<li>Raising trees on community land (village commons, pasture land) rather than private land.</li>
+<li>Benefits are shared by the community as a whole.</li>
+<li>Aims to provide a "buffer" to protect commercial forests from illegal encroachment.</li>
+</ul>
+</li>
+<li>
+<p><strong>Extension Forestry:</strong></p>
+<ul>
+<li>Planting of trees on the sides of roads, canals, and railways, as well as on wastelands.</li>
+<li>Creates green belts and reduces pollution.</li>
+</ul>
+</li>
+<li>
+<p><strong>Agroforestry:</strong></p>
+<ul>
+<li>A land-use management system in which trees or shrubs are grown around or among crops or pastureland.</li>
+<li><em>Silviculture + Agriculture:</em> Trees + Crops.</li>
+<li><em>Silvipasture:</em> Trees + Animals.</li>
+</ul>
+</li>
+</ol>
+<h3>Benefits</h3>
+<ul>
+<li><strong>Ecological:</strong> Increases forest cover, reduces soil erosion, maintains moisture.</li>
+<li><strong>Economic:</strong> Provides raw materials for cottage industries (lac, silk, resin).</li>
+<li><strong>Social:</strong> Empowers local communities and reduces the burden on women (easier access to firewood).</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/GEO295/Unit4/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/GEO295/Unit6/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 6</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

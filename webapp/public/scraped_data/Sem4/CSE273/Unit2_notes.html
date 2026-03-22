@@ -1,0 +1,677 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/CSE273">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE273/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE273/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE273/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE273</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Pandas for Data Handling</h1>
+<p>Pandas is an open-source Python library providing high-performance, easy-to-use data structures and data analysis tools. It is built on top of NumPy and is essential for data cleaning, manipulation, and analysis in Machine Learning.</p>
+<hr/>
+<h2>1. Series and DataFrame</h2>
+<p>Pandas deals primarily with two data structures: <strong>Series</strong> (1-dimensional) and <strong>DataFrame</strong> (2-dimensional).</p>
+<h3>1.1 Pandas Series</h3>
+<p>A Series is a one-dimensional labeled array capable of holding data of any type (integer, string, float, python objects, etc.). The axis labels are collectively called the <strong>index</strong>.</p>
+<p><strong>Syntax:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">import pandas as pd
+s = pd.Series(data, index=index)
+</code></pre></div></p>
+<p><strong>Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">import pandas as pd
+import numpy as np
+
+# Creating a Series from a list
+data = [10, 20, 30, 40]
+labels = ['a', 'b', 'c', 'd']
+series = pd.Series(data, index=labels)
+
+print(series)
+# Output:
+# a    10
+# b    20
+# c    30
+# d    40
+# dtype: int64
+</code></pre></div></p>
+<h3>1.2 Pandas DataFrame</h3>
+<p>A DataFrame is a two-dimensional data structure, i.e., data is aligned in a tabular fashion in rows and columns. It is mutable, size-mutable, and can handle heterogeneous data types.</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Potentially columns are of different types.</li>
+<li>Size – Mutable.</li>
+<li>Labeled axes (rows and columns).</li>
+<li>Can perform arithmetic operations on rows and columns.</li>
+</ul>
+<p><strong>Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Creating a DataFrame from a Dictionary
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'City': ['New York', 'Paris', 'London']
+}
+
+df = pd.DataFrame(data)
+print(df)
+</code></pre></div></p>
+<p><figure class="image-figure"><img alt='A structural diagram comparing a Pandas Series and a Pandas DataFrame. On the left, depict a "Series...' src="/notes-images/Sem4/CSE273/images/CSE273_Unit2_img1_9b4d3c23.jpg"><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></img></figure></p>
+<hr/>
+<h2>2. Reading and Writing CSV Files</h2>
+<p>CSV (Comma Separated Values) is the most common file format for storing data.</p>
+<h3>2.1 Reading CSV</h3>
+<p>The <code>read_csv()</code> function is used to load a CSV file into a DataFrame.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Basic reading
+df = pd.read_csv('data.csv')
+
+# Reading with specific requirements
+df = pd.read_csv('data.csv', 
+                 index_col=0,       # Use first column as index
+                 header=0,          # Row number to use as column names
+                 usecols=['Name', 'Age']) # Load specific columns
+</code></pre></div></p>
+<h3>2.2 Writing CSV</h3>
+<p>The <code>to_csv()</code> function writes a DataFrame to a CSV file.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Write to CSV
+df.to_csv('output.csv', index=False) # index=False prevents writing row numbers
+</code></pre></div></p>
+<hr/>
+<h2>3. Inspecting Datasets</h2>
+<p>Before analyzing data, it is crucial to understand its structure and content.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>df.head(n)</code></td>
+<td style="text-align: left;">Returns the first <em>n</em> rows (default is 5).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>df.tail(n)</code></td>
+<td style="text-align: left;">Returns the last <em>n</em> rows (default is 5).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>df.info()</code></td>
+<td style="text-align: left;">Prints a summary of the DataFrame (index dtype, columns, non-null values, memory usage).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>df.describe()</code></td>
+<td style="text-align: left;">Generates descriptive statistics (mean, std, min, max, quartiles) for numeric columns.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>df.shape</code></td>
+<td style="text-align: left;">Returns a tuple representing the dimensionality (rows, columns).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>df.columns</code></td>
+<td style="text-align: left;">Returns the column labels.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>df.dtypes</code></td>
+<td style="text-align: left;">Returns the data type of each column.</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>4. Selecting and Filtering Data</h2>
+<p>Pandas provides specific accessors, <code>loc</code> and <code>iloc</code>, for efficient data selection.</p>
+<h3>4.1 Selection: <code>loc</code> vs <code>iloc</code></h3>
+<ul>
+<li><strong><code>loc</code> (Label-based):</strong> Selects data based on the <strong>names</strong> of rows and columns.</li>
+<li><strong><code>iloc</code> (Integer-based):</strong> Selects data based on the <strong>integer position</strong> (index) of rows and columns (0-based).</li>
+</ul>
+<p><strong>Example:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Select the row with index label 'a' and column 'Age'
+val = df.loc['a', 'Age'] 
+
+# Select the first row (position 0) and the second column (position 1)
+val = df.iloc[0, 1]
+
+# Slicing
+subset_loc = df.loc[:, 'Name':'Age'] # All rows, columns from Name to Age (inclusive)
+subset_iloc = df.iloc[0:5, 0:2]      # First 5 rows, first 2 columns (exclusive of end)
+</code></pre></div></p>
+<p><figure class="image-figure"><img alt="A visual comparison diagram illustrating the difference between Pandas .loc and .iloc selectors. The..." src="/notes-images/Sem4/CSE273/images/CSE273_Unit2_img2_001bc888.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure> (Label Based)" with an arrow pointing to a selection highlighting the row "B" and column "Col1" explicitly using their names. On the right side, label ".iloc[] (Position Based)" with an arrow pointing to the same cell but referring to it as coordinates [1, 0]. Use color coding: Red highlights for Label-based selection references, and Blue highlights for Integer-position based selection references. Background should be clean white or light grey.]</p>
+<h3>4.2 Filtering (Boolean Indexing)</h3>
+<p>Filtering allows you to select rows that satisfy a specific condition.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Filter rows where Age is greater than 30
+adults = df[df['Age'] &gt; 30]
+
+# Multiple conditions (Use &amp; for AND, | for OR)
+# Note: Parentheses are mandatory around conditions
+target_group = df[(df['Age'] &gt; 25) &amp; (df['City'] == 'London')]
+</code></pre></div></p>
+<hr/>
+<h2>5. Data Visualization using Matplotlib</h2>
+<p>Matplotlib is a low-level graph plotting library in Python that serves as a visualization utility.</p>
+<p><strong>Importing:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">import matplotlib.pyplot as plt
+</code></pre></div></p>
+<h3>5.1 Line Plot</h3>
+<p>Used to visualize trends over time or sequential data.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
+
+plt.plot(x, y, color='green', linestyle='--', marker='o')
+plt.title("Line Plot Example")
+plt.xlabel("X Axis")
+plt.ylabel("Y Axis")
+plt.show()
+</code></pre></div></p>
+<h3>5.2 Bar Plot</h3>
+<p>Used to compare categorical data.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">categories = ['A', 'B', 'C']
+values = [10, 20, 15]
+
+plt.bar(categories, values, color='skyblue')
+plt.title("Bar Plot Example")
+plt.show()
+</code></pre></div></p>
+<h3>5.3 Histogram</h3>
+<p>Used to visualize the frequency distribution of a continuous variable.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">ages = [22, 55, 62, 45, 21, 22, 34, 42, 42, 4, 99, 102]
+bins = [0, 20, 40, 60, 80, 100]
+
+plt.hist(ages, bins, histtype='bar', rwidth=0.8)
+plt.title("Age Distribution")
+plt.show()
+</code></pre></div></p>
+<h3>5.4 Scatter Plot</h3>
+<p>Used to observe relationships/correlations between two numeric variables.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">x = [5, 7, 8, 7, 2, 17, 2, 9]
+y = [99, 86, 87, 88, 111, 86, 103, 87]
+
+plt.scatter(x, y, c='red')
+plt.title("Scatter Plot")
+plt.show()
+</code></pre></div></p>
+<h3>5.5 Pie Chart</h3>
+<p>Used to display proportions of a whole.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">labels = ['Python', 'Java', 'C++']
+sizes = [215, 130, 245]
+
+plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
+plt.axis('equal') # Ensures pie is drawn as a circle
+plt.show()
+</code></pre></div></p>
+<p><figure class="image-figure"><img alt="A grid layout diagram showing the five main types of Matplotlib plots. The image should be divided i..." src="/notes-images/Sem4/CSE273/images/CSE273_Unit2_img3_86b35324.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<hr/>
+<h2>6. Customizing Plots</h2>
+<p>Customization improves the readability and aesthetics of the plots.</p>
+<ul>
+<li><strong>Titles and Labels:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    plt.title("Global Sales Data")
+    plt.xlabel("Year")
+    plt.ylabel("Sales ($)")
+    </code></pre></div></li>
+<li><strong>Legends:</strong> Used to identify multiple datasets on the same plot.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    plt.plot(x, y1, label='Company A')
+    plt.plot(x, y2, label='Company B')
+    plt.legend(loc='upper right')
+    </code></pre></div></li>
+<li><strong>Grid:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">    plt.grid(True, linestyle='--', alpha=0.6)
+    </code></pre></div></li>
+<li><strong>Colors and Styles:</strong>
+<ul>
+<li>Colors: 'b' (blue), 'g' (green), 'r' (red), 'k' (black).</li>
+<li>Markers: 'o' (circle), 's' (square), '^' (triangle).</li>
+<li>Line Styles: '-' (solid), '--' (dashed), ':' (dotted).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>7. Subplots</h2>
+<p>The <code>subplot()</code> function allows you to draw multiple plots in a single figure (canvas).</p>
+<p><strong>Syntax:</strong> <code>plt.subplot(nrows, ncols, index)</code></p>
+<p><strong>Example:</strong> Creating a 1x2 grid (1 row, 2 columns).</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python"># Plot 1
+plt.subplot(1, 2, 1) # (1 row, 2 cols, index 1)
+plt.plot(x, y)
+plt.title("First Plot")
+
+# Plot 2
+plt.subplot(1, 2, 2) # (1 row, 2 cols, index 2)
+plt.scatter(x, y)
+plt.title("Second Plot")
+
+plt.suptitle("Multiple Plots Example") # Main title for the whole figure
+plt.show()
+</code></pre></div></p>
+<p>Alternatively, <code>plt.subplots()</code> (plural) creates the figure and axes objects at once:</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">fig, axes = plt.subplots(nrows=2, ncols=2)
+axes[0,0].plot(x, y) # Top left
+axes[0,1].bar(x, y)  # Top right
+axes[1,0].scatter(x, y) # Bottom left
+axes[1,1].hist(y)    # Bottom right
+plt.show()
+</code></pre></div></p>
+<p><figure class="image-figure"><img alt="An infographic detailing the anatomy of a Matplotlib Figure. The main visual is a large rectangle la..." src="/notes-images/Sem4/CSE273/images/CSE273_Unit2_img4_22d92061.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/CSE273/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/CSE273/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

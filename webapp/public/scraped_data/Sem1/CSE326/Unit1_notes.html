@@ -1,0 +1,714 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem1/CSE326">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem1/CSE326/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/CSE326/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE326</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Fundamentals of HTML</h1>
+<h2>1. Introduction to Web Technologies and HTML</h2>
+<h3>Web Technologies Overview</h3>
+<p>The World Wide Web operates on a <strong>Client-Server model</strong>.</p>
+<ul>
+<li><strong>The Client (Browser):</strong> Software (like Chrome, Firefox, Edge) that requests information. It is responsible for rendering HTML, CSS, and JavaScript into a visual interface for the user.</li>
+<li><strong>The Server:</strong> A powerful computer that stores website files and serves them to the client upon request.</li>
+<li><strong>HTTP/HTTPS:</strong> The protocol (HyperText Transfer Protocol) used for communication between the client and server.</li>
+</ul>
+<h3>HTML (HyperText Markup Language)</h3>
+<p>HTML is the standard markup language for documents designed to be displayed in a web browser. It provides the <strong>structure</strong> and <strong>content</strong> of a webpage.</p>
+<ul>
+<li><strong>HyperText:</strong> Refers to "text within text." It allows users to link to other pages via hyperlinks.</li>
+<li><strong>Markup Language:</strong> Instead of a programming language (which uses logic and loops), HTML uses <strong>tags</strong> to annotate text, defining how it should be displayed (e.g., "This is a heading," "This is a paragraph").</li>
+<li><strong>HTML5:</strong> The current version of HTML. It introduced semantic elements (<code>&lt;header&gt;</code>, <code>&lt;article&gt;</code>), multimedia support (<code>&lt;video&gt;</code>, <code>&lt;audio&gt;</code>), and improved APIs.</li>
+</ul>
+<hr/>
+<h2>2. Structure of an HTML Document</h2>
+<p>Every HTML5 document follows a specific tree structure (DOM - Document Object Model).</p>
+<h3>The Boilerplate Code</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Document Title&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Visible content goes here --&gt;
+    &lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre></div></p>
+<h3>Breakdown of Structure</h3>
+<ol>
+<li><strong><code>&lt;!DOCTYPE html&gt;</code></strong>: This is a declaration, not a tag. It tells the browser that the document type is HTML5.</li>
+<li><strong><code>&lt;html&gt;</code></strong>: The root element. All other elements are contained within this tag.</li>
+<li><strong><code>&lt;head&gt;</code></strong>: Contains metadata (information about the document) that is <strong>not</strong> displayed on the page itself.</li>
+<li><strong><code>&lt;body&gt;</code></strong>: Contains the actual content visible to the user (text, images, links, etc.).</li>
+</ol>
+<hr/>
+<h2>3. Root and Metadata Elements</h2>
+<h3>The Root Element</h3>
+<ul>
+<li><strong><code>&lt;html&gt;</code></strong>: The container for all HTML elements (except the DOCTYPE).
+<ul>
+<li><em>Attribute:</em> <code>lang="en"</code> helps search engines and screen readers determine the language of the page.</li>
+</ul></li>
+</ul>
+<h3>Metadata Elements (Inside <code>&lt;head&gt;</code>)</h3>
+<p>Metadata provides data about the HTML document.</p>
+<ol>
+<li><strong><code>&lt;title&gt;</code></strong>: Sets the title shown in the browser's title bar or tab. It is crucial for SEO (Search Engine Optimization).</li>
+<li><strong><code>&lt;meta&gt;</code></strong>:
+<ul>
+<li><code>charset="UTF-8"</code>: Specifies the character encoding (supports almost all characters and symbols).</li>
+<li><code>viewport</code>: Essential for <strong>Responsive Web Design</strong>. It sets the width of the page to follow the screen-width of the device (mobile-friendly).</li>
+<li><code>description</code>: Provides a summary of the page for search engines.</li>
+</ul></li>
+<li><strong><code>&lt;link&gt;</code></strong>: Used to link external resources, most commonly external CSS files (<code>&lt;link rel="stylesheet" href="style.css"&gt;</code>).</li>
+<li><strong><code>&lt;style&gt;</code></strong>: Used to define internal CSS.</li>
+<li><strong><code>&lt;script&gt;</code></strong>: Used to embed or reference JavaScript.</li>
+</ol>
+<hr/>
+<h2>4. Basic Tags: Headings, Paragraphs, Breaks, Rules</h2>
+<h3>Headings (<code>&lt;h1&gt;</code> to <code>&lt;h6&gt;</code>)</h3>
+<p>Headings are block-level elements used to define the structure and hierarchy of content.</p>
+<ul>
+<li><strong><code>&lt;h1&gt;</code></strong>: Most important heading (Main Title). Should be used only once per page for SEO.</li>
+<li><strong><code>&lt;h6&gt;</code></strong>: Least important heading.</li>
+<li>Headings have default bold styling and varying font sizes.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;h1&gt;Main Heading&lt;/h1&gt;
+&lt;h2&gt;Subheading&lt;/h2&gt;
+&lt;h3&gt;Section Title&lt;/h3&gt;
+</code></pre></div></p>
+<h3>Paragraphs (<code>&lt;p&gt;</code>)</h3>
+<p>The <code>&lt;p&gt;</code> tag defines a block of text.</p>
+<ul>
+<li>Browsers automatically add margins (white space) before and after a paragraph.</li>
+<li>HTML ignores extra spaces and newlines within the code; it collapses them into a single space unless <code>&lt;pre&gt;</code> is used.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;p&gt;This is a paragraph of text. It will start on a new line.&lt;/p&gt;
+</code></pre></div></p>
+<h3>Line Breaks (<code>&lt;br&gt;</code>)</h3>
+<p>The <code>&lt;br&gt;</code> tag produces a line break in the text (carriage return).</p>
+<ul>
+<li>It is an <strong>empty tag</strong> (no closing tag).</li>
+<li>Use case: Writing addresses or poems. Do not use it to create spacing between paragraphs (use CSS margins instead).</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;p&gt;John Doe&lt;br&gt;123 Main St&lt;br&gt;New York, NY&lt;/p&gt;
+</code></pre></div></p>
+<h3>Horizontal Rules (<code>&lt;hr&gt;</code>)</h3>
+<p>The <code>&lt;hr&gt;</code> tag defines a thematic break in the content.</p>
+<ul>
+<li>Visually renders as a horizontal line.</li>
+<li>It is an <strong>empty tag</strong>.</li>
+<li>Use case: Separating topics within a section.</li>
+</ul>
+<hr/>
+<h2>5. Text Formatting in HTML</h2>
+<p>HTML provides specific tags to format text. Modern HTML emphasizes <strong>Semantic Formatting</strong> (defining the <em>meaning</em> of the text) over <strong>Physical Formatting</strong> (defining the <em>look</em>).</p>
+<h3>Semantic Formatting Tags</h3>
+<h4>1. <code>&lt;strong&gt;</code> (Strong Importance)</h4>
+<ul>
+<li><strong>Function:</strong> Indicates that the text is of strong importance, seriousness, or urgency.</li>
+<li><strong>Visual:</strong> Rendered as <strong>bold</strong> by default.</li>
+<li><strong>Difference from <code>&lt;b&gt;</code>:</strong> <code>&lt;b&gt;</code> makes text bold for stylistic reasons; <code>&lt;strong&gt;</code> adds semantic weight for screen readers (accessibility).</li>
+</ul>
+<h4>2. <code>&lt;em&gt;</code> (Emphasized)</h4>
+<ul>
+<li><strong>Function:</strong> Indicates stress emphasis. Changing the stress of a word changes the nuance of the sentence.</li>
+<li><strong>Visual:</strong> Rendered as <em>italic</em> by default.</li>
+<li><strong>Difference from <code>&lt;i&gt;</code>:</strong> <code>&lt;i&gt;</code> is for text in an alternate voice/mood (like technical terms); <code>&lt;em&gt;</code> is for vocal emphasis.</li>
+</ul>
+<h4>3. <code>&lt;mark&gt;</code> (Highlighted)</h4>
+<ul>
+<li><strong>Function:</strong> Represents text that is marked or highlighted for reference or notation purposes.</li>
+<li><strong>Visual:</strong> Usually rendered with a yellow background.</li>
+</ul>
+<h4>4. <code>&lt;small&gt;</code> (Side Comment)</h4>
+<ul>
+<li><strong>Function:</strong> Represents side comments like copyright, legal disclaimers, or fine print.</li>
+<li><strong>Visual:</strong> Rendered in a smaller font size.</li>
+</ul>
+<h4>5. <code>&lt;abbr&gt;</code> (Abbreviation)</h4>
+<ul>
+<li><strong>Function:</strong> Defines an abbreviation or an acronym (e.g., HTML, CSS).</li>
+<li><strong>Attribute:</strong> Use the <code>title</code> attribute to provide the full description. When hovering, the browser shows the title.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;p&gt;I am learning &lt;abbr title="HyperText Markup Language"&gt;HTML&lt;/abbr&gt;.&lt;/p&gt;
+</code></pre></div></p>
+<h4>6. <code>&lt;cite&gt;</code> (Citation)</h4>
+<ul>
+<li><strong>Function:</strong> Defines the title of a creative work (e.g., a book, a poem, a song, a movie, a painting).</li>
+<li><strong>Visual:</strong> Rendered in <em>italic</em>.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;p&gt;&lt;cite&gt;The Scream&lt;/cite&gt; by Edvard Munch.&lt;/p&gt;
+</code></pre></div></p>
+<h4>7. <code>&lt;dfn&gt;</code> (Definition)</h4>
+<ul>
+<li><strong>Function:</strong> Represents the "defining instance" of a term. It indicates that the term contained within is being defined in the surrounding text.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;p&gt;&lt;dfn&gt;HTML&lt;/dfn&gt; is the standard markup language for creating web pages.&lt;/p&gt;
+</code></pre></div></p>
+<hr/>
+<h2>6. Quotations and Comments</h2>
+<h3>Quotations</h3>
+<ol>
+<li>
+<p><strong><code>&lt;blockquote&gt;</code> (Block Quotation):</strong></p>
+<ul>
+<li>Used for long quotations (usually a paragraph or more) taken from another source.</li>
+<li>Browsers usually indent <code>&lt;blockquote&gt;</code> elements.</li>
+<li><strong>Attribute:</strong> <code>cite</code> attribute can provide a URL to the source.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">    &lt;blockquote cite="http://example.com/source"&gt;
+        The internet is becoming the town square for the global village of tomorrow.
+    &lt;/blockquote&gt;
+    </code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong><code>&lt;q&gt;</code> (Inline Quotation):</strong></p>
+<ul>
+<li>Used for short quotations that flow with the text.</li>
+<li>Browsers automatically insert quotation marks around the content.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">    &lt;p&gt;Bill Gates said, &lt;q&gt;Content is king.&lt;/q&gt;&lt;/p&gt;
+    </code></pre></div></li>
+</ul>
+</li>
+</ol>
+<h3>Comments</h3>
+<p>Comments are lines of code ignored by the browser. They are not visible on the webpage but are viewable in the source code.</p>
+<ul>
+<li><strong>Syntax:</strong> <code>&lt;!-- Comment goes here --&gt;</code></li>
+<li><strong>Purpose:</strong>
+<ol>
+<li>Explain complex code logic.</li>
+<li>"Comment out" sections of code during debugging so they don't run/display.</li>
+</ol></li>
+</ul>
+<hr/>
+<h2>7. Types of HTML Tags: Paired and Unpaired</h2>
+<h3>Paired Tags (Container Tags)</h3>
+<p>These tags consist of an <strong>opening tag</strong> and a <strong>closing tag</strong>. They enclose content.</p>
+<ul>
+<li><strong>Syntax:</strong> <code>&lt;tagname&gt;Content&lt;/tagname&gt;</code></li>
+<li><strong>Examples:</strong>
+<ul>
+<li><code>&lt;html&gt; ... &lt;/html&gt;</code></li>
+<li><code>&lt;p&gt; ... &lt;/p&gt;</code></li>
+<li><code>&lt;h1&gt; ... &lt;/h1&gt;</code></li>
+<li><code>&lt;strong&gt; ... &lt;/strong&gt;</code></li>
+</ul></li>
+<li><em>Note:</em> Failing to close these tags can break the layout or hierarchy of the page.</li>
+</ul>
+<h3>Unpaired Tags (Void/Empty/Singular Tags)</h3>
+<p>These tags do not have a closing tag because they cannot contain text or other elements.</p>
+<ul>
+<li><strong>Syntax:</strong> <code>&lt;tagname&gt;</code> or <code>&lt;tagname /&gt;</code> (XHTML style).</li>
+<li><strong>Examples:</strong>
+<ul>
+<li><code>&lt;br&gt;</code> (Line Break)</li>
+<li><code>&lt;hr&gt;</code> (Horizontal Rule)</li>
+<li><code>&lt;img&gt;</code> (Image)</li>
+<li><code>&lt;input&gt;</code> (Input field)</li>
+<li><code>&lt;meta&gt;</code> (Metadata)</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>8. Block-level vs Inline Elements</h2>
+<p>Understanding the display behavior of elements is critical for layout design.</p>
+<h3>Block-level Elements</h3>
+<p>Block-level elements always start on a new line and take up the full width available (stretches to the left and right as far as it can).</p>
+<ul>
+<li><strong>Behavior:</strong>
+<ol>
+<li>Starts on a new line.</li>
+<li>Has a top and bottom margin.</li>
+<li>Takes up 100% width of its parent container.</li>
+</ol></li>
+<li><strong>Examples:</strong>
+<ul>
+<li><code>&lt;div&gt;</code> (Standard block container)</li>
+<li><code>&lt;h1&gt;</code> - <code>&lt;h6&gt;</code></li>
+<li><code>&lt;p&gt;</code></li>
+<li><code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code></li>
+<li><code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;section&gt;</code></li>
+</ul></li>
+</ul>
+<h3>Inline Elements</h3>
+<p>Inline elements do not start on a new line. They only take up as much width as necessary.</p>
+<ul>
+<li><strong>Behavior:</strong>
+<ol>
+<li>Does not start on a new line.</li>
+<li>Allows other elements to sit next to it horizontally.</li>
+<li>Top and bottom margins/padding are often not respected by the document flow.</li>
+</ol></li>
+<li><strong>Examples:</strong>
+<ul>
+<li><code>&lt;span&gt;</code> (Standard inline container)</li>
+<li><code>&lt;a&gt;</code> (Anchor/Link)</li>
+<li><code>&lt;img&gt;</code></li>
+<li><code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;mark&gt;</code></li>
+<li><code>&lt;br&gt;</code></li>
+</ul></li>
+</ul>
+<h3>Comparison Table</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Block-level Elements</th>
+<th style="text-align: left;">Inline Elements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Line Break</strong></td>
+<td style="text-align: left;">Starts on a new line</td>
+<td style="text-align: left;">Continues on the same line</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Width</strong></td>
+<td style="text-align: left;">Full width (100%)</td>
+<td style="text-align: left;">Only strictly necessary width</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Can contain</strong></td>
+<td style="text-align: left;">Other block-level or inline elements</td>
+<td style="text-align: left;">Only data and other inline elements</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Example</strong></td>
+<td style="text-align: left;"><code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h1&gt;</code></td>
+<td style="text-align: left;"><code>&lt;span&gt;</code>, <code>&lt;a&gt;</code>, <code>&lt;b&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Code Illustration</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;!-- Block Level: Each div is on a new line --&gt;
+&lt;div style="background-color: lightblue"&gt;Block 1&lt;/div&gt;
+&lt;div style="background-color: lightcoral"&gt;Block 2&lt;/div&gt;
+
+&lt;!-- Inline: Both spans are on the same line --&gt;
+&lt;span style="background-color: yellow"&gt;Inline 1&lt;/span&gt;
+&lt;span style="background-color: lightgreen"&gt;Inline 2&lt;/span&gt;
+</code></pre></div></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem1/CSE326/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

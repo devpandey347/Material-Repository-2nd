@@ -1,0 +1,626 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem1/CSE326">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem1/CSE326/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/CSE326/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE326</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Javascript DOM</h1>
+<h2>1. DOM Introduction</h2>
+<p>The <strong>Document Object Model (DOM)</strong> is a programming interface for web documents (HTML and XML). It represents the page so that programs can change the document structure, style, and content.</p>
+<h3>Key Concepts</h3>
+<ul>
+<li><strong>Tree Structure:</strong> The DOM views an HTML document as a tree of nodes. Every element, attribute, and piece of text in the HTML is a node.</li>
+<li><strong>Object-Oriented:</strong> Elements in the DOM are objects. They have properties (values associated with the object) and methods (actions the object can perform).</li>
+<li><strong>Platform Independent:</strong> It is a W3C (World Wide Web Consortium) standard, meaning it functions consistently across different browsers and platforms.</li>
+<li><strong>Dynamic HTML:</strong> JavaScript uses the DOM to create dynamic HTML. It can add, delete, or modify elements on the fly without reloading the page.</li>
+</ul>
+<p><strong>The DOM Tree Visual:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Document
+ └── html
+      ├── head
+      │    └── title ("My Page")
+      └── body
+           ├── h1 ("Header")
+           └── a (href="link.html")
+</code></pre></div></p>
+<hr/>
+<h2>2. DOM Document</h2>
+<p>The <code>document</code> object is the entry point into the web page. It represents the web page itself. To access any element in an HTML page, you always start with accessing the <code>document</code> object.</p>
+<h3>Common Document Properties</h3>
+<ul>
+<li><code>document.title</code>: Sets or returns the title of the document.</li>
+<li><code>document.URL</code>: Returns the full URL of the HTML document.</li>
+<li><code>document.domain</code>: Returns the domain name of the server that loaded the document.</li>
+<li><code>document.body</code>: Returns the <code>&lt;body&gt;</code> element.</li>
+<li><code>document.head</code>: Returns the <code>&lt;head&gt;</code> element.</li>
+<li><code>document.cookie</code>: Returns all name/value pairs of cookies in the document.</li>
+</ul>
+<h3>Writing to the Document</h3>
+<p>While rarely used in modern application development, <code>document.write()</code> can be used to write directly to the output stream.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">document.write("Hello World!"); 
+// Warning: Using this after the page has loaded will overwrite the entire document.
+</code></pre></div></p>
+<hr/>
+<h2>3. DOM Methods (Selection)</h2>
+<p>DOM methods are actions you can perform on HTML elements. The most common methods involve selecting elements to manipulate them.</p>
+<h3>Traditional Selection Methods</h3>
+<ul>
+<li><strong><code>getElementById(id)</code></strong>: Returns the element that has the ID attribute with the specified value.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const header = document.getElementById("main-title");
+    </code></pre></div></li>
+<li><strong><code>getElementsByClassName(name)</code></strong>: Returns a <strong>HTMLCollection</strong> (array-like list) of all elements with a specific class name.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const items = document.getElementsByClassName("list-item");
+    // Accessing the first item: items[0]
+    </code></pre></div></li>
+<li><strong><code>getElementsByTagName(name)</code></strong>: Returns a <strong>HTMLCollection</strong> of all elements with a specific tag name.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const paragraphs = document.getElementsByTagName("p");
+    </code></pre></div></li>
+</ul>
+<h3>Modern Selection Methods (Recommended)</h3>
+<ul>
+<li><strong><code>querySelector(selector)</code></strong>: Returns the <strong>first</strong> element that matches a specified CSS selector.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const firstButton = document.querySelector(".btn-primary"); 
+    const container = document.querySelector("#container");
+    </code></pre></div></li>
+<li><strong><code>querySelectorAll(selector)</code></strong>: Returns a <strong>NodeList</strong> containing all elements that match the specified CSS selector.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const allButtons = document.querySelectorAll("button.active");
+    // Can be iterated using forEach
+    allButtons.forEach(btn =&gt; console.log(btn));
+    </code></pre></div></li>
+</ul>
+<hr/>
+<h2>4. DOM Elements</h2>
+<p>Once selected, DOM elements are objects that can be manipulated, traversed, created, or deleted.</p>
+<h3>Creating and Removing Elements</h3>
+<ul>
+<li><strong><code>document.createElement(tagName)</code></strong>: Creates a new element node.</li>
+<li><strong><code>document.createTextNode(text)</code></strong>: Creates a new text node.</li>
+<li><strong><code>element.appendChild(node)</code></strong>: Adds a node as the last child of a node.</li>
+<li><strong><code>element.remove()</code></strong>: Removes the element from the DOM.</li>
+<li><strong><code>element.removeChild(node)</code></strong>: Removes a child node from an element.</li>
+</ul>
+<p><strong>Example: Adding a new item to a list</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// 1. Create the element
+const newItem = document.createElement("li");
+// 2. Add content
+newItem.textContent = "New List Item";
+// 3. Select the parent
+const list = document.getElementById("myList");
+// 4. Append
+list.appendChild(newItem);
+</code></pre></div></p>
+<h3>DOM Traversal (Navigating the Tree)</h3>
+<ul>
+<li><code>element.parentNode</code>: Returns the parent element.</li>
+<li><code>element.childNodes</code>: Returns a collection of child nodes (includes whitespace/text nodes).</li>
+<li><code>element.children</code>: Returns a collection of child <strong>elements</strong> (ignores text nodes).</li>
+<li><code>element.nextElementSibling</code>: Returns the next sibling element.</li>
+<li><code>element.previousElementSibling</code>: Returns the previous sibling element.</li>
+</ul>
+<hr/>
+<h2>5. DOM HTML</h2>
+<p>The DOM allows JavaScript to change the content and attributes of HTML elements.</p>
+<h3>Changing Content</h3>
+<ul>
+<li><strong><code>innerHTML</code></strong>: Gets or sets the HTML content (inner HTML) of an element. It parses string as HTML.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    document.getElementById("demo").innerHTML = "&lt;strong&gt;Bold Text&lt;/strong&gt;";
+    </code></pre></div></li>
+<li><strong><code>textContent</code></strong>: Gets or sets the text content of a node and its descendants. It does <strong>not</strong> parse HTML tags (safer against XSS attacks).<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    document.getElementById("demo").textContent = "&lt;strong&gt;Bold Text&lt;/strong&gt;"; 
+    // Result displays literal characters: &lt;strong&gt;Bold Text&lt;/strong&gt;
+    </code></pre></div></li>
+<li><strong><code>innerText</code></strong>: Similar to <code>textContent</code> but respects CSS styling (e.g., won't return text hidden via CSS).</li>
+</ul>
+<h3>Changing Attributes</h3>
+<ul>
+<li><strong>Property Access</strong>: Most standard attributes are available as properties.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const img = document.getElementById("myImage");
+    img.src = "new-pic.jpg";
+    img.id = "newId";
+    </code></pre></div></li>
+<li><strong><code>getAttribute(name)</code></strong>: Returns the value of the attribute.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const link = document.querySelector("a");
+    console.log(link.getAttribute("href"));
+    </code></pre></div></li>
+<li><strong><code>setAttribute(name, value)</code></strong>: Sets the value of an attribute.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const input = document.querySelector("input");
+    input.setAttribute("type", "password");
+    </code></pre></div></li>
+<li><strong><code>removeAttribute(name)</code></strong>: Removes an attribute completely.</li>
+</ul>
+<hr/>
+<h2>6. DOM CSS</h2>
+<p>JavaScript can manipulate the style of HTML elements dynamically.</p>
+<h3>The <code>style</code> Property</h3>
+<p>Used to add <strong>inline styles</strong> to an element. CSS properties in JavaScript use <strong>camelCase</strong> instead of kebab-case (e.g., <code>background-color</code> becomes <code>backgroundColor</code>).</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const box = document.getElementById("box");
+
+// Syntax: element.style.property = value
+box.style.backgroundColor = "blue";
+box.style.fontSize = "20px";
+box.style.display = "none"; // Hides the element
+</code></pre></div></p>
+<h3>The <code>classList</code> Property (Best Practice)</h3>
+<p>Instead of managing individual styles, it is often better to toggle CSS classes defined in a stylesheet.</p>
+<ul>
+<li><strong><code>element.classList.add("class")</code></strong>: Adds a class.</li>
+<li><strong><code>element.classList.remove("class")</code></strong>: Removes a class.</li>
+<li><strong><code>element.classList.toggle("class")</code></strong>: Adds if missing, removes if present.</li>
+<li><strong><code>element.classList.contains("class")</code></strong>: Returns true/false.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// CSS: .active { color: red; font-weight: bold; }
+
+const btn = document.querySelector("button");
+btn.classList.add("active");
+</code></pre></div></p>
+<hr/>
+<h2>7. DOM Events</h2>
+<p>Events are "things" that happen to HTML elements. JavaScript uses <strong>Event Listeners</strong> to react to these events.</p>
+<h3>Common Events</h3>
+<ul>
+<li><strong>Mouse:</strong> <code>click</code>, <code>dblclick</code>, <code>mouseover</code>, <code>mouseout</code>, <code>mousedown</code>, <code>mouseup</code>.</li>
+<li><strong>Keyboard:</strong> <code>keydown</code>, <code>keyup</code>, <code>keypress</code>.</li>
+<li><strong>Form:</strong> <code>submit</code>, <code>change</code>, <code>focus</code>, <code>blur</code>.</li>
+<li><strong>Window:</strong> <code>load</code>, <code>resize</code>, <code>scroll</code>.</li>
+</ul>
+<h3>Handling Events</h3>
+<h4>Method 1: HTML Attribute (Not Recommended)</h4>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">HTML</span></div><pre><code class="language-html">&lt;button onclick="alert('Hello')"&gt;Click Me&lt;/button&gt;
+</code></pre></div></p>
+<h4>Method 2: DOM Property</h4>
+<p>Assigns a function to the event property. Limit: Only one function per event per element.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const btn = document.getElementById("myBtn");
+btn.onclick = function() {
+    console.log("Button clicked");
+};
+</code></pre></div></p>
+<h4>Method 3: <code>addEventListener()</code> (Best Practice)</h4>
+<p>Allows adding multiple event handlers to a single element without overwriting existing ones.</p>
+<ul>
+<li><strong>Syntax:</strong> <code>element.addEventListener(event, function, useCapture)</code></li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const btn = document.getElementById("myBtn");
+
+function handleClick() {
+    alert("Clicked!");
+}
+
+// Note: Do not use "on" prefix (use "click", not "onclick")
+btn.addEventListener("click", handleClick);
+</code></pre></div></p>
+<h3>The Event Object</h3>
+<p>When an event occurs, the browser passes an <code>event</code> object to the handler function containing details about the event.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">document.querySelector("a").addEventListener("click", function(event) {
+    // Prevent the default action (e.g., stop link from navigating)
+    event.preventDefault();
+    
+    // Identify the element that was clicked
+    console.log("Target:", event.target);
+    
+    // Mouse coordinates
+    console.log("X:", event.clientX, "Y:", event.clientY);
+});
+</code></pre></div></p>
+<h3>Event Bubbling vs. Capturing</h3>
+<ul>
+<li><strong>Bubbling (Default):</strong> The inner-most element's event is handled first and then propagates up to outer elements.</li>
+<li><strong>Capturing:</strong> The outer-most element's event is handled first and then propagates down to inner elements.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem1/CSE326/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,1009 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/CSE275">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE275/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE275/Unit4/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE275/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE275/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE275</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            18 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Advanced Nature-Inspired Optimization</h1>
+<h2>1. Firefly Algorithm (FA)</h2>
+<h3>1.1. Introduction and Inspiration</h3>
+<p>The Firefly Algorithm (FA) is a metaheuristic algorithm inspired by the flashing behavior of fireflies. Developed by Xin-She Yang in 2008, it is based on the idealized behavior of fireflies, specifically how the intensity and timing of their flashes are used for communication and attracting mates.</p>
+<p><strong>Core Idea:</strong> Fireflies are attracted to brighter fireflies. This attraction is proportional to the brightness of the other firefly and decreases as the distance between them increases.</p>
+<h3>1.2. Key Concepts and Mathematical Formulation</h3>
+<p>The algorithm is based on three idealized rules:</p>
+<ol>
+<li><strong>Unisex Attraction:</strong> All fireflies are unisex, so any firefly can be attracted to any other firefly regardless of their sex.</li>
+<li><strong>Attractiveness &amp; Brightness:</strong> Attractiveness is proportional to brightness. For any two flashing fireflies, the less bright one will move towards the brighter one. Attractiveness decreases as the distance between them increases. If there is no brighter firefly, a firefly will move randomly.</li>
+<li><strong>Brightness &amp; Objective Function:</strong> The brightness of a firefly is determined by the landscape of the objective function. For a maximization problem, brightness is proportional to the value of the objective function.</li>
+</ol>
+<p><strong>Mathematical Formulation:</strong></p>
+<ul>
+<li>
+<p><strong>Light Intensity (Brightness):</strong> The brightness <code>I</code> of a firefly at a location <code>x</code> is associated with the objective function <code>f(x)</code>. For a maximization problem, <code>I(x) ∝ f(x)</code>.</p>
+</li>
+<li>
+<p><strong>Attractiveness (β):</strong> The attractiveness of a firefly is relative and depends on the distance <code>r</code> between it and another firefly. It follows a decreasing function, commonly an exponential decay:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">    β(r) = β₀ * e^(-γ * r²)
+    </code></pre></div><br/>
+Where:</p>
+<ul>
+<li><code>β₀</code> is the attractiveness at <code>r = 0</code> (maximum attractiveness).</li>
+<li><code>γ</code> is the light absorption coefficient, which controls the rate of decrease.</li>
+<li><code>rᵢⱼ</code> is the Cartesian distance between firefly <code>i</code> and firefly <code>j</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Movement Equation:</strong> The movement of a firefly <code>i</code> towards a more attractive (brighter) firefly <code>j</code> is determined by:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">    xᵢ(t+1) = xᵢ(t) + β(r) * (xⱼ(t) - xᵢ(t)) + α(t) * εᵢ
+    </code></pre></div><br/>
+Where:</p>
+<ul>
+<li><code>xᵢ(t)</code> is the current position of firefly <code>i</code>.</li>
+<li><code>xⱼ(t)</code> is the position of a brighter firefly <code>j</code>.</li>
+<li>The second term represents the attraction.</li>
+<li>The third term is a randomization term for exploration.
+<ul>
+<li><code>α(t)</code> is a randomization parameter, often decreasing over time.</li>
+<li><code>εᵢ</code> is a vector of random numbers drawn from a uniform or Gaussian distribution.</li>
+</ul></li>
+</ul>
+</li>
+</ul>
+<h3>1.3. Algorithm Pseudocode</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Algorithm: Firefly Algorithm (FA)
+
+1.  Initialize algorithm parameters:
+    - Population size (n)
+    - Maximum generations (MaxGen)
+    - Attractiveness at r=0 (β₀)
+    - Light absorption coefficient (γ)
+    - Randomization parameter (α)
+
+2.  Initialize a population of n fireflies with random positions xᵢ (i=1, 2, ..., n).
+3.  Determine the light intensity Iᵢ for each firefly based on the objective function f(xᵢ).
+
+4.  While (t &lt; MaxGen):
+5.      For i = 1 to n (each firefly):
+6.          For j = 1 to n (each firefly):
+7.              If (Iⱼ &gt; Iᵢ): // If firefly j is brighter than i
+8.                  Calculate distance rᵢⱼ between xᵢ and xⱼ.
+9.                  Calculate attractiveness β using β(r) = β₀ * e^(-γ * r²).
+10.                 Move firefly i towards j using the movement equation:
+                    xᵢ(t+1) = xᵢ(t) + β * (xⱼ(t) - xᵢ(t)) + α * (rand - 0.5)
+11.                 Evaluate new solution and update light intensity Iᵢ.
+12.             End If
+13.         End For
+14.     End For
+15.     Rank fireflies and find the current best solution.
+16.     t = t + 1
+17. End While
+
+18. Post-process results and visualization.
+19. Return the best solution found.
+</code></pre></div></p>
+<h3>1.4. Strengths and Weaknesses</h3>
+<p><strong>Strengths:</strong></p>
+<ul>
+<li><strong>Automatic Subdivision:</strong> The population can automatically subdivide into subgroups, with each group swarming around a local optimum. This allows FA to find multiple optima simultaneously.</li>
+<li><strong>Good for Multimodal Problems:</strong> Due to the subdivision capability, it performs well on complex, multimodal optimization problems.</li>
+<li><strong>Simplicity:</strong> The core concept and implementation are relatively straightforward.</li>
+</ul>
+<p><strong>Weaknesses:</strong></p>
+<ul>
+<li><strong>Parameter Tuning:</strong> The performance is sensitive to the parameters <code>β₀</code>, <code>γ</code>, and <code>α</code>. Poor tuning can lead to slow convergence or getting stuck.</li>
+<li><strong>Slow Convergence for some problems:</strong> The "brightest" firefly does not move, which can slow down the exploitation of the best-found region.</li>
+<li><strong>Computational Cost:</strong> The main loop has a complexity of O(n²), as each firefly is compared with every other firefly.</li>
+</ul>
+<hr/>
+<h2>2. Whale Optimization Algorithm (WOA)</h2>
+<h3>2.1. Introduction and Inspiration</h3>
+<p>The Whale Optimization Algorithm (WOA) is a metaheuristic developed by Seyedali Mirjalili and Andrew Lewis in 2016. It is inspired by the social behavior of humpback whales, specifically their unique hunting strategy known as the "bubble-net feeding method."</p>
+<p><strong>Core Idea:</strong> The algorithm mimics the search for prey and the bubble-net attacking behavior of humpback whales. The best solution found so far is assumed to be the target prey.</p>
+<h3>2.2. Key Concepts and Mathematical Formulation</h3>
+<p>WOA has two main phases: <strong>Exploitation</strong> (attacking prey) and <strong>Exploration</strong> (searching for prey).</p>
+<h4>2.2.1. Exploitation Phase (Bubble-net Attacking Method)</h4>
+<p>This phase has two mechanisms:</p>
+<ol>
+<li>
+<p><strong>Shrinking Encircling Mechanism:</strong> Humpback whales encircle their prey. WOA models this by updating the position of search agents towards the best-known solution.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">    D = |C · X*(t) - X(t)|
+    X(t+1) = X*(t) - A · D
+    </code></pre></div><br/>
+Where:</p>
+<ul>
+<li><code>t</code> is the current iteration.</li>
+<li><code>X*(t)</code> is the position vector of the best solution obtained so far.</li>
+<li><code>X(t)</code> is the position vector of a whale.</li>
+<li><code>A</code> and <code>C</code> are coefficient vectors calculated as:
+<ul>
+<li><code>A = 2 · a · r₁ - a</code></li>
+<li><code>C = 2 · r₂</code></li>
+<li><code>a</code> is a control parameter linearly decreased from 2 to 0 over the course of iterations.</li>
+<li><code>r₁</code>, <code>r₂</code> are random vectors in [0, 1].</li>
+</ul></li>
+<li>By decreasing <code>a</code>, the fluctuation range of <code>A</code> is also decreased, causing the whales to "shrink" their circle around the prey.</li>
+</ul>
+</li>
+<li>
+<p><strong>Spiral Updating Position:</strong> Whales attack the prey in a spiral-shaped path. This is modeled simultaneously with the shrinking circle.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">    X(t+1) = D' · e^(bl) · cos(2πl) + X*(t)
+    </code></pre></div><br/>
+Where:</p>
+<ul>
+<li><code>D' = |X*(t) - X(t)|</code> is the distance of the whale to the prey.</li>
+<li><code>b</code> is a constant defining the shape of the logarithmic spiral.</li>
+<li><code>l</code> is a random number in [-1, 1].</li>
+</ul>
+</li>
+</ol>
+<p>A 50% probability is assumed to choose between the shrinking circle and the spiral model during optimization.</p>
+<h4>2.2.2. Exploration Phase (Search for Prey)</h4>
+<p>This phase is based on the random search behavior of whales. Instead of updating positions based on the best agent, a whale updates its position based on a randomly chosen whale. This forces the algorithm to explore new areas of the search space.</p>
+<p>This is achieved by using the vector <code>A</code> with random values greater than 1 or less than -1.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">D = |C · X_rand(t) - X(t)|
+X(t+1) = X_rand(t) - A · D
+</code></pre></div><br/>
+Where <code>X_rand</code> is a random position vector (a random whale) from the current population.</p>
+<h3>2.3. Algorithm Pseudocode</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Algorithm: Whale Optimization Algorithm (WOA)
+
+1.  Initialize the whale population Xᵢ (i = 1, 2, ..., n).
+2.  Calculate the fitness of each search agent.
+3.  Set X* = the best search agent.
+
+4.  While (t &lt; MaxGen):
+5.      For each search agent:
+6.          Update a, A, C, l, and p. // p is a random number in [0,1]
+7.
+8.          If (p &lt; 0.5):
+9.              If (|A| &lt; 1): // Exploitation: Shrinking Encircling
+10.                 Update the position using the shrinking encircling equation.
+11.             Else if (|A| &gt;= 1): // Exploration: Search for Prey
+12.                 Select a random search agent X_rand.
+13.                 Update the position using the random search equation.
+14.             End If
+15.         Else if (p &gt;= 0.5): // Exploitation: Spiral Updating
+16.             Update the position using the spiral equation.
+17.         End If
+18.
+19.     End For
+20.
+21.     Check for and correct any search agents that go beyond the search space.
+22.     Calculate the fitness of each search agent.
+23.     Update X* if a better solution is found.
+24.     t = t + 1
+25. End While
+
+26. Return X*.
+</code></pre></div></p>
+<h3>2.4. Strengths and Weaknesses</h3>
+<p><strong>Strengths:</strong></p>
+<ul>
+<li><strong>Good Balance:</strong> The parameter <code>a</code> provides a smooth transition between exploration (<code>|A| &gt;= 1</code>) and exploitation (<code>|A| &lt; 1</code>), leading to a good balance.</li>
+<li><strong>Fewer Parameters:</strong> WOA has only two main internal parameters to adjust (<code>a</code> and <code>b</code>), making it simpler to implement and tune compared to other algorithms.</li>
+<li><strong>Strong Exploitation:</strong> The spiral movement mechanism provides a robust exploitation capability around the best solution.</li>
+</ul>
+<p><strong>Weaknesses:</strong></p>
+<ul>
+<li><strong>Premature Convergence:</strong> Like many metaheuristics, it can sometimes converge prematurely to a local optimum, especially in very high-dimensional problems.</li>
+<li><strong>Stagnation:</strong> In later stages, the population may lose diversity, leading to stagnation where little improvement is made.</li>
+</ul>
+<hr/>
+<h2>3. Grey Wolf Optimization (GWO)</h2>
+<h3>3.1. Introduction and Inspiration</h3>
+<p>The Grey Wolf Optimizer (GWO) is a metaheuristic algorithm introduced by Seyedali Mirjalili et al. in 2014. It is inspired by the social hierarchy and hunting mechanism of grey wolves.</p>
+<p><strong>Core Idea:</strong> The algorithm simulates the leadership hierarchy and hunting behavior. The population of solutions is divided into four groups: alpha (α), beta (β), delta (δ), and omega (ω). The search is guided by the three fittest wolves (α, β, and δ).</p>
+<h3>3.2. Key Concepts and Mathematical Formulation</h3>
+<ol>
+<li>
+<p><strong>Social Hierarchy:</strong></p>
+<ul>
+<li><strong>Alpha (α):</strong> The leader of the pack. The fittest solution in the population.</li>
+<li><strong>Beta (β):</strong> The second-best decision-makers. The second fittest solution.</li>
+<li><strong>Delta (δ):</strong> Subordinates to α and β. The third fittest solution.</li>
+<li><strong>Omega (ω):</strong> The remaining wolves. They follow the guidance of α, β, and δ.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hunting Behavior:</strong></p>
+<ul>
+<li>
+<p><strong>Encircling Prey:</strong> Wolves encircle prey during the hunt. This is modeled mathematically as:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">        D = |C · X_p(t) - X(t)|
+        X(t+1) = X_p(t) - A · D
+        </code></pre></div><br/>
+Where <code>t</code> is the iteration, <code>X_p</code> is the position of the prey, <code>X</code> is the position of a wolf, and <code>A</code> and <code>C</code> are coefficient vectors similar to those in WOA.</p>
+</li>
+<li>
+<p><strong>Hunting:</strong> The hunt is guided by the alpha, beta, and delta wolves as they are presumed to have the best knowledge about the location of the prey. The omega wolves update their positions based on the positions of these three leaders.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">        // Calculate distances from alpha, beta, and delta
+        D_α = |C₁ · X_α - X|
+        D_β = |C₂ · X_β - X|
+        D_δ = |C₃ · X_δ - X|
+
+        // Calculate steps towards alpha, beta, and delta
+        X₁ = X_α - A₁ · D_α
+        X₂ = X_β - A₂ · D_β
+        X₃ = X_δ - A₃ · D_δ
+
+        // Update the wolf's position (average of the three steps)
+        X(t+1) = (X₁ + X₂ + X₃) / 3
+        </code></pre></div><br/>
+The vectors <code>A</code> and <code>C</code> are calculated as in WOA, providing a mechanism for exploration and exploitation. <code>a</code> is linearly decreased from 2 to 0. When <code>|A| &gt; 1</code>, the wolves diverge from the prey (exploration). When <code>|A| &lt; 1</code>, they converge towards the prey (exploitation).</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3>3.3. Algorithm Pseudocode</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Algorithm: Grey Wolf Optimizer (GWO)
+
+1.  Initialize the grey wolf population Xᵢ (i = 1, 2, ..., n).
+2.  Initialize parameters a, A, and C.
+3.  Calculate the fitness of each search agent.
+4.  Identify the three best solutions as X_α, X_β, and X_δ.
+
+5.  While (t &lt; MaxGen):
+6.      For each search agent (wolf):
+7.          Update its position using the GWO position update equations based on X_α, X_β, and X_δ.
+8.      End For
+9.
+10.     Update a, A, and C.
+11.     Calculate the fitness of all search agents.
+12.     Update X_α, X_β, and X_δ based on the new fitness values.
+13.     t = t + 1
+14. End While
+
+15. Return X_α (the best solution found).
+</code></pre></div></p>
+<h3>3.4. Strengths and Weaknesses</h3>
+<p><strong>Strengths:</strong></p>
+<ul>
+<li><strong>Simple Structure:</strong> GWO has a simple concept and is easy to implement.</li>
+<li><strong>Fewer Parameters:</strong> Similar to WOA, it has few parameters to tune.</li>
+<li><strong>Good Exploration-Exploitation Balance:</strong> The adaptive parameter <code>a</code> and the use of the top three solutions provide a robust mechanism for balancing global and local search.</li>
+</ul>
+<p><strong>Weaknesses:</strong></p>
+<ul>
+<li><strong>Premature Convergence:</strong> Can converge prematurely, especially on complex multimodal problems where the top three solutions might cluster in the same local optimum.</li>
+<li><strong>Low Solution Accuracy:</strong> May struggle to find highly precise solutions in some complex numerical problems.</li>
+<li><strong>Slow Convergence:</strong> Convergence speed can be slow in the later stages of the search process.</li>
+</ul>
+<hr/>
+<h2>4. Grasshopper Optimization Algorithm (GOA)</h2>
+<h3>4.1. Introduction and Inspiration</h3>
+<p>The Grasshopper Optimization Algorithm (GOA) is a metaheuristic proposed by Saremi, Mirjalili, and Lewis in 2017. It is inspired by the swarming behavior of grasshoppers in nature, which is characterized by both long-range (migration) and short-range (foraging) movements.</p>
+<p><strong>Core Idea:</strong> The algorithm models the social interaction (repulsion and attraction) between grasshoppers in a swarm. The movement is influenced by social interaction, gravity, and wind advection.</p>
+<h3>4.2. Key Concepts and Mathematical Formulation</h3>
+<p>The position update equation for a grasshopper is:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Xᵢ = Sᵢ + Gᵢ + Aᵢ
+</code></pre></div><br/>
+Where:</p>
+<ul>
+<li><code>Xᵢ</code> is the position of the <code>i</code>-th grasshopper.</li>
+<li><code>Sᵢ</code> is the social interaction component.</li>
+<li><code>Gᵢ</code> is the gravity force component.</li>
+<li><code>Aᵢ</code> is the wind advection component.</li>
+</ul>
+<p>A more practical version used in the algorithm is:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Xᵢᵈ(t+1) = c * ( Σ [from j=1 to N, j≠i] c * (ubᵈ - lbᵈ)/2 * s( |xⱼᵈ - xᵢᵈ| ) * (xⱼ - xᵢ)/dᵢⱼ ) + Tᵈ
+</code></pre></div><br/>
+Where:</p>
+<ul>
+<li><code>ubᵈ</code> and <code>lbᵈ</code> are the upper and lower bounds in the <code>d</code>-th dimension.</li>
+<li><code>Tᵈ</code> is the position of the target (the best solution found so far).</li>
+<li><code>c</code> is a decreasing coefficient that balances exploration and exploitation.</li>
+<li><code>s(r) = f * e^(-r/l) - e^(-r)</code> is a function that defines the social forces (attraction and repulsion). <code>f</code> and <code>l</code> are parameters for the intensity and length scale of attraction.</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Social Interaction (S):</strong> The function <code>s(r)</code> models how grasshoppers interact. At short distances, they repel each other to avoid collision. At larger distances, they attract each other to form a swarm.</li>
+<li><strong>Adaptive Coefficient <code>c</code>:</strong> This is the most important parameter. It is decreased over iterations to balance exploration and exploitation.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">    c = c_max - t * (c_max - c_min) / MaxGen
+    </code></pre></div>
+<ul>
+<li>Initially, <code>c</code> is large, which causes grasshoppers to make large steps (exploration).</li>
+<li>As iterations proceed, <code>c</code> becomes smaller, reducing the step size and encouraging movement towards the target (exploitation).</li>
+</ul></li>
+<li><strong>Target (T):</strong> The term <code>Tᵈ</code> represents the best solution found so far (the "food source"). As the algorithm progresses, the swarm converges towards this target.</li>
+</ul>
+<h3>4.3. Algorithm Pseudocode</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Algorithm: Grasshopper Optimization Algorithm (GOA)
+
+1.  Initialize algorithm parameters:
+    - Population size (N)
+    - Max iterations (MaxGen)
+    - c_max, c_min (coefficients for adaptive parameter c)
+
+2.  Initialize the grasshopper population Xᵢ (i = 1, 2, ..., N).
+3.  Calculate the fitness of each grasshopper.
+4.  Set T = the position of the best grasshopper (the target).
+
+5.  While (t &lt; MaxGen):
+6.      Update the coefficient c.
+7.      For each grasshopper i:
+8.          Normalize the distances between grasshoppers.
+9.          Calculate the sum of social interactions (Sᵢ) with all other grasshoppers.
+10.         Update the position of grasshopper i using the GOA position update equation towards the target T.
+11.     End For
+12.
+13.     Bring any grasshoppers that go outside the boundaries back in.
+14.     Calculate the fitness of the updated population.
+15.     Update T if a better solution is found.
+16.     t = t + 1
+17. End While
+
+18. Return T.
+</code></pre></div></p>
+<h3>4.4. Strengths and Weaknesses</h3>
+<p><strong>Strengths:</strong></p>
+<ul>
+<li><strong>Strong Exploration:</strong> The repulsion mechanism between grasshoppers helps prevent them from getting trapped in local optima in the early stages.</li>
+<li><strong>Smooth Transition:</strong> The adaptive coefficient <code>c</code> provides a gradual shift from exploration to exploitation.</li>
+<li><strong>Good Performance on Structural Problems:</strong> Has shown promising results in structural design optimization problems.</li>
+</ul>
+<p><strong>Weaknesses:</strong></p>
+<ul>
+<li><strong>Slow Convergence:</strong> The algorithm tends to converge slowly, especially towards the end of the search, as it has to evaluate the interaction between all pairs of grasshoppers.</li>
+<li><strong>Parameter Sensitivity:</strong> The parameters <code>f</code> and <code>l</code> in the social interaction function <code>s(r)</code> can be sensitive and difficult to tune.</li>
+</ul>
+<hr/>
+<h2>5. Conceptual Grouping of Metaheuristics</h2>
+<p>Metaheuristics can be classified based on various criteria. Understanding these groupings helps in selecting an appropriate algorithm for a given problem.</p>
+<h3>5.1. Classification by Solution Strategy</h3>
+<ul>
+<li>
+<p><strong>Single-Solution Based:</strong> These algorithms work on a single candidate solution at a time. They are also known as trajectory-based methods.</p>
+<ul>
+<li><strong>Examples:</strong> Simulated Annealing (SA), Tabu Search (TS), Iterated Local Search (ILS).</li>
+<li><strong>Characteristics:</strong> Strong at exploitation (local search), but can be weaker at exploration.</li>
+</ul>
+</li>
+<li>
+<p><strong>Population-Based:</strong> These algorithms maintain and improve a population of candidate solutions in each iteration.</p>
+<ul>
+<li><strong>Examples:</strong> Genetic Algorithm (GA), Particle Swarm Optimization (PSO), Ant Colony Optimization (ACO), and all algorithms discussed in this unit (FA, WOA, GWO, GOA).</li>
+<li><strong>Characteristics:</strong> Inherently better at exploration due to the diversity of the population.</li>
+</ul>
+</li>
+</ul>
+<h3>5.2. Classification by Inspiration Source</h3>
+<ul>
+<li>
+<p><strong>Evolutionary Algorithms (EAs):</strong> Inspired by biological evolution. They use mechanisms like selection, crossover, and mutation.</p>
+<ul>
+<li><strong>Examples:</strong> Genetic Algorithm (GA), Differential Evolution (DE), Genetic Programming (GP).</li>
+</ul>
+</li>
+<li>
+<p><strong>Swarm Intelligence (SI) Algorithms:</strong> Inspired by the collective behavior of decentralized, self-organized systems, typically social animals.</p>
+<ul>
+<li><strong>Examples:</strong> Particle Swarm Optimization (PSO), Ant Colony Optimization (ACO), Firefly Algorithm (FA), Whale Optimization Algorithm (WOA), Grey Wolf Optimizer (GWO), Grasshopper Optimization Algorithm (GOA).</li>
+</ul>
+</li>
+<li>
+<p><strong>Physics-Based Algorithms:</strong> Inspired by physical laws and processes.</p>
+<ul>
+<li><strong>Examples:</strong> Simulated Annealing (SA) (inspired by annealing in metallurgy), Gravitational Search Algorithm (GSA).</li>
+</ul>
+</li>
+<li>
+<p><strong>Human-Based Algorithms:</strong> Inspired by human behaviors and interactions.</p>
+<ul>
+<li><strong>Examples:</strong> Harmony Search (HS) (inspired by music improvisation), Teaching-Learning-Based Optimization (TLBO).</li>
+</ul>
+</li>
+</ul>
+<h3>5.3. Summary Table of Groupings</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Classification Type</th>
+<th style="text-align: left;">Category 1</th>
+<th style="text-align: left;">Category 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Solution Strategy</strong></td>
+<td style="text-align: left;">Single-Solution Based (e.g., SA, TS)</td>
+<td style="text-align: left;">Population-Based (e.g., GA, PSO, WOA)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Inspiration Source</strong></td>
+<td style="text-align: left;">Evolutionary (e.g., GA, DE)</td>
+<td style="text-align: left;">Swarm Intelligence (e.g., PSO, FA, GWO)</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Physics-Based (e.g., SA)</td>
+<td style="text-align: left;">Human-Based (e.g., TLBO)</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>6. Comparison of Metaheuristic Algorithms</h2>
+<p>No single metaheuristic is universally superior for all types of optimization problems. This is formalized by the <strong>No Free Lunch (NFL) Theorem</strong>, which states that for any algorithm, any elevated performance over one class of problems is paid for with diminished performance over another class. Therefore, comparison is problem-dependent.</p>
+<h3>6.1. Comparative Table of Advanced Algorithms</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Firefly Algorithm (FA)</th>
+<th style="text-align: left;">Whale Optimization (WOA)</th>
+<th style="text-align: left;">Grey Wolf Optimizer (GWO)</th>
+<th style="text-align: left;">Grasshopper Opt. (GOA)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Inspiration</strong></td>
+<td style="text-align: left;">Flashing behavior of fireflies</td>
+<td style="text-align: left;">Bubble-net hunting of humpback whales</td>
+<td style="text-align: left;">Social hierarchy &amp; hunting of grey wolves</td>
+<td style="text-align: left;">Swarming behavior of grasshoppers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Main Idea</strong></td>
+<td style="text-align: left;">Attraction based on brightness (objective value) and distance</td>
+<td style="text-align: left;">Encircling &amp; spiral attack on the best solution (prey)</td>
+<td style="text-align: left;">Search guided by the top 3 solutions (alpha, beta, delta)</td>
+<td style="text-align: left;">Social attraction/repulsion &amp; movement towards the best target</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Exploration</strong></td>
+<td style="text-align: left;">Random movement term (<code>α*εᵢ</code>) and attraction to distant bright fireflies</td>
+<td style="text-align: left;">Random search based on <code>|A| &gt;= 1</code></td>
+<td style="text-align: left;">Divergence from prey based on <code>|A| &gt; 1</code></td>
+<td style="text-align: left;">Large steps due to high initial <code>c</code> value and grasshopper repulsion</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Exploitation</strong></td>
+<td style="text-align: left;">Movement towards brighter, nearby fireflies</td>
+<td style="text-align: left;">Shrinking circle (<code>|A| &lt; 1</code>) and spiral attack path</td>
+<td style="text-align: left;">Convergence towards prey based on <code>|A| &lt; 1</code></td>
+<td style="text-align: left;">Small steps due to low final <code>c</code> value and attraction to target</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Key Parameters</strong></td>
+<td style="text-align: left;"><code>β₀</code> (attractiveness), <code>γ</code> (absorption), <code>α</code> (randomness)</td>
+<td style="text-align: left;"><code>a</code> (controls A), <code>b</code> (spiral shape)</td>
+<td style="text-align: left;"><code>a</code> (controls A)</td>
+<td style="text-align: left;"><code>c</code> (adaptive coeff.), <code>f</code>, <code>l</code> (social forces)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Complexity</strong></td>
+<td style="text-align: left;">High (O(n²)) due to pairwise comparisons</td>
+<td style="text-align: left;">Low (O(n)) per iteration</td>
+<td style="text-align: left;">Low (O(n)) per iteration</td>
+<td style="text-align: left;">High (O(n²)) due to pairwise social force calculation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pros</strong></td>
+<td style="text-align: left;">Good for multimodal problems, automatic subgrouping</td>
+<td style="text-align: left;">Simple, few parameters, good exploitation</td>
+<td style="text-align: left;">Simple, few parameters, good balance</td>
+<td style="text-align: left;">Strong exploration, avoids early trapping</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Cons</strong></td>
+<td style="text-align: left;">High computational cost, sensitive parameters</td>
+<td style="text-align: left;">Can suffer from premature convergence</td>
+<td style="text-align: left;">Low precision on some problems, can stagnate</td>
+<td style="text-align: left;">Slow convergence, sensitive social force parameters</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>7. Scalability and Convergence Issues in Optimization</h2>
+<h3>7.1. Scalability and the Curse of Dimensionality</h3>
+<p><strong>Scalability</strong> refers to how an algorithm's performance (in terms of solution quality and computational time) is affected as the size of the problem increases. For optimization, this usually means an increase in the number of decision variables (dimensions).</p>
+<p>The <strong>Curse of Dimensionality</strong> describes the phenomenon where the search space grows exponentially with the number of dimensions.</p>
+<ul>
+<li><strong>Impact on Metaheuristics:</strong>
+<ol>
+<li><strong>Vast Search Space:</strong> The volume of the search space becomes too large to explore effectively. A fixed-size population covers a progressively smaller fraction of the space.</li>
+<li><strong>Increased Local Optima:</strong> The number of local optima often increases with dimensionality, making it harder to find the global optimum.</li>
+<li><strong>Computational Cost:</strong> The time required to evaluate the objective function for one solution often increases with more dimensions, slowing down the entire algorithm.</li>
+<li><strong>Stagnation:</strong> With a vast space to search, the algorithm may wander for many iterations without finding better solutions.</li>
+</ol></li>
+</ul>
+<h3>7.2. Convergence Issues</h3>
+<p><strong>Convergence</strong> is the process by which the algorithm's population moves towards a single point or region in the search space.</p>
+<ol>
+<li>
+<p><strong>Premature Convergence:</strong></p>
+<ul>
+<li><strong>What it is:</strong> The algorithm gets trapped in a local optimum and loses its ability to explore other regions of the search space. The population's diversity decreases rapidly, and all solutions converge to a suboptimal point.</li>
+<li><strong>Causes:</strong>
+<ul>
+<li>An overly aggressive exploitation mechanism.</li>
+<li>Poor balance between exploration and exploitation.</li>
+<li>Loss of diversity in the population.</li>
+<li>Incorrect parameter settings.</li>
+</ul></li>
+<li><strong>Example:</strong> In GWO, if the alpha, beta, and delta wolves all get stuck in the same local basin, the entire pack will be drawn there, unable to escape.</li>
+</ul>
+</li>
+<li>
+<p><strong>Stagnation:</strong></p>
+<ul>
+<li><strong>What it is:</strong> The algorithm makes very little or no improvement over a long series of iterations. It is not necessarily converged, but its search progress has stalled.</li>
+<li><strong>Causes:</strong>
+<ul>
+<li>The step sizes of the search agents become too small.</li>
+<li>The algorithm has thoroughly explored the current region but lacks a mechanism to jump to a new, promising region.</li>
+</ul></li>
+<li><strong>Example:</strong> In FA, if all fireflies have similar brightness levels and are far apart, the attraction force becomes negligible, and movement is dominated by small random steps, leading to stagnation.</li>
+</ul>
+</li>
+<li>
+<p><strong>Convergence Rate:</strong></p>
+<ul>
+<li><strong>What it is:</strong> The speed at which an algorithm approaches an optimum.</li>
+<li><strong>Trade-off:</strong> A very fast convergence rate is often a sign of strong exploitation, which increases the risk of premature convergence. A very slow rate indicates excessive exploration or stagnation. The ideal is a rapid initial exploration followed by a focused exploitation and convergence to the global optimum.</li>
+</ul>
+</li>
+</ol>
+<h3>7.3. Addressing These Issues</h3>
+<ul>
+<li>
+<p><strong>Parameter Control/Tuning:</strong></p>
+<ul>
+<li><strong>Adaptive Parameters:</strong> Instead of fixed parameters, use parameters that change over the course of the run. WOA, GWO, and GOA all use this concept (e.g., decreasing <code>a</code> or <code>c</code>) to shift from exploration to exploitation.</li>
+<li><strong>Self-Adaptive Parameters:</strong> Encode the parameters into the solution itself and let them evolve along with the solution (common in Evolutionary Algorithms).</li>
+</ul>
+</li>
+<li>
+<p><strong>Maintaining Diversity:</strong></p>
+<ul>
+<li>Introduce mechanisms to prevent the population from becoming too homogeneous.</li>
+<li><strong>Example:</strong> In GA, a higher mutation rate can reintroduce diversity. In PSO, some variants introduce "rogue" particles that explore randomly.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hybridization:</strong></p>
+<ul>
+<li>Combine two or more algorithms to leverage their respective strengths.</li>
+<li><strong>Global-Local Hybrid:</strong> Use a global search algorithm (like GWO) to identify promising regions and then apply a local search algorithm (like Hill Climbing) to finely tune the solution within that region.</li>
+<li><strong>Algorithm Fusion:</strong> Combine operators from different algorithms, e.g., using a crossover operator from GA within a PSO algorithm.</li>
+</ul>
+</li>
+<li>
+<p><strong>Modified Algorithm Structures:</strong></p>
+<ul>
+<li><strong>Multi-population/Sub-swarm approaches:</strong> Divide the population into multiple sub-populations that explore different areas and share information periodically. This can help avoid a single premature convergence point.</li>
+</ul>
+</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/CSE275/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/CSE275/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>
