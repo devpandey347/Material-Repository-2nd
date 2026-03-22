@@ -101,6 +101,7 @@ function HomePage() {
             subjects: (semester.subjects || []).map((subject) => {
                 const codeKey = (subject.code || '').toUpperCase()
                 const fileSubject = fileSubjectMap.get(codeKey)
+                const fileCount = (fileSubject?.groups || []).reduce((total, group) => total + (group.files || []).length, 0)
                 const legacyHref = subject.href?.startsWith('subjects/') ? `/${subject.href}` : subject.href
                 const notesRoute = getNotesRouteFromHref(subject.href)
 
@@ -110,6 +111,7 @@ function HomePage() {
                     isNotesSubject: !fileSubject && !!notesRoute,
                     browseHref: fileSubject ? `/subject/${codeKey}` : (notesRoute || legacyHref),
                     icon: fileSubject?.icon || '📘',
+                    fileCount,
                     hasStudyMaterial: !!fileSubject?.groups?.some((group) =>
                         (group.files || []).some((file) => {
                             const ext = (file.extension || '').toLowerCase()
@@ -124,18 +126,13 @@ function HomePage() {
     const allSubjects = useMemo(() => {
         return semesters.flatMap((semester) =>
             (semester.subjects || []).map((subject) => {
-                const codeKey = (subject.code || '').toUpperCase()
-                const fileSubject = fileSubjectMap.get(codeKey)
-                const fileCount = (fileSubject?.groups || []).reduce((total, group) => total + (group.files || []).length, 0)
-
                 return {
                     ...subject,
                     semester: semester.title,
-                    fileCount,
                 }
             }),
         )
-    }, [semesters, fileSubjectMap])
+    }, [semesters])
 
     const totalFileCount = useMemo(() => {
         return allSubjects.reduce((sum, subject) => sum + (subject.fileCount || 0), 0)
@@ -186,48 +183,60 @@ function HomePage() {
                     </section>
                 )}
 
-                {!!allSubjects.length && (
-                    <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                        {allSubjects.map((subject) => {
-                            const hasNotesOrFiles = subject.fileCount > 0 || subject.isNotesSubject || subject.isFileSubject
-                            const badgeText = subject.fileCount > 0
-                                ? `${subject.fileCount} files`
-                                : subject.isNotesSubject
-                                    ? 'Notes Available'
-                                    : subject.isFileSubject
-                                        ? 'Files Available'
-                                        : hasNotesOrFiles
-                                            ? 'Available'
-                                            : 'Coming Soon'
+                {!!semesters.length && (
+                    <section className="space-y-8">
+                        {semesters.map((semester) => (
+                            <div key={semester.title}>
+                                <div className="mb-4 flex items-center justify-between">
+                                    <h2 className="text-2xl font-bold text-red-500">{semester.title}</h2>
+                                    <span className="rounded-full border border-zinc-700 bg-[#111111] px-3 py-1 text-xs font-semibold text-zinc-300">
+                                        {(semester.subjects || []).length} subjects
+                                    </span>
+                                </div>
 
-                            return (
-                                <article className="glass-red relative animate-rise-in p-6" key={`${subject.semester}-${subject.code}-${subject.name}`}>
-                                    <p className="absolute right-4 top-4 rounded-full border border-red-500 bg-red-950 px-3 py-1 text-xs font-semibold text-white">
-                                        {badgeText}
-                                    </p>
+                                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                                    {(semester.subjects || []).map((subject) => {
+                                        const hasNotesOrFiles = subject.fileCount > 0 || subject.isNotesSubject || subject.isFileSubject
+                                        const badgeText = subject.fileCount > 0
+                                            ? `${subject.fileCount} files`
+                                            : subject.isNotesSubject
+                                                ? 'Notes Available'
+                                                : subject.isFileSubject
+                                                    ? 'Files Available'
+                                                    : hasNotesOrFiles
+                                                        ? 'Available'
+                                                        : 'Coming Soon'
 
-                                    <h2 className="mt-5 text-2xl font-bold text-white">
-                                        {subject.code} {subject.hasStudyMaterial ? <span className="text-yellow-300">★</span> : null}
-                                    </h2>
-                                    <p className="mt-1 text-xs uppercase tracking-[0.08em] text-zinc-500">{subject.semester}</p>
-                                    <p className="mt-4 min-h-12 text-sm text-zinc-400">{subject.name}</p>
+                                        return (
+                                            <article className="glass-red relative animate-rise-in p-6" key={`${semester.title}-${subject.code}-${subject.name}`}>
+                                                <p className="absolute right-4 top-4 rounded-full border border-red-500 bg-red-950 px-3 py-1 text-xs font-semibold text-white">
+                                                    {badgeText}
+                                                </p>
 
-                                    {subject.isFileSubject ? (
-                                        <Link to={subject.browseHref} className="btn-red-outline mt-6 inline-flex px-4 py-2 text-sm">
-                                            Browse Files
-                                        </Link>
-                                    ) : subject.isNotesSubject ? (
-                                        <Link to={subject.browseHref} className="btn-red-outline mt-6 inline-flex px-4 py-2 text-sm">
-                                            {subject.label || 'Browse Notes'}
-                                        </Link>
-                                    ) : (
-                                        <a href={subject.browseHref} className="btn-red-outline mt-6 inline-flex px-4 py-2 text-sm">
-                                            {subject.label || 'Browse Notes'}
-                                        </a>
-                                    )}
-                                </article>
-                            )
-                        })}
+                                                <h3 className="mt-5 text-2xl font-bold text-white">
+                                                    {subject.code} {subject.hasStudyMaterial ? <span className="text-yellow-300">★</span> : null}
+                                                </h3>
+                                                <p className="mt-4 min-h-12 text-sm text-zinc-400">{subject.name}</p>
+
+                                                {subject.isFileSubject ? (
+                                                    <Link to={subject.browseHref} className="btn-red-outline mt-6 inline-flex px-4 py-2 text-sm">
+                                                        Browse Files
+                                                    </Link>
+                                                ) : subject.isNotesSubject ? (
+                                                    <Link to={subject.browseHref} className="btn-red-outline mt-6 inline-flex px-4 py-2 text-sm">
+                                                        {subject.label || 'Browse Notes'}
+                                                    </Link>
+                                                ) : (
+                                                    <a href={subject.browseHref} className="btn-red-outline mt-6 inline-flex px-4 py-2 text-sm">
+                                                        {subject.label || 'Browse Notes'}
+                                                    </a>
+                                                )}
+                                            </article>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        ))}
                     </section>
                 )}
             </div>
