@@ -1,0 +1,683 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">GEO295</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 2</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/GEO295/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>GEO295</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Advanced Concepts of Geomorphology</h1>
+<h2>1. Plate Tectonics</h2>
+<p>The theory of Plate Tectonics is the unifying framework of modern geology, explaining the movement of the Earth's lithosphere and the formation of major landforms. It superseded the hypothesis of Continental Drift (Alfred Wegener) by providing a physical mechanism for movement.</p>
+<h3>Core Concepts</h3>
+<ul>
+<li><strong>The Lithosphere:</strong> The rigid outer shell of the Earth, comprising the crust and the uppermost mantle. It is broken into tectonic plates.</li>
+<li><strong>The Asthenosphere:</strong> The semi-fluid, plastic layer of the upper mantle below the lithosphere. Plates "float" and move upon this layer.</li>
+<li><strong>Driving Mechanisms:</strong>
+<ul>
+<li><strong>Mantle Convection:</strong> Heat from the core generates convection currents in the mantle, dragging plates along.</li>
+<li><strong>Ridge Push:</strong> Newly formed, elevated lithosphere at mid-ocean ridges slides down due to gravity, pushing the plate.</li>
+<li><strong>Slab Pull:</strong> Cold, dense oceanic lithosphere sinks into the mantle at subduction zones, pulling the rest of the plate behind it (considered the strongest force).</li>
+</ul></li>
+</ul>
+<h3>Plate Boundaries</h3>
+<p>The interactions between plates occur at their boundaries, resulting in distinct geomorphic features.</p>
+<h4>A. Divergent Boundaries (Constructive Margins)</h4>
+<p>Plates move apart. Magma rises from the mantle to fill the gap, creating new crust.</p>
+<ul>
+<li><strong>Oceanic:</strong> Mid-Ocean Ridges (e.g., Mid-Atlantic Ridge). Features include rift valleys, transform faults, and basaltic volcanism.</li>
+<li><strong>Continental:</strong> Rift Valleys (e.g., East African Rift Valley). The crust stretches, thins, and fractures, creating grabens and horsts.</li>
+</ul>
+<h4>B. Convergent Boundaries (Destructive Margins)</h4>
+<p>Plates move toward each other. The nature of the boundary depends on the type of crust involved.</p>
+<ul>
+<li><strong>Oceanic-Continental:</strong> The denser oceanic plate subducts under the continental plate.
+<ul>
+<li><em>Features:</em> Oceanic trenches, volcanic arcs (e.g., The Andes), Benioff zones (earthquake foci).</li>
+</ul></li>
+<li><strong>Oceanic-Oceanic:</strong> The older, colder (denser) oceanic plate subducts.
+<ul>
+<li><em>Features:</em> Island arcs (e.g., Japan, Philippines), deep trenches (e.g., Mariana Trench).</li>
+</ul></li>
+<li><strong>Continental-Continental:</strong> Neither plate subducts due to buoyancy. The crust buckles and thickens.
+<ul>
+<li><em>Features:</em> Fold mountains (e.g., The Himalayas). No volcanism, but intense seismicity.</li>
+</ul></li>
+</ul>
+<h4>C. Transform Boundaries (Conservative Margins)</h4>
+<p>Plates slide laterally past one another. Lithosphere is neither created nor destroyed.</p>
+<ul>
+<li><em>Features:</em> Strike-slip faults (e.g., San Andreas Fault). Intense shallow earthquakes, but no volcanic activity.</li>
+</ul>
+<hr/>
+<h2>2. Recent Views on Mountain Building (Orogeny)</h2>
+<p>Orogeny refers to the process of mountain formation, particularly involving folding and thrusting.</p>
+<h3>Geosynclinal Theory (Classical View)</h3>
+<p>Historically, geologists believed mountains formed in <strong>geosynclines</strong>—massive, sediment-filled depressions.</p>
+<ol>
+<li><strong>Lithogenesis:</strong> Sediment accumulates, causing the basin to subside.</li>
+<li><strong>Orogenesis:</strong> Lateral compression squeezes sediments into folds.</li>
+<li><strong>Gliptogenesis:</strong> Erosion sculpts the uplifted mass.</li>
+</ol>
+<h3>Plate Tectonic Theory of Orogeny (Modern View)</h3>
+<p>Modern geomorphology views mountain building as a direct result of plate convergence.</p>
+<ol>
+<li>
+<p><strong>Cordilleran Type (Ocean-Continent Collision):</strong></p>
+<ul>
+<li>Accretionary wedges form as sediments are scraped off the subducting plate.</li>
+<li>Magmatism creates a batholithic core (volcanic roots).</li>
+<li>Examples: Rockies, Andes.</li>
+</ul>
+</li>
+<li>
+<p><strong>Alpine/Himalayan Type (Continent-Continent Collision):</strong></p>
+<ul>
+<li>Total closure of an ocean basin (e.g., the Tethys Sea closed to form the Himalayas).</li>
+<li>Since continental crust cannot subduct deeply, it shortens, folds, and stacks via thrust faults (nappes).</li>
+<li>Result: Extreme crustal thickening and high elevation.</li>
+</ul>
+</li>
+<li>
+<p><strong>Island Arc Type (Ocean-Ocean Collision):</strong></p>
+<ul>
+<li>Volcanic activity builds mountains rising from the ocean floor.</li>
+</ul>
+</li>
+</ol>
+<h3>Isostasy</h3>
+<p>The concept of gravitational equilibrium between the Earth's crust and mantle.</p>
+<ul>
+<li><strong>Airy Hypothesis:</strong> Mountains have deep low-density "roots" floating in the higher-density mantle (like an iceberg). Higher mountains have deeper roots.</li>
+<li><strong>Pratt Hypothesis:</strong> Different topographic heights differ in density; higher mountains are less dense than lower ocean basins, but all float at the same base level.</li>
+</ul>
+<hr/>
+<h2>3. Vulcanicity</h2>
+<p>Vulcanicity (or volcanism) encompasses all processes by which molten rock (magma), gases, and pyroclastic materials are forced into the Earth's crust or ejected onto the surface.</p>
+<h3>Classification by Location</h3>
+<ol>
+<li><strong>Extrusive (Volcanic):</strong> Magma reaches the surface as lava.</li>
+<li><strong>Intrusive (Plutonic):</strong> Magma cools and solidifies beneath the surface.</li>
+</ol>
+<h3>Intrusive Landforms</h3>
+<ul>
+<li><strong>Batholiths:</strong> Massive, deep-seated igneous bodies (usually granite) forming the roots of mountains. Exposed by erosion (e.g., Sierra Nevada).</li>
+<li><strong>Laccoliths:</strong> Mushroom-shaped bodies that dome the overlying strata.</li>
+<li><strong>Sills:</strong> Horizontal sheets of magma intruded between sedimentary layers.</li>
+<li><strong>Dykes:</strong> Vertical wall-like structures cutting across rock layers.</li>
+<li><strong>Phacoliths:</strong> Lens-shaped masses found in the anticlines or synclines of folded strata.</li>
+</ul>
+<h3>Extrusive Landforms (Volcanoes)</h3>
+<p>The shape depends on lava viscosity (silica content).</p>
+<ol>
+<li><strong>Shield Volcanoes:</strong> Formed by low-viscosity (fluid) basaltic lava. Broad, gentle slopes (e.g., Mauna Loa, Hawaii).</li>
+<li><strong>Composite Cones (Stratovolcanoes):</strong> Formed by high-viscosity andesitic/rhyolitic lava and pyroclastics. Steep, conical, explosive (e.g., Mt. Fuji, Mt. St. Helens).</li>
+<li><strong>Cinder Cones:</strong> Small, steep piles of pyroclastic debris (scoria).</li>
+<li><strong>Calderas:</strong> Massive depressions formed when a volcano collapses into its emptied magma chamber (e.g., Crater Lake, USA).</li>
+</ol>
+<h3>Volcanic Products</h3>
+<ul>
+<li><strong>Lava:</strong> Acidic (high silica, viscous) vs. Basic (low silica, fluid).</li>
+<li><strong>Tephra/Pyroclasts:</strong> Ash, lapilli, and volcanic bombs.</li>
+<li><strong>Gases:</strong> Water vapor, CO2, sulfur dioxide.</li>
+</ul>
+<hr/>
+<h2>4. Earthquakes and Tsunamis</h2>
+<h3>Earthquakes</h3>
+<p>Sudden shaking of the ground caused by the release of energy stored in the crust.</p>
+<ul>
+<li><strong>Elastic Rebound Theory (H.F. Reid):</strong> Rocks accumulate strain energy due to tectonic stress. When stress exceeds the rock's strength, it ruptures (faults), snapping back to an unstrained shape and releasing waves.</li>
+<li><strong>Focus (Hypocenter):</strong> The point of origin within the crust.</li>
+<li><strong>Epicenter:</strong> The point on the surface directly above the focus.</li>
+</ul>
+<h4>Seismic Waves</h4>
+<ol>
+<li><strong>Body Waves</strong> (Travel through Earth's interior):
+<ul>
+<li><strong>P-Waves (Primary):</strong> Longitudinal (push-pull). Fastest. Travel through solids and liquids.</li>
+<li><strong>S-Waves (Secondary):</strong> Transverse (shear). Slower. Travel only through solids (stopped by the outer core).</li>
+</ul></li>
+<li><strong>Surface Waves</strong> (Travel along the surface; most destructive):
+<ul>
+<li><strong>Love Waves:</strong> Side-to-side horizontal motion.</li>
+<li><strong>Rayleigh Waves:</strong> Rolling, elliptical motion (like ocean waves).</li>
+</ul></li>
+</ol>
+<h4>Measurement</h4>
+<ul>
+<li><strong>Richter Scale (Magnitude):</strong> Logarithmic scale measuring energy released.</li>
+<li><strong>Mercalli Scale (Intensity):</strong> Observational scale measuring damage and human perception.</li>
+</ul>
+<h3>Tsunamis</h3>
+<p>Large ocean waves caused by the displacement of a large volume of water.</p>
+<ul>
+<li><strong>Causes:</strong> Undersea earthquakes (subduction zones), volcanic eruptions, submarine landslides, or meteorite impacts.</li>
+<li><strong>Mechanics:</strong>
+<ol>
+<li><strong>Generation:</strong> Vertical displacement of the seafloor lifts the water column.</li>
+<li><strong>Propagation:</strong> In deep water, waves have low amplitude (&lt;1m) but very long wavelengths (&gt;100km) and high speeds (up to 800 km/h).</li>
+<li><strong>Shoaling (Run-up):</strong> As waves approach shallow water, speed decreases due to friction, wavelength shortens, and amplitude (height) increases drastically, causing coastal inundation.</li>
+</ol></li>
+</ul>
+<hr/>
+<h2>5. Concepts of Geomorphic Cycles and Landscape Development</h2>
+<p>Theories attempting to explain how landscapes evolve over time.</p>
+<h3>A. The Davisian Cycle of Erosion (W.M. Davis, 1899)</h3>
+<p>Davis proposed that landscapes evolve through a time-dependent series of stages.</p>
+<ul>
+<li><strong>Formula:</strong> Landscape = <span class="katex-inline" data-math="f"></span> (Structure, Process, Stage).
+<ul>
+<li><em>Structure:</em> Rock composition and geological arrangement.</li>
+<li><em>Process:</em> Agents of denudation (rivers, wind, glaciers).</li>
+<li><em>Stage:</em> The time duration and phase of development.</li>
+</ul></li>
+</ul>
+<h4>The Stages:</h4>
+<ol>
+<li><strong>Youth:</strong> Rapid uplift followed by vertical incision. V-shaped valleys, waterfalls, steep gradients. Broad, flat interfluves (remnants of original uplift).</li>
+<li><strong>Maturity:</strong> Vertical erosion decreases; lateral erosion increases. Valleys widen, floodplains form, interfluves become rounded divides.</li>
+<li><strong>Old Age:</strong> Relief is reduced to a featureless plain near sea level called a <strong>Peneplain</strong>. Rivers meander sluggishly. Resistant rock remnants stand as <strong>Monadnocks</strong>.</li>
+</ol>
+<ul>
+<li><strong>Critique:</strong> Oversimplified; assumes rapid uplift then tectonic stability (unrealistic); overemphasis on time.</li>
+</ul>
+<h3>B. Penck’s Model of Slope Replacement (Walther Penck)</h3>
+<p>Rejected the time-bound "stages" of Davis. Proposed that landforms are a function of the ratio between the rate of uplift and the rate of erosion.</p>
+<ul>
+<li><strong>Slope Retreat:</strong> Slopes do not flatten (as Davis suggested) but retreat parallel to themselves (<strong>Parallel Retreat</strong>).</li>
+<li><strong>Treppen Concept:</strong> Landscapes resemble staircases (piedmont benchlands) due to phases of uplift.</li>
+</ul>
+<h3>C. King’s Pediplanation Cycle (L.C. King)</h3>
+<p>Applicable primarily to semi-arid/savanna regions (derived from studies in Africa).</p>
+<ul>
+<li><strong>Process:</strong> Parallel retreat of scarps (steep slopes).</li>
+<li><strong>Pediment:</strong> A gently inclined bedrock surface carved at the foot of a retreating scarp.</li>
+<li><strong>Pediplain:</strong> The coalescence of multiple pediments creates a multi-concave surface called a Pediplain (distinct from Davis's convex-concave Peneplain).</li>
+</ul>
+<h3>D. Dynamic Equilibrium (J.T. Hack)</h3>
+<p>Rejected cyclic evolution. Suggested that landscapes adjust to balance the resisting force of rocks with the energy of erosional processes.</p>
+<ul>
+<li>Once equilibrium is reached, the landform shape remains constant as it lowers, provided forcing factors (climate/tectonics) don't change. Time is not a variable causing change in shape.</li>
+</ul>
+<hr/>
+<h2>6. Erosion Surfaces</h2>
+<p>An erosion surface is a recognizable, extensive, flat or nearly flat land surface formed by erosion agents.</p>
+<h3>Types of Erosion Surfaces</h3>
+<ol>
+<li>
+<p><strong>Peneplain:</strong></p>
+<ul>
+<li>Associated with: W.M. Davis / Humid temperate climates.</li>
+<li>Formation: Downwearing of interfluves over long periods of stability.</li>
+<li>Features: Low relief, deep soil cover, covered in sediment.</li>
+</ul>
+</li>
+<li>
+<p><strong>Pediplain:</strong></p>
+<ul>
+<li>Associated with: L.C. King / Semi-arid and arid climates.</li>
+<li>Formation: Formed by the coalescence of pediments via scarp retreat.</li>
+<li>Features: Thin veneer of gravel, exposed bedrock, abrupt transition from plain to inselbergs (steep hills).</li>
+</ul>
+</li>
+<li>
+<p><strong>Etchplain:</strong></p>
+<ul>
+<li>Associated with: Tropical humid environments (Deep weathering).</li>
+<li>Formation: Two-stage process.
+<ol>
+<li>Deep chemical weathering (hydrolysis) rots the bedrock beneath the soil creates a "saprolite" layer.</li>
+<li>Climate change or uplift strips the regolith (soil), exposing the uneven "etch surface" or "weathering front" beneath.</li>
+</ol></li>
+<li>Features: Tors, castle koppies, and bornhardts.</li>
+</ul>
+</li>
+<li>
+<p><strong>Panplain:</strong></p>
+<ul>
+<li>Associated with: Lateral erosion by rivers (Crickmay).</li>
+<li>Formation: Formed by the coalescence of floodplains.</li>
+</ul>
+</li>
+</ol>
+<h3>Identification of Erosion Surfaces</h3>
+<p>In complex landscapes, old erosion surfaces may be identified by:</p>
+<ul>
+<li><strong>Accordance of Summit Levels:</strong> Hilltops at roughly the same elevation suggesting a dissected plateau.</li>
+<li><strong>Benchlands:</strong> Steps on valley sides indicating pauses in uplift (rejuvenation).</li>
+<li><strong>Unconformities:</strong> Erosional boundaries in the geological strata.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/GEO295/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/GEO295/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

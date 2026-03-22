@@ -1,0 +1,690 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">GEO295</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 4</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/GEO295">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/GEO295/Unit4/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit3/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/GEO295/Unit5/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 4 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>GEO295</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 4: Oceanography</h1>
+<h2>1. Bottom Topography of the Oceans</h2>
+<p>The ocean floor is not a flat plain but possesses a complex relief similar to the land, divided into four major divisions:</p>
+<ol>
+<li><strong>Continental Shelf:</strong> Shallow extension of the continent (avg depth 200m).</li>
+<li><strong>Continental Slope:</strong> Steep descent from the shelf to the deep ocean.</li>
+<li><strong>Continental Rise:</strong> Gentle slope at the base of the continental slope caused by sediment deposition.</li>
+<li><strong>Deep Sea Plain (Abyssal Plain):</strong> Flat, deep terrain (3,000–6,000m).</li>
+<li><strong>Oceanic Deeps (Trenches):</strong> Deepest parts of the oceans (tectonically active).</li>
+</ol>
+<h3>A. Bottom Topography of the Atlantic Ocean</h3>
+<p>The Atlantic is the second-largest ocean, characterized by an "S" shape.</p>
+<ul>
+<li><strong>Mid-Atlantic Ridge:</strong> The most striking feature. It is a submerged mountain range extending from Iceland in the north to Bouvet Island in the south (approx. 14,000 km). It separates the ocean into eastern and western basins.
+<ul>
+<li><strong>Dolphin Rise:</strong> The northern section of the ridge.</li>
+<li><strong>Challenger Rise:</strong> The southern section of the ridge.</li>
+</ul></li>
+<li><strong>Continental Shelf:</strong> It is variable in width. It is very broad off the coast of Newfoundland (Grand Banks) and the British Isles (Dogger Bank), which are major fishing grounds. It is narrow off the coast of Brazil and Africa.</li>
+<li><strong>Ocean Basins:</strong>
+<ul>
+<li><em>North American Basin</em></li>
+<li><em>Brazilian Basin</em></li>
+<li><em>Angola Basin</em></li>
+</ul></li>
+<li><strong>Trenches:</strong> The Atlantic lacks the numerous trenches found in the Pacific. Notable trenches include:
+<ul>
+<li><em>Puerto Rico Trench</em> (North Atlantic)</li>
+<li><em>South Sandwich Trench</em> (South Atlantic)</li>
+<li><em>Romanche Deep</em> (A gap in the Mid-Atlantic Ridge).</li>
+</ul></li>
+</ul>
+<h3>B. Bottom Topography of the Pacific Ocean</h3>
+<p>The Pacific is the largest and deepest ocean, covering one-third of the Earth's surface.</p>
+<ul>
+<li><strong>Ridges:</strong> The Pacific lacks a central mid-ocean ridge like the Atlantic. instead, it features the <strong>East Pacific Rise</strong> (a broad, low swell) on the eastern side.</li>
+<li><strong>Trenches:</strong> The Pacific has the most trenches due to the "Ring of Fire" subduction zones.
+<ul>
+<li><em>Mariana Trench:</em> Contains the Challenger Deep (approx. 11,034m), the deepest point on Earth.</li>
+<li><em>Tonga, Kuril, Philippine, and Aleutian Trenches.</em></li>
+</ul></li>
+<li><strong>Continental Shelf:</strong> Generally narrow along the American coasts (due to mountains/plate boundaries) but broad along the Asian coasts (Australia/Indonesia).</li>
+<li><strong>Seamounts and Guyots:</strong> The Pacific floor is dotted with thousands of volcanic islands, seamounts (submerged volcanoes), and guyots (flat-topped seamounts). Hawaii is a prime example of a volcanic chain.</li>
+</ul>
+<h3>C. Bottom Topography of the Indian Ocean</h3>
+<p>The Indian Ocean is smaller than the Atlantic and Pacific and is bounded by land on the north (landlocked nature).</p>
+<ul>
+<li><strong>Ridges:</strong> The <strong>Central Indian Ridge</strong> runs from the peninsular India shelf southwards. Near the equator, it bifurcates (Y-shape):
+<ul>
+<li><em>Southwest Indian Ridge</em> (towards Africa).</li>
+<li><em>Southeast Indian Ridge</em> (towards Australia).</li>
+<li><em>90 East Ridge:</em> A long, linear aseismic ridge running parallel to the 90°E meridian.</li>
+</ul></li>
+<li><strong>Trenches:</strong> Generally rare. The <strong>Sunda Trench</strong> (Java Trench) is the only significant trench, located south of Indonesia.</li>
+<li><strong>Basins:</strong>
+<ul>
+<li><em>Arabian Basin</em></li>
+<li><em>Somali Basin</em></li>
+<li><em>Natal Basin</em></li>
+</ul></li>
+<li><strong>Continental Shelf:</strong> Wide along the Arabian Sea and Bay of Bengal; narrow along the African coast.</li>
+</ul>
+<hr/>
+<h2>2. Temperature and Salinity of the Oceans</h2>
+<h3>A. Temperature</h3>
+<p>Ocean temperature controls marine life and influences climate (evaporation rates).</p>
+<p><strong>1. Horizontal Distribution (Surface Temperature):</strong></p>
+<ul>
+<li><strong>Latitude:</strong> Temperatures decrease from the equator (avg 26°C) toward the poles (approx -1.9°C freezing point).</li>
+<li><strong>Unequal Distribution:</strong> The Northern Hemisphere oceans are generally warmer than the Southern Hemisphere due to more landmass contact.</li>
+<li><strong>Ocean Currents:</strong> Warm currents (e.g., Gulf Stream) raise temperature; cold currents (e.g., Peru Current) lower it.</li>
+<li><strong>Prevailing Winds:</strong> Offshore winds remove warm surface water (upwelling of cold water); onshore winds pile up warm water.</li>
+</ul>
+<p><strong>2. Vertical Distribution:</strong></p>
+<ul>
+<li><strong>Photic Zone (Upper Layer):</strong> 0–200m depth. Warm and uniform temperature due to mixing by waves.</li>
+<li><strong>Thermocline:</strong> A transition layer (200m–1000m) where temperature decreases rapidly with depth.</li>
+<li><strong>Deep Zone:</strong> Below 1000m. Temperatures are very cold and stable (approx. 1°C to 4°C).</li>
+</ul>
+<h3>B. Salinity</h3>
+<p>Salinity is the total amount of dissolved salts in seawater, expressed in parts per thousand (ppt or ‰). Average ocean salinity is <strong>35‰</strong>.</p>
+<ul>
+<li><strong>Composition:</strong> Sodium Chloride (NaCl) constitutes 77.7% of ocean salts, followed by Magnesium Chloride and Magnesium Sulphate.</li>
+</ul>
+<p><strong>Factors Affecting Salinity:</strong></p>
+<ol>
+<li><strong>Evaporation:</strong> High evaporation increases salinity (e.g., Red Sea).</li>
+<li><strong>Precipitation:</strong> Heavy rain decreases salinity (e.g., Equatorial regions).</li>
+<li><strong>Freshwater Influx:</strong> Rivers dilute seawater (e.g., Mouth of the Amazon or Ganges).</li>
+<li><strong>Ice Formation/Melting:</strong> Freezing rejects salt (increasing salinity); melting ice dilutes water (decreasing salinity).</li>
+</ol>
+<p><strong>Horizontal Distribution:</strong></p>
+<ul>
+<li><strong>Equatorial Zones:</strong> Moderate salinity (low 30s) due to high rainfall neutralizing evaporation.</li>
+<li><strong>Sub-Tropical Highs (20°-30° N/S):</strong> Highest salinity (36-37‰) due to high evaporation, clear skies, and low rainfall.</li>
+<li><strong>Polar Regions:</strong> Low salinity due to low evaporation and melting ice.</li>
+<li><strong>Inland Seas:</strong>
+<ul>
+<li>High Salinity: Dead Sea (238‰), Lake Van (330‰).</li>
+<li>Low Salinity: Baltic Sea (freshwater influx).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>3. Ocean Deposits</h2>
+<p>Ocean deposits are unconsolidated sediments covering the ocean floor. They are classified by their origin.</p>
+<h3>A. Terrigenous Deposits (Source: Land)</h3>
+<p>Derived from the weathering of continental rocks and transported by rivers, wind, and glaciers.</p>
+<ul>
+<li><strong>Gravel/Sand:</strong> Deposited near the coast (Continental Shelf).</li>
+<li><strong>Silt/Clay/Mud:</strong> Deposited further out.
+<ul>
+<li><em>Blue Mud:</em> Sulfide-rich, found in bays/estuaries.</li>
+<li><em>Red Mud:</em> Iron-oxide rich, found near Yellow Sea/Brazil.</li>
+<li><em>Green Mud:</em> Contains glauconite.</li>
+</ul></li>
+</ul>
+<h3>B. Biogenous Deposits (Source: Organisms)</h3>
+<p>Derived from the skeletal remains of marine organisms. These form <strong>Oozes</strong> in the deep sea.</p>
+<ul>
+<li><strong>Calcareous Oozes (Calcium Carbonate):</strong> Found at depths <em>shallower</em> than the Carbonate Compensation Depth (CCD), approx 4,500m.
+<ul>
+<li><em>Globigerina Ooze:</em> (Foraminifera) - Most widespread.</li>
+<li><em>Pteropod Ooze:</em> (Molluscs).</li>
+</ul></li>
+<li><strong>Siliceous Oozes (Silica):</strong> Found in colder, deeper waters (below CCD).
+<ul>
+<li><em>Diatom Ooze:</em> Phytoplankton shells (high latitudes).</li>
+<li><em>Radiolarian Ooze:</em> Protozoa shells (tropical deep waters).</li>
+</ul></li>
+</ul>
+<h3>C. Hydrogenous Deposits (Source: Water)</h3>
+<p>Minerals precipitated directly from seawater.</p>
+<ul>
+<li><strong>Polymetallic Nodules (Manganese Nodules):</strong> Potato-sized lumps containing manganese, iron, nickel, and cobalt.</li>
+<li>Evaporites (Salts).</li>
+</ul>
+<h3>D. Cosmogenous Deposits (Source: Space)</h3>
+<p>Magnetic spherules and meteoritic dust (rare, usually found in Red Clay).</p>
+<hr/>
+<h2>4. Ocean Currents and Tides</h2>
+<h3>A. Ocean Currents</h3>
+<p>Large masses of surface water circulating in regular patterns.</p>
+<p><strong>Causes:</strong></p>
+<ol>
+<li><strong>Planetary Winds:</strong> Trade winds push water west; Westerlies push water east.</li>
+<li><strong>Coriolis Force:</strong> Deflects currents to the right in the N. Hemisphere and left in the S. Hemisphere.</li>
+<li><strong>Density Differences:</strong> Water moves from low salinity/high temp to high salinity/low temp.</li>
+</ol>
+<p><strong>Major Circulations (Gyres):</strong></p>
+<ul>
+<li><strong>Atlantic Ocean:</strong>
+<ul>
+<li><em>North:</em> Gulf Stream (Warm), North Atlantic Drift (Warm), Canary Current (Cold).</li>
+<li><em>South:</em> Brazil Current (Warm), Benguela Current (Cold).</li>
+</ul></li>
+<li><strong>Pacific Ocean:</strong>
+<ul>
+<li><em>North:</em> Kuroshio (Warm), Oyashio (Cold), California Current (Cold).</li>
+<li><em>South:</em> East Australian Current (Warm), Peru/Humboldt Current (Cold).</li>
+</ul></li>
+<li><strong>Indian Ocean:</strong>
+<ul>
+<li>Unique because currents reverse with the Monsoons.</li>
+<li><em>Summer:</em> Southwest Monsoon Drift (Clockwise).</li>
+<li><em>Winter:</em> Northeast Monsoon Drift (Counter-clockwise).</li>
+<li><em>Steady Currents:</em> Agulhas Current (Warm), West Australian Current (Cold).</li>
+</ul></li>
+</ul>
+<h3>B. Tides</h3>
+<p>Periodic rise and fall of sea level.</p>
+<p><strong>Mechanism:</strong> Caused by the gravitational pull of the Moon and the Sun, and the centrifugal force of the Earth.</p>
+<ul>
+<li><strong>Semidiurnal Tides:</strong> Two highs and two lows per day (most common).</li>
+<li><strong>Diurnal Tides:</strong> One high and one low per day.</li>
+</ul>
+<p><strong>Types based on Alignment:</strong></p>
+<ol>
+<li><strong>Spring Tides:</strong> Occur at Full Moon and New Moon. Earth, Moon, and Sun are in a straight line (<strong>Syzygy</strong>). Result: Highest high tides, lowest low tides (maximum range).</li>
+<li><strong>Neap Tides:</strong> Occur at First and Third Quarter moons. Moon and Sun are at right angles (Quadrature). The gravitational forces counteract each other. Result: Lower high tides, higher low tides (minimum range).</li>
+</ol>
+<hr/>
+<h2>5. Marine Resources</h2>
+<h3>A. Biotic Resources (Living)</h3>
+<ul>
+<li><strong>Fisheries:</strong> The ocean provides significant protein. Major grounds are found where warm and cold currents meet (e.g., Grand Banks, Dogger Bank, Coast of Japan).</li>
+<li><strong>Plankton:</strong> Phytoplankton (primary producers) and Zooplankton. Potential future food source.</li>
+<li><strong>Seaweeds/Algae:</strong> Used for food (sushi), fertilizers, and alginates (thickeners in cosmetics/ice cream).</li>
+<li><strong>Medicinal:</strong> Compounds from sponges, corals, and cone snails used in cancer and pain research.</li>
+</ul>
+<h3>B. Mineral Resources (Non-Living)</h3>
+<ul>
+<li><strong>Polymetallic Nodules:</strong> Found on the abyssal plain; rich in Mn, Ni, Cu, Co.</li>
+<li><strong>Salt:</strong> Extracted via evaporation (NaCl).</li>
+<li><strong>Sand and Gravel:</strong> Construction materials extracted from the continental shelf.</li>
+<li><strong>Placers:</strong> Heavy minerals (Monazite, Zircon, Titanium) found in beach sands (e.g., Kerala coast, India).</li>
+</ul>
+<h3>C. Energy Resources</h3>
+<ul>
+<li><strong>Petroleum and Natural Gas:</strong> Extracted from offshore drilling on continental shelves (e.g., North Sea, Gulf of Mexico, Bombay High).</li>
+<li><strong>Tidal Energy:</strong> Harnessing the potential energy of high tidal ranges (e.g., La Rance, France).</li>
+<li><strong>Wave Energy:</strong> Capturing kinetic energy of waves.</li>
+<li><strong>OTEC (Ocean Thermal Energy Conversion):</strong> Uses the temperature difference between warm surface water and cold deep water to generate electricity (requires a difference of ~20°C).</li>
+</ul>
+<hr/>
+<h2>6. Corals</h2>
+<p>Coral reefs are underwater structures made from calcium carbonate secreted by corals. They are often called the <strong>"Rainforests of the Sea"</strong> due to their biodiversity.</p>
+<h3>A. Symbiotic Relationship</h3>
+<p>Corals are colonies of tiny animals called <strong>Polyps</strong>. They have a symbiotic relationship with microscopic algae called <strong>Zooxanthellae</strong>, which live inside their tissues.</p>
+<ul>
+<li>Zooxanthellae provide food (via photosynthesis) and color.</li>
+<li>Polyps provide shelter and CO2.</li>
+</ul>
+<h3>B. Conditions for Growth</h3>
+<ol>
+<li><strong>Temperature:</strong> Warm water (20°C–21°C minimum). Optimal 23°C-25°C.</li>
+<li><strong>Depth:</strong> Shallow water (usually &lt;50m) for sunlight penetration.</li>
+<li><strong>Salinity:</strong> Normal oceanic salinity (27‰–40‰). They cannot survive in fresh water.</li>
+<li><strong>Sediment:</strong> Clean water; sediment clogs polyp mouths.</li>
+</ol>
+<h3>C. Types of Coral Reefs</h3>
+<ol>
+<li><strong>Fringing Reefs:</strong> Grow directly from a shore (contiguous). No lagoon.</li>
+<li><strong>Barrier Reefs:</strong> Separated from the land by a wide, deep lagoon (e.g., Great Barrier Reef, Australia).</li>
+<li><strong>Atolls:</strong> A circular reef surrounding a lagoon, usually formed around a submerged volcanic island (e.g., Maldives, Lakshadweep).</li>
+</ol>
+<h3>D. Coral Bleaching</h3>
+<p>When corals are stressed (by high temperatures, pollution, or acidification), they expel the Zooxanthellae.</p>
+<ul>
+<li><strong>Result:</strong> The coral turns white (bleached) and starves. If conditions do not improve, the coral dies.</li>
+</ul>
+<hr/>
+<h2>7. Marine Pollution</h2>
+<p>The contamination of the ocean by chemicals, particles, industrial, agricultural, and residential waste.</p>
+<h3>A. Sources</h3>
+<ol>
+<li><strong>Land-based runoff (80%):</strong> Agricultural fertilizers (nitrates/phosphates), pesticides, and untreated sewage.</li>
+<li><strong>Plastics:</strong> Microplastics and macro-plastics degrade slowly, harming marine life via ingestion and entanglement.</li>
+<li><strong>Oil Spills:</strong> Accidents during drilling (Deepwater Horizon) or transport disrupt the insulating capacity of marine mammals and birds.</li>
+<li><strong>Ocean Dumping:</strong> Industrial waste and radioactive materials.</li>
+<li><strong>Atmospheric Deposition:</strong> Acid rain and carbon dioxide absorption.</li>
+</ol>
+<h3>B. Impacts</h3>
+<ol>
+<li><strong>Eutrophication:</strong> Excess nutrients lead to algal blooms. When algae die, bacteria consume oxygen to decompose them, creating <strong>Dead Zones</strong> (Hypoxic zones) where life cannot survive.</li>
+<li><strong>Ocean Acidification:</strong> Oceans absorb CO2, lowering pH. This dissolves calcium carbonate, weakening shells of clams, oysters, and corals.</li>
+<li><strong>Bioaccumulation/Biomagnification:</strong> Toxins (mercury, PCBs) accumulate in tissues of small organisms and magnify up the food chain to top predators (tuna, sharks, humans).</li>
+<li><strong>Great Pacific Garbage Patch:</strong> Massive accumulation of floating plastic debris in the North Pacific Gyre.</li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/GEO295/Unit3/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/GEO295/Unit5/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

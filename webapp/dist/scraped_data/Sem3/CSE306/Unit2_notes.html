@@ -1,0 +1,745 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem3/CSE306">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSE306/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSE306/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSE306/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE306</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: PHYSICAL LAYER: Signal, Media, Modulation &amp; Multiplexing</h1>
+<p>The Physical Layer is the first layer of the OSI model (Layer 1). It coordinates the functions required to carry a bitstream over a physical medium. It deals with the mechanical and electrical specifications of the interface and transmission medium.</p>
+<hr/>
+<h2>1. Basics of Data Communications and Signals</h2>
+<h3>Data Communication Components</h3>
+<ol>
+<li><strong>Message:</strong> The information (data) to be communicated.</li>
+<li><strong>Sender:</strong> The device that generates the data.</li>
+<li><strong>Receiver:</strong> The device that receives the data.</li>
+<li><strong>Transmission Medium:</strong> The physical path by which a message travels from sender to receiver.</li>
+<li><strong>Protocol:</strong> A set of rules that govern data communications.</li>
+</ol>
+<h3>Data Flow Directions</h3>
+<ul>
+<li><strong>Simplex:</strong> Unidirectional (e.g., Keyboard to CPU, TV broadcasting).</li>
+<li><strong>Half-Duplex:</strong> Both directions, but only one at a time (e.g., Walkie-talkie).</li>
+<li><strong>Full-Duplex:</strong> Both directions simultaneously (e.g., Telephone network).</li>
+</ul>
+<h3>Analog and Digital Signals</h3>
+<p>To be transmitted, data must be transformed into electromagnetic signals.</p>
+<h4>Analog Signals</h4>
+<ul>
+<li><strong>Definition:</strong> A continuous waveform that changes smoothly over time.</li>
+<li><strong>Nature:</strong> Infinite range of values.</li>
+<li><strong>Example:</strong> Human voice, sine waves.</li>
+<li><strong>Sine Wave Parameters:</strong>
+<ul>
+<li><strong>Peak Amplitude (<span class="katex-inline" data-math="A"></span>):</strong> Absolute value of the highest intensity (Volts).</li>
+<li><strong>Frequency (<span class="katex-inline" data-math="f"></span>):</strong> Number of cycles per second (Hertz). <span class="katex-inline" data-math="Period (T) = 1/f"></span>.</li>
+<li><strong>Phase (<span class="katex-inline" data-math="\phi"></span>):</strong> The position of the waveform relative to time zero (Degrees or Radians).</li>
+</ul></li>
+</ul>
+<h4>Digital Signals</h4>
+<ul>
+<li><strong>Definition:</strong> A discrete waveform that changes abruptly.</li>
+<li><strong>Nature:</strong> Limited set of values (usually 1 and 0).</li>
+<li><strong>Bit Interval:</strong> Time required to send one single bit.</li>
+<li><strong>Bit Rate:</strong> The number of bits sent in 1 second (bps).</li>
+</ul>
+<h4>Periodic vs. Non-Periodic</h4>
+<ul>
+<li><strong>Periodic:</strong> Repeats a pattern within a measurable time frame (common in analog).</li>
+<li><strong>Non-Periodic:</strong> Does not exhibit a repeating pattern (common in data communication/digital signals).</li>
+</ul>
+<hr/>
+<h2>2. Transmission Impairments and Performance</h2>
+<p>Signals travel through transmission media, which are not perfect. The imperfection causes signal impairment.</p>
+<h3>Types of Impairments</h3>
+<h4>1. Attenuation</h4>
+<ul>
+<li><strong>Definition:</strong> Loss of signal energy (strength) as it travels through a medium due to resistance.</li>
+<li><strong>Measurement:</strong> Decibels (dB).</li>
+<li><strong>Formula:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">    dB = 10 log10 (P2 / P1)
+    Where P1 is input power and P2 is output power.
+    </code></pre></div>
+<ul>
+<li>Negative dB = Attenuation (loss).</li>
+<li>Positive dB = Amplification (gain).</li>
+</ul></li>
+</ul>
+<h4>2. Distortion</h4>
+<ul>
+<li><strong>Definition:</strong> Alteration of the signal's original shape.</li>
+<li><strong>Cause:</strong> Occurs in composite signals where different frequencies travel at different propagation speeds, arriving at the receiver at slightly different times.</li>
+</ul>
+<h4>3. Noise</h4>
+<ul>
+<li><strong>Definition:</strong> Random or unwanted signals that mix with the original signal.</li>
+<li><strong>Types:</strong>
+<ul>
+<li><strong>Thermal Noise:</strong> Random motion of electrons (white noise).</li>
+<li><strong>Induced Noise:</strong> From external sources (motors, appliances).</li>
+<li><strong>Crosstalk:</strong> A wire picks up a signal from an adjacent wire.</li>
+<li><strong>Impulse Noise:</strong> Spikes (high energy) from lightning or power surges.</li>
+</ul></li>
+</ul>
+<h3>Performance Metrics</h3>
+<ol>
+<li><strong>Bandwidth:</strong> The range of frequencies a medium can pass (Hz) or the maximum speed of bits (bps).</li>
+<li><strong>Throughput:</strong> The actual measurement of how fast data can flow through a network (usually lower than bandwidth).</li>
+<li><strong>Latency (Delay):</strong> Time taken for a message to travel from sender to receiver.
+<ul>
+<li><em>Latency = Propagation time + Transmission time + Queuing time + Processing time.</em></li>
+</ul></li>
+<li><strong>Jitter:</strong> The variation in packet arrival time (crucial for multimedia).</li>
+</ol>
+<hr/>
+<h2>3. Data Rate Limits</h2>
+<p>The maximum data rate of a channel depends on the bandwidth available, the signal levels used, and the quality of the channel (noise).</p>
+<h3>Noiseless Channel: Nyquist Bit Rate</h3>
+<p>Assume a perfect channel with no noise.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">BitRate = 2 × Bandwidth × log2(L)
+</code></pre></div></p>
+<ul>
+<li><strong>Bandwidth:</strong> Bandwidth of the channel in Hz.</li>
+<li><strong>L:</strong> Number of signal levels used to represent data.</li>
+</ul>
+<h3>Noisy Channel: Shannon Capacity</h3>
+<p>In reality, channels have noise. Shannon determines the theoretical highest data rate.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Capacity = Bandwidth × log2(1 + SNR)
+</code></pre></div></p>
+<ul>
+<li><strong>SNR (Signal-to-Noise Ratio):</strong> <span class="katex-inline" data-math="SignalPower / NoisePower"></span>.</li>
+<li><strong>Note:</strong> If SNR is given in dB, convert it first: <span class="katex-inline" data-math="SNR_{dB} = 10 \log_{10}(SNR)"></span>.</li>
+</ul>
+<hr/>
+<h2>4. Transmission Media</h2>
+<h3>A. Guided Media (Wired)</h3>
+<p>Waves are guided along a physical path.</p>
+<h4>1. Twisted Pair Cable</h4>
+<ul>
+<li><strong>Structure:</strong> Two insulated copper wires twisted together to reduce crosstalk and electromagnetic interference (EMI).</li>
+<li><strong>Types:</strong>
+<ul>
+<li><strong>Unshielded Twisted Pair (UTP):</strong> Common in LANs (e.g., Cat5e, Cat6).</li>
+<li><strong>Shielded Twisted Pair (STP):</strong> Metal casing covers wire pairs for better noise protection.</li>
+</ul></li>
+<li><strong>Connectors:</strong> RJ45.</li>
+</ul>
+<h4>2. Coaxial Cable</h4>
+<ul>
+<li><strong>Structure:</strong> Central conductor, insulating dielectric, outer conductor (shield mesh), and plastic jacket.</li>
+<li><strong>Characteristics:</strong> Higher frequency range than twisted pair.</li>
+<li><strong>Standards:</strong> RG-59 (TV), RG-58 (Thin Ethernet), RG-11 (Thick Ethernet).</li>
+<li><strong>Connectors:</strong> BNC.</li>
+</ul>
+<h4>3. Fiber Optic Cable</h4>
+<ul>
+<li><strong>Structure:</strong> Core (glass/plastic), Cladding (lower refractive index), and Jacket.</li>
+<li><strong>Physics:</strong> Uses <strong>Total Internal Reflection</strong> to guide light.</li>
+<li><strong>Modes:</strong>
+<ul>
+<li><strong>Multimode:</strong> Multiple beams from a light source move through the core (LED source). Good for shorter distances.</li>
+<li><strong>Single-mode:</strong> Single beam (Laser source). Smaller core, long-distance.</li>
+</ul></li>
+<li><strong>Advantages:</strong> Immune to EMI, very high bandwidth, low attenuation.</li>
+</ul>
+<h3>B. Unguided Media (Wireless)</h3>
+<p>Transport electromagnetic waves without a physical conductor.</p>
+<h4>1. Radio Waves (3 kHz – 1 GHz)</h4>
+<ul>
+<li>Omnidirectional (send in all directions).</li>
+<li>Used for AM/FM radio, television.</li>
+<li>Susceptible to multipath interference.</li>
+</ul>
+<h4>2. Microwaves (1 GHz – 300 GHz)</h4>
+<ul>
+<li>Unidirectional (requires line-of-sight alignment).</li>
+<li>Used for cellular phones, satellite networks, wireless LANs.</li>
+</ul>
+<h4>3. Infrared (300 GHz – 400 THz)</h4>
+<ul>
+<li>Short-range communication.</li>
+<li>Cannot pass through walls.</li>
+<li>Used for remote controls, IrDA ports.</li>
+</ul>
+<h3>C. Cabling Standards (TIA/EIA-568)</h3>
+<p>For terminating twisted pair cables into RJ45 connectors:</p>
+<ul>
+<li><strong>T568A:</strong> Green-White, Green, Orange-White, Blue, Blue-White, Orange, Brown-White, Brown.</li>
+<li><strong>T568B:</strong> Orange-White, Orange, Green-White, Blue, Blue-White, Green, Brown-White, Brown (Most common).</li>
+<li><strong>Straight-through:</strong> Both ends T568B (PC to Switch).</li>
+<li><strong>Crossover:</strong> One end T568A, one end T568B (PC to PC).</li>
+</ul>
+<hr/>
+<h2>5. Digital-to-Digital Conversion (Line Coding)</h2>
+<p>Converting digital data (bits) into digital signals (voltage pulses).</p>
+<h3>Key Characteristics</h3>
+<ul>
+<li><strong>DC Component:</strong> Undesirable constant voltage (frequency zero) which cannot pass through transformers.</li>
+<li><strong>Synchronization:</strong> Receiver uses transitions in the signal to synchronize with the sender's clock.</li>
+</ul>
+<h3>Coding Schemes</h3>
+<h4>1. Unipolar Scheme</h4>
+<ul>
+<li><strong>NRZ (Non-Return to Zero):</strong> Uses positive voltage for 1, zero voltage for 0.
+<ul>
+<li><em>Drawback:</em> High cost, DC component, no synchronization.</li>
+</ul></li>
+</ul>
+<h4>2. Polar Schemes (Uses Positive and Negative Voltages)</h4>
+<ul>
+<li><strong>NRZ-L (Level):</strong> Level of voltage determines value (e.g., +V for 0, -V for 1).</li>
+<li><strong>NRZ-I (Invert):</strong> Change or lack of change determines value. Invert voltage on '1', no change on '0'.</li>
+<li><strong>RZ (Return to Zero):</strong> Uses three values (+, -, 0). Signal returns to 0 in the middle of each bit. Good sync, but requires high bandwidth.</li>
+<li><strong>Biphase (Manchester):</strong>
+<ul>
+<li>Combines RZ and NRZ-L.</li>
+<li>Transition happens at the middle of the interval.</li>
+<li>Low-to-High represents 1 (or 0 depending on convention), High-to-Low represents 0.</li>
+<li><strong>Used in Ethernet.</strong></li>
+</ul></li>
+<li><strong>Differential Manchester:</strong> Transition at the middle is for sync; presence/absence of transition at the <em>start</em> determines the bit.</li>
+</ul>
+<h4>3. Bipolar Schemes (AMI)</h4>
+<ul>
+<li><strong>AMI (Alternate Mark Inversion):</strong> 0 is zero voltage. 1 is alternating positive and negative voltages.</li>
+<li><strong>Benefits:</strong> No DC component.</li>
+</ul>
+<hr/>
+<h2>6. Analog-to-Digital Conversion (Digitization)</h2>
+<p>Converting analog signals (like voice) into digital data (bits). The primary technique is <strong>PCM (Pulse Code Modulation)</strong>.</p>
+<h3>PCM Steps</h3>
+<ol>
+<li>
+<p><strong>Sampling (PAM - Pulse Amplitude Modulation):</strong></p>
+<ul>
+<li>Measuring the amplitude of the signal at equal intervals.</li>
+<li><strong>Nyquist Theorem:</strong> Sampling rate must be at least 2 times the highest frequency (<span class="katex-inline" data-math="f_{max}"></span>) of the signal.</li>
+<li><span class="katex-inline" data-math="Rate = 2 \times f_{max}"></span>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Quantization:</strong></p>
+<ul>
+<li>Assigning the sampled values to specific discrete levels (rounding off).</li>
+<li>Introduces <strong>Quantization Error</strong> (noise).</li>
+</ul>
+</li>
+<li>
+<p><strong>Encoding:</strong></p>
+<ul>
+<li>Converting the quantized values into streams of bits.</li>
+</ul>
+</li>
+</ol>
+<h3>Delta Modulation (DM)</h3>
+<ul>
+<li>Simplified PCM. Records only the change from the previous sample (+delta or -delta) rather than absolute value. 1 bit per sample.</li>
+</ul>
+<hr/>
+<h2>7. Digital-to-Analog Conversion (Modulation)</h2>
+<p>Converting digital data (bits) into an analog signal (carrier wave) to send over telephone lines or wireless links (Modems).</p>
+<h3>Techniques</h3>
+<ol>
+<li>
+<p><strong>ASK (Amplitude Shift Keying):</strong></p>
+<ul>
+<li>Frequency and Phase remain constant.</li>
+<li>Amplitude changes to represent 1 or 0.</li>
+<li>Highly susceptible to noise.</li>
+</ul>
+</li>
+<li>
+<p><strong>FSK (Frequency Shift Keying):</strong></p>
+<ul>
+<li>Amplitude and Phase remain constant.</li>
+<li>Frequency changes (<span class="katex-inline" data-math="f_1"></span> for bit 1, <span class="katex-inline" data-math="f_2"></span> for bit 0).</li>
+</ul>
+</li>
+<li>
+<p><strong>PSK (Phase Shift Keying):</strong></p>
+<ul>
+<li>Amplitude and Frequency remain constant.</li>
+<li>Phase changes (e.g., 0 degrees for 0, 180 degrees for 1).</li>
+<li>More robust against noise than ASK/FSK.</li>
+<li><strong>QPSK (Quadrature PSK):</strong> Uses 4 phases to encode 2 bits at a time.</li>
+</ul>
+</li>
+<li>
+<p><strong>QAM (Quadrature Amplitude Modulation):</strong></p>
+<ul>
+<li>Combines ASK and PSK.</li>
+<li>Variations in both Amplitude and Phase.</li>
+<li>Highly efficient data usage (e.g., 16-QAM, 64-QAM).</li>
+</ul>
+</li>
+</ol>
+<hr/>
+<h2>8. Analog-to-Analog Conversion</h2>
+<p>Modulating an analog signal (like voice) onto a high-frequency analog carrier signal (like radio).</p>
+<ol>
+<li><strong>AM (Amplitude Modulation):</strong> Carrier amplitude varies with the amplitude of the modulating signal.</li>
+<li><strong>FM (Frequency Modulation):</strong> Carrier frequency varies with the amplitude of the modulating signal. (Better noise immunity than AM).</li>
+<li><strong>PM (Phase Modulation):</strong> Carrier phase varies with the amplitude of the modulating signal.</li>
+</ol>
+<hr/>
+<h2>9. Multiplexing</h2>
+<p>A technique used to combine and transmit multiple signals over a single medium simultaneously to utilize bandwidth efficiently.</p>
+<h3>1. FDM (Frequency Division Multiplexing)</h3>
+<ul>
+<li><strong>Type:</strong> Analog technique.</li>
+<li><strong>Mechanism:</strong> Signals are modulated onto different carrier frequencies.</li>
+<li><strong>Guard Bands:</strong> Strips of unused frequency separate channels to prevent overlapping.</li>
+<li><strong>Example:</strong> AM/FM Radio broadcasting, Cable TV.</li>
+</ul>
+<h3>2. WDM (Wavelength Division Multiplexing)</h3>
+<ul>
+<li><strong>Type:</strong> Analog technique (for Fiber Optics).</li>
+<li><strong>Mechanism:</strong> Conceptually same as FDM, but uses light wavelengths (colors).</li>
+<li><strong>Prism:</strong> Uses a prism/diffraction grating to combine and split light beams.</li>
+</ul>
+<h3>3. TDM (Time Division Multiplexing)</h3>
+<ul>
+<li><strong>Type:</strong> Digital technique.</li>
+<li><strong>Mechanism:</strong> The timeline is divided into slots. Each user gets the entire bandwidth for a specific fraction of time.</li>
+</ul>
+<h4>Variations of TDM:</h4>
+<ul>
+<li><strong>Synchronous TDM:</strong>
+<ul>
+<li>Time slots are pre-assigned to sources.</li>
+<li>If a source has no data, the slot is sent empty (wasted capacity).</li>
+</ul></li>
+<li><strong>Statistical TDM:</strong>
+<ul>
+<li>Dynamic allocation. Slots are allocated only to sources that have data to send.</li>
+<li>More efficient but requires overhead (addressing info in slots) to identify the owner of the data.</li>
+</ul></li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem3/CSE306/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem3/CSE306/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

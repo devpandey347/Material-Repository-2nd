@@ -1,0 +1,599 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem2/PEL130">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/PEL130/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/PEL130/Unit6/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/PEL130/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>PEL130</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Professional Vocabulary</h1>
+<h2>1. Introduction</h2>
+<p>Professional vocabulary refers to the specific set of words, phrases, and terminologies used within a business or technical environment. Mastery of this vocabulary distinguishes a layperson from a professional. It ensures precision in communication, brevity in correspondence, and establishes credibility in a corporate setting. This unit focuses on three distinct pillars: One Word Substitution (brevity), Technical Jargons (specialization), and Business Idioms (cultural fluency).</p>
+<hr/>
+<h2>2. One Word Substitution</h2>
+<p>One word substitution is the process of replacing a wordy phrase with a single, specific word. In professional communication, this aids in conciseness and avoids redundancy.</p>
+<p><figure class="image-figure"><img alt="A conceptual funnel diagram illustrating the process of One Word Substitution. At the top wide openi..." src="/notes-images/Sem2/PEL130/images/PEL130_Unit6_img1_79ad3810.jpg"><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></img></figure></p>
+<h3>A. Professional &amp; Personality Traits</h3>
+<ul>
+<li><strong>Ambidextrous:</strong> One who can use either hand with ease.</li>
+<li><strong>Arbitrator:</strong> A person appointed by two parties to solve a dispute.</li>
+<li><strong>Polyglot:</strong> A person who knows and speaks many languages.</li>
+<li><strong>Versatile:</strong> Someone who possesses many talents.</li>
+<li><strong>Introvert/Extrovert:</strong> A person who is reserved/outgoing in nature.</li>
+<li><strong>Meticulous:</strong> Showing great attention to detail; very careful and precise.</li>
+</ul>
+<h3>B. Business &amp; Administrative Terms</h3>
+<ul>
+<li><strong>Agenda:</strong> A list of items to be discussed at a meeting.</li>
+<li><strong>Bankruptcy:</strong> The state of being unable to pay outstanding debts.</li>
+<li><strong>Bureaucracy:</strong> A system of government/management in which most of the important decisions are taken by state officials rather than by elected representatives (often implies excessive red tape).</li>
+<li><strong>Colleague:</strong> A person with whom one works in a profession or business.</li>
+<li><strong>Hierarchy:</strong> A system in which members of an organization are ranked according to relative status or authority.</li>
+<li><strong>Minutes:</strong> A written record of what was said at a meeting.</li>
+<li><strong>Unanimous:</strong> Held or carried by everyone; full agreement.</li>
+</ul>
+<h3>C. Research &amp; Academic Terms</h3>
+<ul>
+<li><strong>Bibliography:</strong> A list of books referred to in a scholarly work.</li>
+<li><strong>Plagiarism:</strong> The practice of taking someone else's work or ideas and passing them off as one's own.</li>
+<li><strong>Etymology:</strong> The study of the origin of words and the way in which their meanings have changed throughout history.</li>
+<li><strong>Chronological:</strong> Arranging events in the order of their occurrence in time.</li>
+</ul>
+<hr/>
+<h2>3. Basic Technical Jargons</h2>
+<p>Jargon refers to special words or expressions that are used by a particular profession or group and are difficult for others to understand. While excessive jargon can hinder communication with outsiders, it acts as a linguistic shorthand for professionals within the same field, increasing efficiency.</p>
+<p><figure class="image-figure"><img alt='A central hub-and-spoke diagram visualizing "Types of Professional Jargon." The central circle is la...' src="/notes-images/Sem2/PEL130/images/PEL130_Unit6_img2_1a47d93b.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>A. Corporate &amp; Management Jargon</h3>
+<ul>
+<li><strong>Actionable:</strong> Capable of being done or acted upon; practical.
+<ul>
+<li><em>Usage:</em> "We need <strong>actionable</strong> insights from this data, not just theory."</li>
+</ul></li>
+<li><strong>Bandwidth:</strong> (Metaphorical) The energy or mental capacity required to deal with a situation.
+<ul>
+<li><em>Usage:</em> "I don't have the <strong>bandwidth</strong> to take on another project this week."</li>
+</ul></li>
+<li><strong>Deliverables:</strong> Quantifiable goods or services that must be provided upon the completion of a project.
+<ul>
+<li><em>Usage:</em> "The key <strong>deliverables</strong> for Phase 1 are due on Friday."</li>
+</ul></li>
+<li><strong>Leverage:</strong> To use something to maximum advantage.
+<ul>
+<li><em>Usage:</em> "We need to <strong>leverage</strong> our social media presence to increase sales."</li>
+</ul></li>
+<li><strong>Scalability:</strong> The capability of a system or company to grow or manage increased demand.
+<ul>
+<li><em>Usage:</em> "The software lacks <strong>scalability</strong>; it crashes when we add more than 50 users."</li>
+</ul></li>
+<li><strong>Synergy:</strong> The interaction or cooperation of two or more organizations to produce a combined effect greater than the sum of their separate effects.
+<ul>
+<li><em>Usage:</em> " The merger created excellent <strong>synergy</strong> between the two departments."</li>
+</ul></li>
+</ul>
+<h3>B. Information Technology (IT) Jargon</h3>
+<ul>
+<li><strong>Algorithm:</strong> A process or set of rules to be followed in calculations or other problem-solving operations.</li>
+<li><strong>Beta:</strong> A version of a product (usually software) sent to testers for feedback before the final release.</li>
+<li><strong>Cache:</strong> A hardware or software component that stores data so that future requests for that data can be served faster.</li>
+<li><strong>Cloud Computing:</strong> The practice of using a network of remote servers hosted on the internet to store, manage, and process data.</li>
+<li><strong>Phishing:</strong> The fraudulent practice of sending emails purporting to be from reputable companies to induce individuals to reveal personal information.</li>
+</ul>
+<h3>C. Financial Jargon</h3>
+<ul>
+<li><strong>Assets:</strong> Resources owned by a business which have economic value.</li>
+<li><strong>Equity:</strong> The value of the shares issued by a company; ownership interest.</li>
+<li><strong>Fiscal Year:</strong> A one-year period used for financial reporting and budgeting (which may not match the calendar year).</li>
+<li><strong>ROI (Return on Investment):</strong> A performance measure used to evaluate the efficiency of an investment.
+<ul>
+<li><em>Formula:</em> (Net Profit / Cost of Investment) x 100.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>4. Business Idioms</h2>
+<p>Idioms are phrases where the meaning cannot be deduced from the literal definitions of the individual words. In business, idioms are frequently used to soften commands, describe complex situations quickly, or build rapport.</p>
+<p><figure class="image-figure"><img alt='A horizontal timeline or process flow chart titled "The Lifecycle of a Project via Idioms." The char...' src="/notes-images/Sem2/PEL130/images/PEL130_Unit6_img3_7de9eab9.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>A. Project &amp; Process Idioms</h3>
+<ul>
+<li><strong>Back to the drawing board:</strong> To start a task all over again because it failed.
+<ul>
+<li><em>Example:</em> "The client rejected the proposal, so it’s <strong>back to the drawing board</strong>."</li>
+</ul></li>
+<li><strong>Get the ball rolling:</strong> To start something; to begin a process.
+<ul>
+<li><em>Example:</em> "Let’s <strong>get the ball rolling</strong> by introducing everyone."</li>
+</ul></li>
+<li><strong>In the pipeline:</strong> Being planned or developed; underway.
+<ul>
+<li><em>Example:</em> "We have three new products <strong>in the pipeline</strong> for next year."</li>
+</ul></li>
+<li><strong>Cut corners:</strong> To do something perfunctorily so as to save time or money (often negatively).
+<ul>
+<li><em>Example:</em> "We cannot afford to <strong>cut corners</strong> on safety regulations."</li>
+</ul></li>
+</ul>
+<h3>B. Communication &amp; Negotiation Idioms</h3>
+<ul>
+<li><strong>Touch base:</strong> To make contact with someone briefly.
+<ul>
+<li><em>Example:</em> "I’ll <strong>touch base</strong> with you next week regarding the contract."</li>
+</ul></li>
+<li><strong>On the same page:</strong> To have the same understanding or amount of knowledge.
+<ul>
+<li><em>Example:</em> "Let's have a quick meeting to ensure everyone is <strong>on the same page</strong>."</li>
+</ul></li>
+<li><strong>Play hardball:</strong> To act strong and aggressive in a situation (usually negotiation).
+<ul>
+<li><em>Example:</em> "The suppliers are <strong>playing hardball</strong> regarding the price hike."</li>
+</ul></li>
+<li><strong>Elephant in the room:</strong> An obvious problem or difficult issue that people are ignoring.
+<ul>
+<li><em>Example:</em> "The budget cut is the <strong>elephant in the room</strong> that no one wants to discuss."</li>
+</ul></li>
+</ul>
+<h3>C. Financial &amp; Outcome Idioms</h3>
+<ul>
+<li><strong>In the red:</strong> Losing money; negative balance.
+<ul>
+<li><em>Origin:</em> Accountants traditionally used red ink for negative entries.</li>
+</ul></li>
+<li><strong>In the black:</strong> Making a profit; positive balance.</li>
+<li><strong>Ballpark figure:</strong> A rough numerical estimate.
+<ul>
+<li><em>Example:</em> "I don't need the exact cost yet, just give me a <strong>ballpark figure</strong>."</li>
+</ul></li>
+<li><strong>Cash cow:</strong> A business, product, or service that generates a steady stream of income/profit.
+<ul>
+<li><em>Example:</em> "The subscription service has become the company's <strong>cash cow</strong>."</li>
+</ul></li>
+</ul>
+<h2>5. Summary Table</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Category</th>
+<th style="text-align: left;">Definition</th>
+<th style="text-align: left;">Key Example</th>
+<th style="text-align: left;">Purpose in Communication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>One Word Substitution</strong></td>
+<td style="text-align: left;">Replacing a phrase with a single word.</td>
+<td style="text-align: left;"><em>Agenda</em> (List of items to discuss)</td>
+<td style="text-align: left;">Brevity and precision.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Technical Jargon</strong></td>
+<td style="text-align: left;">Specialized industry terminology.</td>
+<td style="text-align: left;"><em>Scalability</em> (Capacity to grow)</td>
+<td style="text-align: left;">Efficiency among experts.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Business Idioms</strong></td>
+<td style="text-align: left;">Metaphorical expressions.</td>
+<td style="text-align: left;"><em>Touch base</em> (Contact briefly)</td>
+<td style="text-align: left;">Cultural fluency and rapport.</td>
+</tr>
+</tbody>
+</table> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem2/PEL130/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

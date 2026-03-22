@@ -1,0 +1,694 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT222">INT222</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 2</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT222">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT222/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT222/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT222/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT222</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Implementing HTTP Services &amp; Basic Websites With Node.JS</h1>
+<h2>1. Introduction to the HTTP Module</h2>
+<p>Node.js is built with a core module named <code>http</code> which allows Node.js to transfer data over the Hyper Text Transfer Protocol (HTTP). This module is capable of creating an HTTP server that listens to server ports and gives a response back to the client.</p>
+<h3>Key Characteristics</h3>
+<ul>
+<li><strong>Built-in:</strong> It does not require installation via NPM; it is part of the Node.js core.</li>
+<li><strong>Event-Driven:</strong> It inherits from the <code>EventEmitter</code> class.</li>
+<li><strong>Low-level:</strong> It provides low-level access to HTTP requests and responses, requiring manual handling of data chunks, headers, and routing logic compared to frameworks like Express.</li>
+</ul>
+<p>To include the HTTP module:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const http = require('http');
+</code></pre></div></p>
+<hr/>
+<h2>2. Setting up a Basic HTTP Server</h2>
+<p>The <code>http.createServer()</code> method includes a callback function that is executed every time a request is received. This callback receives two arguments: the Request object and the Response object.</p>
+<h3>Syntax</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const server = http.createServer((req, res) =&gt; {
+    // Logic to handle request and send response
+});
+
+server.listen(port, hostname, callback);
+</code></pre></div></p>
+<h3>Example: "Hello World" Server</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const http = require('http');
+const PORT = 3000;
+
+const server = http.createServer((req, res) =&gt; {
+    res.write('Hello World from Node.js Server');
+    res.end();
+});
+
+server.listen(PORT, () =&gt; {
+    console.log(`Server running at http://localhost:${PORT}/`);
+});
+</code></pre></div></p>
+<hr/>
+<h2>3. Understanding Request and Response Objects</h2>
+<h3>The Request Object (<code>req</code>)</h3>
+<p>The <code>req</code> object represents the HTTP request and has properties for the request query string, parameters, body, HTTP headers, and so on. It is an instance of <code>http.IncomingMessage</code>.</p>
+<p><strong>Key Properties:</strong></p>
+<ul>
+<li><strong><code>req.url</code></strong>: The URL string (the path after the domain).</li>
+<li><strong><code>req.method</code></strong>: The HTTP method used (GET, POST, DELETE, etc.).</li>
+<li><strong><code>req.headers</code></strong>: An object containing the request headers.</li>
+</ul>
+<h3>The Response Object (<code>res</code>)</h3>
+<p>The <code>res</code> object represents the HTTP response that an Express app sends when it gets an HTTP request. It is an instance of <code>http.ServerResponse</code>.</p>
+<p><strong>Key Methods:</strong></p>
+<ul>
+<li><strong><code>res.write(chunk)</code></strong>: Sends a chunk of the response body. Can be called multiple times.</li>
+<li><strong><code>res.end([data])</code></strong>: Signals to the server that all of the response headers and body have been sent. <strong>Must be called on every response.</strong></li>
+<li><strong><code>res.setHeader(name, value)</code></strong>: Sets a single header value.</li>
+</ul>
+<hr/>
+<h2>4. Implementing Basic Routing (Without Frameworks)</h2>
+<p>In raw Node.js, routing must be handled manually by inspecting the <code>req.url</code> and <code>req.method</code> within the server callback.</p>
+<h3>Example: Switch-Case Routing</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const http = require('http');
+
+const server = http.createServer((req, res) =&gt; {
+    const url = req.url;
+    const method = req.method;
+
+    if (url === '/') {
+        res.write('&lt;html&gt;&lt;body&gt;&lt;h1&gt;Home Page&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;');
+        res.end();
+    } else if (url === '/about' &amp;&amp; method === 'GET') {
+        res.write('&lt;html&gt;&lt;body&gt;&lt;h1&gt;About Us&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;');
+        res.end();
+    } else if (url === '/api/data') {
+        res.setHeader('Content-Type', 'application/json');
+        res.write(JSON.stringify({ message: "Here is your data" }));
+        res.end();
+    } else {
+        res.statusCode = 404;
+        res.write('&lt;html&gt;&lt;body&gt;&lt;h1&gt;404 Not Found&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;');
+        res.end();
+    }
+});
+
+server.listen(3000);
+</code></pre></div></p>
+<hr/>
+<h2>5. Setting Response Headers and Status Codes</h2>
+<p>Properly setting headers and status codes is crucial for clients (browsers/APIs) to understand how to process the response.</p>
+<h3>Status Codes (<code>res.statusCode</code>)</h3>
+<ul>
+<li><strong>200</strong>: OK (Standard response for successful HTTP requests).</li>
+<li><strong>201</strong>: Created (Request fulfilled, new resource created).</li>
+<li><strong>301</strong>: Moved Permanently.</li>
+<li><strong>400</strong>: Bad Request (Client error).</li>
+<li><strong>401</strong>: Unauthorized.</li>
+<li><strong>404</strong>: Not Found.</li>
+<li><strong>500</strong>: Internal Server Error.</li>
+</ul>
+<h3>Response Headers (<code>res.writeHead</code> or <code>res.setHeader</code>)</h3>
+<p>Headers provide metadata about the response, such as the content type.</p>
+<p><strong>Using <code>writeHead</code> (Sets status and headers simultaneously):</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">res.writeHead(200, { 
+    'Content-Type': 'application/json',
+    'X-Powered-By': 'Node.js' 
+});
+</code></pre></div></p>
+<p><strong>Common Content-Types:</strong></p>
+<ul>
+<li><code>text/html</code>: HTML documents.</li>
+<li><code>text/plain</code>: Plain text.</li>
+<li><code>application/json</code>: JSON data (standard for APIs).</li>
+</ul>
+<hr/>
+<h2>6. Introducing Express.js</h2>
+<p>Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.</p>
+<h3>Why use Express over raw Node.js?</h3>
+<ol>
+<li><strong>Simplified Routing:</strong> Clean syntax for handling different HTTP verbs and URL paths.</li>
+<li><strong>Middleware:</strong> Easy integration of functions that have access to the request object, response object, and the next middleware function (e.g., authentication, logging).</li>
+<li><strong>Template Engines:</strong> Easy integration with engines like EJS, Pug, or Handlebars.</li>
+<li><strong>Static Files:</strong> Built-in middleware to serve static assets (CSS, images).</li>
+</ol>
+<hr/>
+<h2>7. Installing Express</h2>
+<p>To use Express, it must be installed via the Node Package Manager (NPM) into a project initialized with a <code>package.json</code>.</p>
+<p><strong>Step 1: Initialize project</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">mkdir my-express-app
+cd my-express-app
+npm init -y
+</code></pre></div></p>
+<p><strong>Step 2: Install Express</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">npm install express --save
+</code></pre></div></p>
+<hr/>
+<h2>8. Express Basics: GET and POST</h2>
+<p>Express simplifies request handling by providing methods corresponding to HTTP verbs.</p>
+<h3>Setup</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const express = require('express');
+const app = express();
+const PORT = 3000;
+</code></pre></div></p>
+<h3>GET Request</h3>
+<p>Used to retrieve data.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">app.get('/', (req, res) =&gt; {
+    res.send('Welcome to the Home Page'); // .send() automatically sets Content-Type and ends response
+});
+
+app.get('/users', (req, res) =&gt; {
+    res.json([{ id: 1, name: 'John' }]); // .json() sends JSON response
+});
+</code></pre></div></p>
+<h3>POST Request</h3>
+<p>Used to submit data to be processed to a specified resource.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">app.post('/users', (req, res) =&gt; {
+    // Logic to add a user would go here
+    res.status(201).send('User Created');
+});
+</code></pre></div></p>
+<h3>Starting the Server</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">app.listen(PORT, () =&gt; {
+    console.log(`Express server running on port ${PORT}`);
+});
+</code></pre></div></p>
+<hr/>
+<h2>9. Body-Parser (Handling Request Body)</h2>
+<p>To read data sent in a POST request (e.g., from a form or an API client), the server must parse the body of the request.</p>
+<ul>
+<li><strong>Historically:</strong> <code>body-parser</code> was a separate npm package.</li>
+<li><strong>Currently (Express 4.16.0+):</strong> It is built into Express.</li>
+</ul>
+<h3>Configuration</h3>
+<p>You must configure the middleware <em>before</em> your route definitions.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// To parse JSON payloads (e.g., from React/Vue/Postman)
+app.use(express.json());
+
+// To parse URL-encoded data (e.g., standard HTML forms)
+app.use(express.urlencoded({ extended: true }));
+</code></pre></div></p>
+<h3>Accessing Data</h3>
+<p>Once parsed, the data is available in <code>req.body</code>.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">app.post('/login', (req, res) =&gt; {
+    const username = req.body.username;
+    const password = req.body.password;
+    console.log(`Attempting login for: ${username}`);
+    res.send('Login received');
+});
+</code></pre></div></p>
+<hr/>
+<h2>10. Modular Routing with <code>express.Router</code></h2>
+<p>As an application grows, putting all routes in the main <code>app.js</code> file becomes unmanageable. <code>express.Router</code> creates modular, mountable route handlers (often called "mini-apps").</p>
+<h3>Creating a Router Module (<code>routes/users.js</code>)</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const express = require('express');
+const router = express.Router();
+
+// Define routes relative to the mount path
+router.get('/', (req, res) =&gt; {
+    res.send('Get all users');
+});
+
+router.get('/:id', (req, res) =&gt; {
+    res.send(`Get user with ID: ${req.params.id}`);
+});
+
+module.exports = router;
+</code></pre></div></p>
+<h3>Mounting the Router (<code>app.js</code>)</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const userRoutes = require('./routes/users');
+
+// All routes in userRoutes will be prefixed with /users
+// e.g., /users/ and /users/:id
+app.use('/users', userRoutes);
+</code></pre></div></p>
+<hr/>
+<h2>11. Input Validation with <code>express-validator</code></h2>
+<p><code>express-validator</code> is a set of Express.js middlewares that wraps <code>validator.js</code>. It allows you to validate and sanitize inputs (body, query, params) to ensure data integrity and security.</p>
+<h3>Installation</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">npm install express-validator
+</code></pre></div></p>
+<h3>Implementation Workflow</h3>
+<ol>
+<li>Import <code>check</code> or <code>body</code> and <code>validationResult</code>.</li>
+<li>Pass validation chains as middleware to the route.</li>
+<li>Check for errors inside the route handler.</li>
+</ol>
+<h3>Example Code</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">const { body, validationResult } = require('express-validator');
+
+app.post('/register', [
+    // 1. Define Rules
+    body('email').isEmail().withMessage('Must be a valid email'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be 6+ chars'),
+    body('age').optional().isInt({ min: 18 }).withMessage('Must be 18 or older')
+], (req, res) =&gt; {
+    
+    // 2. Check for Validation Errors
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        // Return 400 Bad Request with the error array
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    // 3. Proceed if valid
+    const { email, password } = req.body;
+    res.send(`User registered with email: ${email}`);
+});
+</code></pre></div></p>
+<h3>Common Validators</h3>
+<ul>
+<li><code>isEmail()</code>: Checks for valid email format.</li>
+<li><code>isLength({ min, max })</code>: Checks string length.</li>
+<li><code>trim()</code>: Sanitizer that removes whitespace.</li>
+<li><code>escape()</code>: Sanitizer that replaces HTML characters (prevents XSS).</li>
+<li><code>normalizeEmail()</code>: Sanitizer that canonicalizes the email address.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT222/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT222/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

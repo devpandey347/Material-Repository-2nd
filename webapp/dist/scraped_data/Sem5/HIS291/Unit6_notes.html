@@ -1,0 +1,613 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/HIS291">HIS291</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 6</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/HIS291">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/HIS291/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/HIS291/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>HIS291</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Ancient Indian art</h1>
+<h2>1. The Mathura School of Art</h2>
+<p>The Mathura School of Art represents a pivotal period in Indian art history. Unlike the Gandhara School, which was heavily influenced by Greco-Roman styles, the Mathura School was <strong>completely indigenous</strong> and deeply rooted in Indian traditions.</p>
+<h3>Historical Context</h3>
+<ul>
+<li><strong>Time Period:</strong> Flourished primarily between the 1st and 3rd centuries CE.</li>
+<li><strong>Dynasty:</strong> Reached its zenith under the patronage of the <strong>Kushana rulers</strong> (particularly Kanishka, Huvishka, and Vasudeva).</li>
+<li><strong>Location:</strong> Centered around Mathura (modern-day Uttar Pradesh) on the banks of the Yamuna River.</li>
+</ul>
+<h3>Key Characteristics</h3>
+<ul>
+<li><strong>Material:</strong> The distinguishing feature of this school is the use of <strong>Spotted Red Sandstone</strong>.</li>
+<li><strong>Religious Pluralism:</strong> It produced art for all three major faiths of the time:
+<ol>
+<li><strong>Buddhism:</strong> Images of Buddha and Bodhisattvas.</li>
+<li><strong>Jainism:</strong> Tirthankaras and votive tablets (Ayagapatas).</li>
+<li><strong>Brahmanism (Hinduism):</strong> Images of Vishnu, Shiva, Durga, and Kartikeya.</li>
+</ol></li>
+<li><strong>Style and Aesthetics:</strong>
+<ul>
+<li><strong>Boldness:</strong> Figures are characterized by a sense of power and fleshy physicality.</li>
+<li><strong>Volume:</strong> The sculptures are voluminous and usually carved in high relief (often visible only from the front).</li>
+<li><strong>Attire:</strong> Transparency in clothing is a hallmark feature. The drapery is often depicted as clinging to the body (wet drapery style) but differs from the heavy pleats of Gandhara.</li>
+</ul></li>
+</ul>
+<h3>Evolution of the Buddha Image</h3>
+<p>Mathura is credited (alongside Gandhara) with the creation of the <strong>first anthropomorphic (human) representations of the Buddha</strong>.</p>
+<ul>
+<li><strong>Early Phase:</strong> Buddha is depicted as a <strong>Yaksha</strong> (nature spirit) with a strong, masculine body, broad chest, and open eyes. He typically displays the <strong>Abhaya Mudra</strong> (gesture of fearlessness).</li>
+<li><strong>Iconography:</strong>
+<ul>
+<li>Shaven head (in early stages) or snail-shell curls (later stages).</li>
+<li><strong>Ushnisha:</strong> A cranial bump symbolizing wisdom.</li>
+<li><strong>Urna:</strong> A tuft of hair between the eyebrows.</li>
+<li>Halo: Initially plain with scalloped edges; became elaborately decorated in the Gupta period.</li>
+</ul></li>
+</ul>
+<h3>Secular Art</h3>
+<ul>
+<li>The school produced beautiful figures of <strong>Yakshas and Yakshis</strong> (fertility deities).</li>
+<li>The "Salabhanjika" motif (a woman holding a tree branch) was popular, showcasing feminine beauty with tribhanga (three-bend) posture.</li>
+</ul>
+<hr/>
+<h2>2. Stupa Architecture: Sanchi and Bharhut</h2>
+<p>The Stupa began as a funerary mound holding relics (Sarira) of the Buddha or realized monks. Over time, it evolved into a complex architectural structure symbolizing the cosmos.</p>
+<h3>General Stupa Architecture Terminology</h3>
+<ul>
+<li><strong>Anda:</strong> The hemispherical dome (symbolizing the universe/peace).</li>
+<li><strong>Harmika:</strong> A square railing on top of the dome (symbolizing the abode of gods).</li>
+<li><strong>Chhatra:</strong> A central pillar with umbrellas (symbolizing the Buddha, Dharma, and Sangha).</li>
+<li><strong>Medhi:</strong> The circular terrace for circumambulation (Pradakshina).</li>
+<li><strong>Vedika:</strong> The boundary railing separating the sacred space from the secular world.</li>
+<li><strong>Torana:</strong> Elaborate gateways at the four cardinal points.</li>
+</ul>
+<h3>A. Stupas of Sanchi</h3>
+<p>Located in the Raisen District of Madhya Pradesh, Sanchi is the best-preserved stupa complex.</p>
+<p><strong>Stupa No. 1 (The Great Stupa):</strong></p>
+<ul>
+<li><strong>Origins:</strong> Originally commissioned by <strong>Emperor Ashoka</strong> (3rd Century BCE) as a brick structure.</li>
+<li><strong>Expansion:</strong> Expanded during the <strong>Sunga period</strong> (2nd Century BCE). The brick core was encased in stone, and the size was doubled.</li>
+<li><strong>Toranas (Gateways):</strong> Added during the <strong>Satavahana period</strong> (1st Century BCE – 1st Century CE).
+<ul>
+<li>There are four Toranas (North, South, East, West).</li>
+<li><strong>Artistic Content:</strong> They are densely carved with scenes from the <strong>Jataka Tales</strong> (stories of Buddha's previous lives) and events from the life of the Historical Buddha.</li>
+<li><strong>Aniconism:</strong> In the early Sanchi art, Buddha is <strong>never</strong> shown in human form. He is represented by symbols:
+<ul>
+<li><strong>Lotus/Elephant:</strong> Birth.</li>
+<li><strong>Horse:</strong> The Great Departure (Mahabhinishkramana).</li>
+<li><strong>Bodhi Tree:</strong> Enlightenment (Nirvana).</li>
+<li><strong>Wheel (Dharmachakra):</strong> First Sermon.</li>
+<li><strong>Stupa:</strong> Death (Mahaparinirvana).</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3>B. Stupas of Bharhut</h3>
+<p>Located in Satna District, Madhya Pradesh. Built primarily during the <strong>Sunga Period</strong> (mid-2nd Century BCE).</p>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li><strong>Current State:</strong> largely destroyed; remains are preserved in the Indian Museum, Kolkata.</li>
+<li><strong>Nature of Art:</strong>
+<ul>
+<li><strong>Narrative Style:</strong> Bharhut is famous for its linear narrative reliefs. The stories are often carved in panels with "labels" in Brahmi script identifying the scene (e.g., "The Gift of Jetavana").</li>
+<li><strong>Folk Integration:</strong> Incorporates local folk deities (Yakshas and Yakshis like <em>Chulakoka Devata</em>) into Buddhist mythology to make the religion more accessible.</li>
+<li><strong>Flat Relief:</strong> Unlike the deep carving of Sanchi, Bharhut sculptures are often in low, flat relief, resembling wood carving techniques transferred to stone.</li>
+<li><strong>Humor and Daily Life:</strong> Depicts scenes of daily life, humorous monkeys, and processions, grounding the sacred in the mundane.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>3. Ancient Indian Paintings</h2>
+<p>The tradition of painting in India is ancient, documented in texts like the <em>Chitrasutra</em> of the <em>Vishnudharmottara Purana</em>. The most significant surviving examples are the mural paintings of Ajanta and Bagh.</p>
+<h3>A. Ajanta Caves</h3>
+<p>Located in the Aurangabad district of Maharashtra, carved into a horseshoe-shaped cliff overlooking the Waghora River.</p>
+<p><strong>Phases of Development:</strong></p>
+<ol>
+<li><strong>Early Phase (Satavahana):</strong> 2nd Century BCE – 1st Century CE. (Caves 9, 10). Primarily Hinayana (symbolic worship).</li>
+<li><strong>Later Phase (Vakataka-Gupta):</strong> 5th – 6th Century CE. (Caves 1, 2, 16, 17, 19, 26). Primarily Mahayana (Buddha in human form).</li>
+</ol>
+<p><strong>Technique (Mural):</strong></p>
+<ul>
+<li>Often mistakenly called frescoes.</li>
+<li><strong>Technique:</strong> <em>Fresco Secco</em> (Double layer of plaster applied to dry rock, painted while dry).</li>
+<li><strong>Process:</strong> A layer of clay/cow dung mixed with rice husk, followed by a thin coat of lime plaster.</li>
+</ul>
+<p><strong>Themes and Subject Matter:</strong></p>
+<ul>
+<li><strong>Jataka Tales:</strong> Stories of compassion and morality (e.g., Shibi Jataka, Mahajanaka Jataka).</li>
+<li><strong>Life of Buddha:</strong> Birth, renunciation, enlightenment.</li>
+<li><strong>Ornamentation:</strong> Ceilings decorated with geometric patterns, floral motifs, and flying celestials (Gandharvas/Apsaras).</li>
+</ul>
+<p><strong>Artistic Features:</strong></p>
+<ul>
+<li><strong>Emotion:</strong> Mastery over expression. The "Dying Princess" in Cave 16 is noted for its pathos.</li>
+<li><strong>Perspective:</strong> Use of "rotative perspective" (multiple viewpoints in one scene).</li>
+<li><strong>Famous Paintings:</strong>
+<ul>
+<li><em>Padmapani Bodhisattva (Cave 1):</em> Famous for the calm expression, tribhanga pose, and holding a blue lotus.</li>
+<li><em>Vajrapani Bodhisattva:</em> Depicting power and thunderbolt.</li>
+</ul></li>
+</ul>
+<h3>B. Bagh Caves</h3>
+<p>Located in the Dhar district of Madhya Pradesh on the banks of the Baghini River.</p>
+<p><strong>Context:</strong></p>
+<ul>
+<li><strong>Timeline:</strong> Late 5th – 6th Century CE (Gupta Period).</li>
+<li><strong>Structure:</strong> 9 rock-cut caves (Viharas).</li>
+<li><strong>Current Status:</strong> Heavily dilapidated; many paintings have faded or collapsed.</li>
+</ul>
+<p><strong>Comparison with Ajanta:</strong></p>
+<ul>
+<li><strong>Style:</strong> Very similar to Ajanta (Gupta style) regarding modeling, line quality, and color.</li>
+<li><strong>Thematic Difference:</strong> While Ajanta is strictly religious, Bagh paintings are <strong>more secular and materialistic</strong>.</li>
+<li><strong>Key Scenes:</strong>
+<ul>
+<li><strong>Cave 4 (Rang Mahal):</strong> Contains the famous mural of the <strong>Hallisaka Dance</strong>, depicting women dancing to the rhythm of music, possibly celebrating a festival.</li>
+<li>Processions of elephants and horses, reflecting courtly life.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>Summary Comparison Table: Art Schools</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Mathura School</th>
+<th style="text-align: left;">Sanchi/Bharhut (Stupa Art)</th>
+<th style="text-align: left;">Ajanta/Bagh (Paintings)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Time Period</strong></td>
+<td style="text-align: left;">1st–3rd Century CE</td>
+<td style="text-align: left;">3rd BCE – 1st Century CE</td>
+<td style="text-align: left;">2nd BCE – 6th Century CE</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Material/Medium</strong></td>
+<td style="text-align: left;">Spotted Red Sandstone</td>
+<td style="text-align: left;">Stone Masonry / Relief</td>
+<td style="text-align: left;">Murals (Temper/Fresco Secco)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Key Patronage</strong></td>
+<td style="text-align: left;">Kushanas</td>
+<td style="text-align: left;">Mauryas, Sungas, Satavahanas</td>
+<td style="text-align: left;">Satavahanas, Vakatakas, Guptas</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Religion</strong></td>
+<td style="text-align: left;">Buddhist, Jain, Hindu</td>
+<td style="text-align: left;">Buddhism</td>
+<td style="text-align: left;">Buddhism (Ajanta), Secular (Bagh)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Key Feature</strong></td>
+<td style="text-align: left;">First human Buddha</td>
+<td style="text-align: left;">Narrative Reliefs, Aniconism</td>
+<td style="text-align: left;">Emotional expression, Light &amp; Shade</td>
+</tr>
+</tbody>
+</table> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/HIS291/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,715 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem2/ECE213">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE213/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem2/ECE213/Unit3/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/ECE213/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem2/ECE213/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ECE213</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            2 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Introduction to Combinational Logic Circuits</h1>
+<p>A combinational logic circuit is a system where the output depends only on the present values of the inputs. Unlike sequential circuits, combinational circuits do not have memory or feedback loops.</p>
+<hr/>
+<h2>1. Arithmetic Circuits</h2>
+<p>Arithmetic circuits are essential components of the Arithmetic Logic Unit (ALU) in processors, handling binary addition and subtraction.</p>
+<h3>1.1 Adders</h3>
+<h4>Half Adder</h4>
+<p>A combinational circuit that performs the addition of two single bits.</p>
+<ul>
+<li><strong>Inputs:</strong> A, B</li>
+<li><strong>Outputs:</strong> Sum (S), Carry (C)</li>
+</ul>
+<p><strong>Truth Table:</strong></p>
+<table>
+<thead>
+<tr>
+<th>A</th>
+<th>B</th>
+<th>Sum (S)</th>
+<th>Carry (C)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Boolean Expressions:</strong></p>
+<ul>
+<li><span class="katex-inline" data-math="S = A \oplus B"></span> (XOR operation)</li>
+<li><span class="katex-inline" data-math="C = A \cdot B"></span> (AND operation)</li>
+</ul>
+<h4>Full Adder</h4>
+<p>A circuit capable of adding three bits: two significant bits and a carry bit from a previous stage.</p>
+<ul>
+<li><strong>Inputs:</strong> A, B, <span class="katex-inline" data-math="C_{in}"></span></li>
+<li><strong>Outputs:</strong> Sum (S), <span class="katex-inline" data-math="C_{out}"></span></li>
+</ul>
+<p><strong>Boolean Expressions:</strong></p>
+<ul>
+<li><span class="katex-inline" data-math="S = A \oplus B \oplus C_{in}"></span></li>
+<li><span class="katex-inline" data-math="C_{out} = A \cdot B + C_{in} \cdot (A \oplus B)"></span> OR <span class="katex-inline" data-math="C_{out} = AB + BC_{in} + AC_{in}"></span></li>
+</ul>
+<p><strong>Implementation:</strong> A Full Adder can be constructed using two Half Adders and one OR gate.</p>
+<h3>1.2 Subtractors</h3>
+<h4>Half Subtractor</h4>
+<p>Performs subtraction of two single bits (<span class="katex-inline" data-math="A - B"></span>).</p>
+<ul>
+<li><strong>Inputs:</strong> A (Minuend), B (Subtrahend)</li>
+<li><strong>Outputs:</strong> Difference (D), Borrow (B)</li>
+</ul>
+<p><strong>Boolean Expressions:</strong></p>
+<ul>
+<li><span class="katex-inline" data-math="D = A \oplus B"></span></li>
+<li><span class="katex-inline" data-math="B = \bar{A} \cdot B"></span> (NOT-A AND B)</li>
+</ul>
+<h4>Full Subtractor</h4>
+<p>Performs subtraction involving three bits: Minuend, Subtrahend, and Borrow from the previous stage.</p>
+<ul>
+<li><strong>Inputs:</strong> A, B, <span class="katex-inline" data-math="B_{in}"></span></li>
+<li><strong>Outputs:</strong> Difference (D), <span class="katex-inline" data-math="B_{out}"></span></li>
+</ul>
+<p><strong>Boolean Expressions:</strong></p>
+<ul>
+<li><span class="katex-inline" data-math="D = A \oplus B \oplus B_{in}"></span></li>
+<li><span class="katex-inline" data-math="B_{out} = \bar{A}B + (\bar{A} + B)B_{in}"></span></li>
+</ul>
+<hr/>
+<h2>2. Comparators</h2>
+<p>A Digital Comparator compares the magnitude of two binary numbers (A and B) and generates three outputs based on the relationship between inputs.</p>
+<h3>1-Bit Comparator</h3>
+<ul>
+<li><strong>Outputs:</strong> <span class="katex-inline" data-math="A &gt; B"></span>, <span class="katex-inline" data-math="A = B"></span>, <span class="katex-inline" data-math="A &lt; B"></span></li>
+</ul>
+<p><strong>Logic Expressions:</strong></p>
+<ol>
+<li><strong>Equality (<span class="katex-inline" data-math="A=B"></span>):</strong> <span class="katex-inline" data-math="Y = A \odot B"></span> (XNOR operation). High if inputs are identical.</li>
+<li><strong>Greater Than (<span class="katex-inline" data-math="A&gt;B"></span>):</strong> <span class="katex-inline" data-math="Y = A \cdot \bar{B}"></span> (A is 1, B is 0).</li>
+<li><strong>Less Than (<span class="katex-inline" data-math="A&lt;B"></span>):</strong> <span class="katex-inline" data-math="Y = \bar{A} \cdot B"></span> (A is 0, B is 1).</li>
+</ol>
+<h3>Magnitude Comparator (n-bit)</h3>
+<p>To compare multi-bit numbers, the circuit compares the Most Significant Bit (MSB) first. If MSBs are equal, it moves to the next lower bit. Commercial ICs like the 7485 allow cascading to compare 4-bit, 8-bit, or larger words.</p>
+<hr/>
+<h2>3. Multiplexers and Demultiplexers</h2>
+<h3>3.1 Multiplexer (MUX)</h3>
+<p>Often called a <strong>"Data Selector,"</strong> a MUX directs one of several input lines to a single output line based on the selection lines.</p>
+<ul>
+<li><strong>Relationship:</strong> <span class="katex-inline" data-math="2^n"></span> Input lines require <span class="katex-inline" data-math="n"></span> Selection lines.</li>
+<li><strong>Structure:</strong> AND gates for selection, followed by a large OR gate for the output.</li>
+</ul>
+<p><strong>4-to-1 Multiplexer Example:</strong></p>
+<ul>
+<li><strong>Inputs:</strong> <span class="katex-inline" data-math="I_0, I_1, I_2, I_3"></span></li>
+<li><strong>Select Lines:</strong> <span class="katex-inline" data-math="S_1, S_0"></span></li>
+<li><strong>Output:</strong> <span class="katex-inline" data-math="Y"></span></li>
+</ul>
+<p><strong>Output Expression:</strong><br/>
+<span class="math-display" data-math="Y = \bar{S_1}\bar{S_0}I_0 + \bar{S_1}S_0I_1 + S_1\bar{S_0}I_2 + S_1S_0I_3"></span></p>
+<p><strong>Applications:</strong> Parallel-to-serial conversion, logic function implementation (universal logic circuit).</p>
+<h3>3.2 Demultiplexer (DEMUX)</h3>
+<p>Often called a <strong>"Data Distributor,"</strong> a DEMUX takes a single input and routes it to one of several output lines.</p>
+<ul>
+<li><strong>Relationship:</strong> 1 Input line, <span class="katex-inline" data-math="n"></span> Selection lines, <span class="katex-inline" data-math="2^n"></span> Output lines.</li>
+<li><strong>Logic:</strong> Essentially a Decoder with an Enable input acting as the data line.</li>
+</ul>
+<hr/>
+<h2>4. Decoders and Encoders</h2>
+<h3>4.1 Decoders</h3>
+<p>A decoder converts binary information from <span class="katex-inline" data-math="n"></span> input lines to a maximum of <span class="katex-inline" data-math="2^n"></span> unique output lines. It detects the presence of a specific code.</p>
+<p><strong>3-to-8 Line Decoder:</strong></p>
+<ul>
+<li><strong>Inputs:</strong> x, y, z</li>
+<li><strong>Outputs:</strong> <span class="katex-inline" data-math="D_0"></span> through <span class="katex-inline" data-math="D_7"></span></li>
+<li><strong>Operation:</strong> If input is <code>000</code>, <span class="katex-inline" data-math="D_0"></span> is active. If input is <code>111</code>, <span class="katex-inline" data-math="D_7"></span> is active.</li>
+<li><strong>Active High vs. Low:</strong> Standard decoders usually have <strong>Active Low</strong> outputs (NAND gate based), meaning the selected output goes LOW (0), while all others stay HIGH (1).</li>
+</ul>
+<h3>4.2 Encoders</h3>
+<p>An encoder performs the inverse operation of a decoder. It converts an active input signal into a coded binary output.</p>
+<ul>
+<li><strong>Inputs:</strong> <span class="katex-inline" data-math="2^n"></span> (or fewer)</li>
+<li><strong>Outputs:</strong> <span class="katex-inline" data-math="n"></span> lines</li>
+</ul>
+<p><strong>Priority Encoder:</strong><br/>
+In standard encoders, if two inputs are active simultaneously, the output is undefined. A <strong>Priority Encoder</strong> solves this by assigning priority to inputs. If <span class="katex-inline" data-math="D_3"></span> and <span class="katex-inline" data-math="D_1"></span> are both active, the encoder outputs the binary code for <span class="katex-inline" data-math="D_3"></span> (assuming higher index = higher priority).</p>
+<hr/>
+<h2>5. Parity Circuits</h2>
+<p>Parity is the simplest method for error detection in data transmission.</p>
+<h3>Concepts</h3>
+<ul>
+<li><strong>Even Parity:</strong> The total number of 1s in the data (including the parity bit) must be even.</li>
+<li><strong>Odd Parity:</strong> The total number of 1s in the data must be odd.</li>
+</ul>
+<h3>Parity Generator (Transmitter side)</h3>
+<p>A circuit that takes a data word and generates a parity bit to append to the message.</p>
+<ul>
+<li><strong>Logic:</strong> Implemented using a cascade of XOR gates.
+<ul>
+<li>For 3-bit message (A, B, C) Even Parity: <span class="katex-inline" data-math="P = A \oplus B \oplus C"></span>.</li>
+</ul></li>
+</ul>
+<h3>Parity Checker (Receiver side)</h3>
+<p>Checks the received data stream (Message + Parity Bit).</p>
+<ul>
+<li>If the parity is correct, the output is 0 (Error Free).</li>
+<li>If the parity is incorrect, the output is 1 (Error Detected).</li>
+</ul>
+<hr/>
+<h2>6. Introduction to Logic Families</h2>
+<p>A "Logic Family" refers to a set of techniques used to implement logic within Very Large Scale Integration (VLSI) circuits. Families are categorized by the semiconductor components used (Bipolar vs. Unipolar).</p>
+<h3>Key Performance Parameters</h3>
+<ol>
+<li><strong>Propagation Delay:</strong> The time difference between input application and output change. Lower is better.</li>
+<li><strong>Power Dissipation:</strong> Power consumed by the gate.</li>
+<li><strong>Fan-out:</strong> The maximum number of standard loads (inputs of other gates) an output can drive without signal degradation.</li>
+<li><strong>Noise Margin:</strong> The maximum noise voltage added to an input signal that does not cause a change in the output state.</li>
+<li><strong>Figure of Merit:</strong> Propagation Delay <span class="katex-inline" data-math="\times"></span> Power Dissipation.</li>
+</ol>
+<h3>Classification</h3>
+<ul>
+<li><strong>Bipolar Logic Families:</strong> Use Bipolar Junction Transistors (BJT). Examples: TTL, ECL.</li>
+<li><strong>Unipolar Logic Families:</strong> Use Field Effect Transistors (FET). Examples: PMOS, NMOS, CMOS.</li>
+</ul>
+<hr/>
+<h2>7. Structure and Operations of Logic Families</h2>
+<h3>7.1 TTL (Transistor-Transistor Logic)</h3>
+<p>The most popular logic family for decades (e.g., 7400 series). It utilizes BJTs.</p>
+<p><strong>Structure (Standard TTL NAND Gate):</strong></p>
+<ol>
+<li><strong>Multi-emitter Transistor:</strong> The input stage uses a transistor with multiple emitters (one for each logic input). This acts as an AND gate.</li>
+<li><strong>Phase Splitter:</strong> A transistor in the middle stage provides complementary signals to the output stage.</li>
+<li><strong>Totem-Pole Output:</strong> The output stage consists of two transistors stacked (one pull-up, one pull-down).
+<ul>
+<li><strong>Operation:</strong> When Output is High, the upper transistor is ON, lower is OFF. When Output is Low, lower is ON, upper is OFF. This reduces power and increases speed compared to passive resistor loads.</li>
+</ul></li>
+</ol>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>Floating inputs are treated as Logic High.</li>
+<li>Fast switching speed.</li>
+<li>Moderate power consumption.</li>
+</ul>
+<h3>7.2 MOS Logic (NMOS / PMOS)</h3>
+<p>Uses Metal-Oxide-Semiconductor Field Effect Transistors.</p>
+<ul>
+<li><strong>NMOS:</strong> Uses N-channel MOSFETs. Electrons are charge carriers. Faster than PMOS but historically slower than bipolar.</li>
+<li><strong>Structure:</strong> Uses an enhancement-mode NMOS as the switch and a depletion-mode NMOS as the load resistor (active load).</li>
+<li><strong>Advantages:</strong> High packing density (takes up less silicon space than BJT), low cost.</li>
+</ul>
+<h3>7.3 CMOS (Complementary MOS)</h3>
+<p>Currently the dominant technology in modern processors and memories.</p>
+<p><strong>Structure:</strong><br/>
+CMOS combines NMOS and PMOS transistors in complementary pairs.</p>
+<ul>
+<li><strong>Inverter Example:</strong>
+<ul>
+<li><strong>Top Transistor:</strong> PMOS (Source connected to <span class="katex-inline" data-math="V_{DD}"></span>).</li>
+<li><strong>Bottom Transistor:</strong> NMOS (Source connected to Ground).</li>
+<li><strong>Gates:</strong> Connected together as Input.</li>
+<li><strong>Drains:</strong> Connected together as Output.</li>
+</ul></li>
+</ul>
+<p><strong>Operation:</strong></p>
+<ol>
+<li><strong>Input = 0 (Low):</strong>
+<ul>
+<li>NMOS is OFF (Open).</li>
+<li>PMOS is ON (Closed).</li>
+<li>Output connects to <span class="katex-inline" data-math="V_{DD}"></span> (High).</li>
+</ul></li>
+<li><strong>Input = 1 (High):</strong>
+<ul>
+<li>NMOS is ON (Closed).</li>
+<li>PMOS is OFF (Open).</li>
+<li>Output connects to Ground (Low).</li>
+</ul></li>
+</ol>
+<p><strong>Key Advantage - Power:</strong><br/>
+In CMOS, the NMOS and PMOS are never ON simultaneously during a steady state. Therefore, there is <strong>almost zero static power dissipation</strong>. Power is only consumed during switching (dynamic power).</p>
+<p><strong>Comparison Summary:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">TTL</th>
+<th style="text-align: left;">CMOS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Component</strong></td>
+<td style="text-align: left;">Bipolar Transistor</td>
+<td style="text-align: left;">FET (PMOS + NMOS)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Power Consumption</strong></td>
+<td style="text-align: left;">High</td>
+<td style="text-align: left;">Very Low (Static)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Noise Immunity</strong></td>
+<td style="text-align: left;">Moderate</td>
+<td style="text-align: left;">High</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Packing Density</strong></td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Very High</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Speed</strong></td>
+<td style="text-align: left;">Fast</td>
+<td style="text-align: left;">Moderate to Fast (Modern)</td>
+</tr>
+</tbody>
+</table> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem2/ECE213/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem2/ECE213/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

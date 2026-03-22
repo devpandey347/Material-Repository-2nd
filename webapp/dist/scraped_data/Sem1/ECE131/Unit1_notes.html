@@ -1,0 +1,654 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem1/ECE131">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem1/ECE131/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem1/ECE131/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ECE131</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Fundamentals of D.C. Circuits</h1>
+<h2>1. Basic Circuit Variables and Elements</h2>
+<h3>Voltage (Potential Difference)</h3>
+<ul>
+<li><strong>Definition:</strong> The work done (energy required) to move a unit positive charge from one point to another in an electric field.</li>
+<li><strong>Symbol:</strong> <span class="katex-inline" data-math="V"></span> or <span class="katex-inline" data-math="v"></span></li>
+<li><strong>Unit:</strong> Volts (<span class="katex-inline" data-math="V"></span>) or Joules/Coulomb (<span class="katex-inline" data-math="J/C"></span>).</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V = \frac{dW}{dq}"></span></li>
+</ul>
+<h3>Current</h3>
+<ul>
+<li><strong>Definition:</strong> The rate of flow of electric charge through a conductor's cross-sectional area.</li>
+<li><strong>Symbol:</strong> <span class="katex-inline" data-math="I"></span> or <span class="katex-inline" data-math="i"></span></li>
+<li><strong>Unit:</strong> Amperes (<span class="katex-inline" data-math="A"></span>) or Coulombs/second (<span class="katex-inline" data-math="C/s"></span>).</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="I = \frac{dq}{dt}"></span></li>
+<li><strong>Direction:</strong>
+<ul>
+<li><strong>Conventional Current:</strong> Flows from positive to negative potential (direction of positive charge flow).</li>
+<li><strong>Electron Flow:</strong> Flows from negative to positive potential (actual flow of electrons).</li>
+</ul></li>
+</ul>
+<h3>Power and Energy</h3>
+<ul>
+<li><strong>Power (<span class="katex-inline" data-math="P"></span>):</strong> The time rate of expending or absorbing energy.
+<ul>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="P = \frac{dW}{dt} = \frac{dW}{dq} \cdot \frac{dq}{dt} = V \cdot I"></span></li>
+<li><strong>Unit:</strong> Watts (<span class="katex-inline" data-math="W"></span>).</li>
+<li><strong>Sign Convention:</strong> If current enters the positive terminal of an element, power is absorbed (Load). If current leaves the positive terminal, power is delivered (Source).</li>
+</ul></li>
+<li><strong>Energy (<span class="katex-inline" data-math="W"></span> or <span class="katex-inline" data-math="E"></span>):</strong> The capacity to do work.
+<ul>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="W = \int P \, dt"></span></li>
+<li><strong>Unit:</strong> Joules (<span class="katex-inline" data-math="J"></span>) or Kilowatt-hour (<span class="katex-inline" data-math="kWh"></span>).</li>
+<li><strong>Relation:</strong> <span class="katex-inline" data-math="1 \, kWh = 3.6 \times 10^6 \, J"></span>.</li>
+</ul></li>
+</ul>
+<h3>Passive Circuit Parameters</h3>
+<h4>1. Resistance (<span class="katex-inline" data-math="R"></span>)</h4>
+<ul>
+<li><strong>Definition:</strong> The property of a material that opposes the flow of current.</li>
+<li><strong>Unit:</strong> Ohm (<span class="katex-inline" data-math="\Omega"></span>).</li>
+<li><strong>Physical Formula:</strong> <span class="katex-inline" data-math="R = \rho \frac{l}{A}"></span>
+<ul>
+<li><span class="katex-inline" data-math="\rho"></span>: Resistivity (<span class="katex-inline" data-math="\Omega \cdot m"></span>)</li>
+<li><span class="katex-inline" data-math="l"></span>: Length (<span class="katex-inline" data-math="m"></span>)</li>
+<li><span class="katex-inline" data-math="A"></span>: Cross-sectional area (<span class="katex-inline" data-math="m^2"></span>)</li>
+</ul></li>
+<li><strong>Conductance (<span class="katex-inline" data-math="G"></span>):</strong> Reciprocal of resistance (<span class="katex-inline" data-math="G = 1/R"></span>). Unit: Siemens (<span class="katex-inline" data-math="S"></span>) or Mho (<span class="katex-inline" data-math="\mho"></span>).</li>
+</ul>
+<h4>2. Inductance (<span class="katex-inline" data-math="L"></span>)</h4>
+<ul>
+<li><strong>Definition:</strong> The property of a circuit element to store energy in the form of a magnetic field. It opposes changes in current.</li>
+<li><strong>Unit:</strong> Henry (<span class="katex-inline" data-math="H"></span>).</li>
+<li><strong>Voltage-Current Relation:</strong> <span class="katex-inline" data-math="v = L \frac{di}{dt}"></span></li>
+<li><strong>DC Behavior:</strong> In a steady DC circuit (where current is constant), <span class="katex-inline" data-math="\frac{di}{dt} = 0"></span>, so voltage across an inductor is 0. It acts as a <strong>Short Circuit</strong>.</li>
+<li><strong>Energy Stored:</strong> <span class="katex-inline" data-math="E = \frac{1}{2} L I^2"></span></li>
+</ul>
+<h4>3. Capacitance (<span class="katex-inline" data-math="C"></span>)</h4>
+<ul>
+<li><strong>Definition:</strong> The property of a circuit element to store energy in the form of an electric field. It opposes changes in voltage.</li>
+<li><strong>Unit:</strong> Farad (<span class="katex-inline" data-math="F"></span>).</li>
+<li><strong>Current-Voltage Relation:</strong> <span class="katex-inline" data-math="i = C \frac{dv}{dt}"></span></li>
+<li><strong>DC Behavior:</strong> In a steady DC circuit (voltage is constant), <span class="katex-inline" data-math="\frac{dv}{dt} = 0"></span>, so current through a capacitor is 0. It acts as an <strong>Open Circuit</strong>.</li>
+<li><strong>Energy Stored:</strong> <span class="katex-inline" data-math="E = \frac{1}{2} C V^2"></span></li>
+</ul>
+<hr/>
+<h2>2. Fundamental Laws</h2>
+<h3>Ohm’s Law</h3>
+<ul>
+<li><strong>Statement:</strong> The current flowing through a metallic conductor is directly proportional to the potential difference across its ends, provided physical conditions (temperature, strain, etc.) remain constant.</li>
+<li><strong>Formula:</strong> <span class="katex-inline" data-math="V = I \cdot R"></span></li>
+<li><strong>Limitations:</strong> Not applicable to non-linear devices (diodes, transistors) or electrolytes.</li>
+</ul>
+<h3>Kirchhoff’s Laws</h3>
+<h4>1. Kirchhoff’s Current Law (KCL)</h4>
+<ul>
+<li><strong>Principle:</strong> Law of Conservation of Charge.</li>
+<li><strong>Statement:</strong> The algebraic sum of currents meeting at a junction (node) is zero.</li>
+<li><strong>Mathematically:</strong> <span class="katex-inline" data-math="\sum I_{in} = \sum I_{out}"></span> or <span class="katex-inline" data-math="\sum I = 0"></span>.</li>
+</ul>
+<h4>2. Kirchhoff’s Voltage Law (KVL)</h4>
+<ul>
+<li><strong>Principle:</strong> Law of Conservation of Energy.</li>
+<li><strong>Statement:</strong> The algebraic sum of all voltages (voltage drops and voltage rises) around a closed loop or mesh is zero.</li>
+<li><strong>Mathematically:</strong> <span class="katex-inline" data-math="\sum V_{rises} = \sum V_{drops}"></span> or <span class="katex-inline" data-math="\sum V = 0"></span>.</li>
+<li><strong>Sign Convention (Standard):</strong>
+<ul>
+<li>Moving from <span class="katex-inline" data-math="-"></span> to <span class="katex-inline" data-math="+"></span> is a <strong>Rise</strong> (<span class="katex-inline" data-math="+V"></span>).</li>
+<li>Moving from <span class="katex-inline" data-math="+"></span> to <span class="katex-inline" data-math="-"></span> is a <strong>Drop</strong> (<span class="katex-inline" data-math="-V"></span>).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>3. Circuit Sources</h2>
+<h3>Independent Sources</h3>
+<ul>
+<li>Does not depend on any other voltage or current in the circuit.</li>
+<li><strong>Ideal Voltage Source:</strong> Maintains constant terminal voltage regardless of load current. Internal resistance <span class="katex-inline" data-math="R_{int} = 0"></span>.</li>
+<li><strong>Ideal Current Source:</strong> Maintains constant output current regardless of load voltage. Internal resistance <span class="katex-inline" data-math="R_{int} = \infty"></span>.</li>
+</ul>
+<h3>Dependent (Controlled) Sources</h3>
+<ul>
+<li>Magnitude depends on a voltage or current elsewhere in the circuit. Denoted by a diamond shape.
+<ol>
+<li><strong>Voltage Controlled Voltage Source (VCVS):</strong> <span class="katex-inline" data-math="V = \mu V_x"></span></li>
+<li><strong>Current Controlled Voltage Source (CCVS):</strong> <span class="katex-inline" data-math="V = r I_x"></span></li>
+<li><strong>Voltage Controlled Current Source (VCCS):</strong> <span class="katex-inline" data-math="I = g V_x"></span></li>
+<li><strong>Current Controlled Current Source (CCCS):</strong> <span class="katex-inline" data-math="I = \beta I_x"></span></li>
+</ol></li>
+</ul>
+<hr/>
+<h2>4. Intuitive Methods of Circuit Analysis</h2>
+<h3>Series Circuits</h3>
+<ul>
+<li>Components are connected end-to-end.</li>
+<li><strong>Current:</strong> Same through all components (<span class="katex-inline" data-math="I_{total} = I_1 = I_2"></span>).</li>
+<li><strong>Voltage:</strong> Adds up (<span class="katex-inline" data-math="V_{total} = V_1 + V_2"></span>).</li>
+<li><strong>Equivalent Resistance:</strong> <span class="katex-inline" data-math="R_{eq} = R_1 + R_2 + \dots + R_n"></span></li>
+</ul>
+<h3>Parallel Circuits</h3>
+<ul>
+<li>Components are connected across the same two nodes.</li>
+<li><strong>Voltage:</strong> Same across all components (<span class="katex-inline" data-math="V_{total} = V_1 = V_2"></span>).</li>
+<li><strong>Current:</strong> Adds up (<span class="katex-inline" data-math="I_{total} = I_1 + I_2"></span>).</li>
+<li><strong>Equivalent Resistance:</strong> <span class="katex-inline" data-math="\frac{1}{R_{eq}} = \frac{1}{R_1} + \frac{1}{R_2} + \dots + \frac{1}{R_n}"></span>
+<ul>
+<li>Special case for two resistors: <span class="katex-inline" data-math="R_{eq} = \frac{R_1 R_2}{R_1 + R_2}"></span></li>
+</ul></li>
+</ul>
+<h3>Voltage Division Rule (VDR)</h3>
+<ul>
+<li>Used for series circuits to find voltage across a specific resistor without calculating current first.</li>
+<li>Voltage across <span class="katex-inline" data-math="R_x"></span>:<br/>
+<span class="math-display" data-math="V_x = V_{total} \times \frac{R_x}{R_{total}}"></span></li>
+</ul>
+<h3>Current Division Rule (CDR)</h3>
+<ul>
+<li>Used for parallel circuits to find current through a specific branch.</li>
+<li><strong>General Formula:</strong> Current through branch <span class="katex-inline" data-math="x"></span>:<br/>
+<span class="math-display" data-math="I_x = I_{total} \times \frac{R_{equivalent}}{R_x}"></span></li>
+<li><strong>Two Resistor Specific Formula:</strong> Current through <span class="katex-inline" data-math="R_1"></span>:<br/>
+<span class="math-display" data-math="I_1 = I_{total} \times \frac{R_2}{R_1 + R_2}"></span></li>
+</ul>
+<h3>Star-Delta (<span class="katex-inline" data-math="\text{Y}-\Delta"></span>) Transformation</h3>
+<p>Used to simplify bridge circuits or networks that are neither series nor parallel.</p>
+<h4>Delta (<span class="katex-inline" data-math="\Delta"></span> or <span class="katex-inline" data-math="\pi"></span>) to Star (<span class="katex-inline" data-math="\text{Y}"></span> or <span class="katex-inline" data-math="\text{T}"></span>)</h4>
+<p>To find resistance <span class="katex-inline" data-math="R_A"></span> in the Star network (connected to node A):<br/>
+<span class="math-display" data-math="R_A = \frac{R_{AB} \cdot R_{AC}}{R_{AB} + R_{BC} + R_{AC}}"></span><br/>
+<em>Mnemonic: Product of adjacent arms divided by sum of all arms.</em></p>
+<h4>Star (<span class="katex-inline" data-math="\text{Y}"></span> or <span class="katex-inline" data-math="\text{T}"></span>) to Delta (<span class="katex-inline" data-math="\Delta"></span> or <span class="katex-inline" data-math="\pi"></span>)</h4>
+<p>To find resistance <span class="katex-inline" data-math="R_{AB}"></span> in the Delta network (between nodes A and B):<br/>
+<span class="math-display" data-math="R_{AB} = \frac{R_A R_B + R_B R_C + R_C R_A}{R_C}"></span><br/>
+<em>Mnemonic: Sum of products of all pairs divided by the opposite arm.</em></p>
+<hr/>
+<h2>5. Systematic Circuit Analysis</h2>
+<h3>Mesh Analysis</h3>
+<ul>
+<li><strong>Based on:</strong> KVL.</li>
+<li><strong>Applicability:</strong> Only for Planar circuits (circuits that can be drawn without crossing lines).</li>
+<li><strong>Steps:</strong>
+<ol>
+<li>Identify meshes (loops) and assign mesh currents (usually clockwise: <span class="katex-inline" data-math="I_1, I_2"></span>).</li>
+<li>Apply KVL to each mesh to generate linear equations.</li>
+<li>Solve the simultaneous equations to find mesh currents.</li>
+</ol></li>
+<li><strong>Supermesh:</strong> Occurs when a current source (independent or dependent) is shared between two meshes. Combine the meshes and write a constraint equation for the current source.</li>
+</ul>
+<h3>Nodal Analysis</h3>
+<ul>
+<li><strong>Based on:</strong> KCL.</li>
+<li><strong>Applicability:</strong> Planar and Non-planar circuits.</li>
+<li><strong>Steps:</strong>
+<ol>
+<li>Identify principal nodes. Select one as the Reference/Ground Node (<span class="katex-inline" data-math="V=0"></span>).</li>
+<li>Assign voltages (<span class="katex-inline" data-math="V_1, V_2"></span>) to remaining nodes relative to ground.</li>
+<li>Apply KCL at each non-reference node (Sum of currents leaving = 0).</li>
+<li>Solve simultaneous equations for node voltages.</li>
+</ol></li>
+<li><strong>Supernode:</strong> Occurs when a voltage source is connected between two non-reference nodes. Treat the two nodes as one generalized node for KCL and write a constraint equation (<span class="katex-inline" data-math="V_1 - V_2 = V_{source}"></span>).</li>
+</ul>
+<hr/>
+<h2>6. Network Theorems</h2>
+<h3>Superposition Theorem</h3>
+<ul>
+<li><strong>Statement:</strong> In a linear, bilateral network containing multiple sources, the response (current or voltage) in any element is the algebraic sum of the responses caused by each source acting alone.</li>
+<li><strong>Procedure:</strong>
+<ol>
+<li>Activate one source at a time.</li>
+<li><strong>Deactivate other sources:</strong>
+<ul>
+<li>Voltage Sources <span class="katex-inline" data-math="\rightarrow"></span> Short Circuit (<span class="katex-inline" data-math="0V"></span>).</li>
+<li>Current Sources <span class="katex-inline" data-math="\rightarrow"></span> Open Circuit (<span class="katex-inline" data-math="0A"></span>).</li>
+</ul></li>
+<li>Calculate the response for the active source.</li>
+<li>Sum individual responses.</li>
+</ol></li>
+<li><strong>Note:</strong> Cannot be used to calculate Power directly (because <span class="katex-inline" data-math="P=I^2R"></span> is non-linear).</li>
+</ul>
+<h3>Thevenin’s Theorem</h3>
+<ul>
+<li><strong>Statement:</strong> Any linear, bilateral, two-terminal network can be replaced by an equivalent circuit consisting of a single voltage source (<span class="katex-inline" data-math="V_{th}"></span>) in series with a single resistor (<span class="katex-inline" data-math="R_{th}"></span>).</li>
+<li><strong>Procedure:</strong>
+<ol>
+<li>Remove the load resistor <span class="katex-inline" data-math="R_L"></span>.</li>
+<li><strong>Find <span class="katex-inline" data-math="V_{th}"></span>:</strong> Calculate the Open Circuit Voltage across the terminals.</li>
+<li><strong>Find <span class="katex-inline" data-math="R_{th}"></span>:</strong> Turn off all independent sources (Voltage <span class="katex-inline" data-math="\rightarrow"></span> Short, Current <span class="katex-inline" data-math="\rightarrow"></span> Open) and calculate equivalent resistance looking into the terminals.</li>
+<li>Draw the equivalent circuit and reconnect <span class="katex-inline" data-math="R_L"></span>.</li>
+<li>Load Current: <span class="katex-inline" data-math="I_L = \frac{V_{th}}{R_{th} + R_L}"></span></li>
+</ol></li>
+</ul>
+<h3>Norton’s Theorem</h3>
+<ul>
+<li><strong>Statement:</strong> Any linear, bilateral, two-terminal network can be replaced by an equivalent circuit consisting of a single current source (<span class="katex-inline" data-math="I_N"></span>) in parallel with a single resistor (<span class="katex-inline" data-math="R_N"></span>).</li>
+<li><strong>Procedure:</strong>
+<ol>
+<li>Remove the load resistor <span class="katex-inline" data-math="R_L"></span>.</li>
+<li><strong>Find <span class="katex-inline" data-math="I_N"></span>:</strong> Place a short circuit across the terminals and calculate the Short Circuit Current (<span class="katex-inline" data-math="I_{sc}"></span>).</li>
+<li><strong>Find <span class="katex-inline" data-math="R_N"></span>:</strong> Same procedure as <span class="katex-inline" data-math="R_{th}"></span> (Norton Resistance = Thevenin Resistance).</li>
+<li>Draw equivalent circuit with <span class="katex-inline" data-math="R_L"></span> in parallel.</li>
+<li>Load Current (via CDR): <span class="katex-inline" data-math="I_L = I_N \times \frac{R_N}{R_N + R_L}"></span></li>
+</ol></li>
+</ul>
+<h3>Maximum Power Transfer Theorem</h3>
+<ul>
+<li><strong>Statement:</strong> A DC source delivers maximum power to a variable load resistor when the load resistance equals the internal resistance of the source (Thevenin Resistance).</li>
+<li><strong>Condition:</strong> <span class="katex-inline" data-math="R_L = R_{th}"></span> (or <span class="katex-inline" data-math="R_S"></span>).</li>
+<li><strong>Maximum Power Formula:</strong><br/>
+<span class="math-display" data-math="P_{max} = \frac{V_{th}^2}{4 R_{th}}"></span></li>
+<li><strong>Efficiency:</strong> At maximum power transfer, the efficiency of the circuit is exactly <strong>50%</strong>, because equal power is dissipated in the source resistance and the load resistance.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem1/ECE131/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

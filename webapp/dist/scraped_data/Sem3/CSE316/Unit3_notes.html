@@ -1,0 +1,750 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem3/CSE316">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem3/CSE316/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSE316/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem3/CSE316/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE316</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Process Synchronization and Threads</h1>
+<h2>1. Introduction to Process Concepts</h2>
+<h3>Concurrent vs. Co-operating Processes</h3>
+<ul>
+<li><strong>Concurrent Processes:</strong> Processes that execute simultaneously (or virtually simultaneously via time-slicing) on a system. They may or may not interact with each other.</li>
+<li><strong>Independent Processes:</strong> Execution of one does not affect the execution of another.</li>
+<li><strong>Co-operating Processes:</strong> Processes that can affect or be affected by other executing processes. They share resources (logical or physical).
+<ul>
+<li><strong>Reasons for Co-operation:</strong> Information sharing, computation speedup (parallelism), modularity, and convenience.</li>
+</ul></li>
+</ul>
+<h3>Hierarchy of Processes</h3>
+<p>In most OSs, processes are organized hierarchically.</p>
+<ul>
+<li><strong>Parent/Child:</strong> A process creating another process is the <strong>parent</strong>; the created process is the <strong>child</strong>.</li>
+<li><strong>Process Tree:</strong> This creates a tree structure (e.g., the <code>init</code> process in Unix/Linux is the root).</li>
+<li><strong>Resource Sharing Options:</strong>
+<ol>
+<li>Parent and child share all resources.</li>
+<li>Children share a subset of parent’s resources.</li>
+<li>Parent and child share no resources.</li>
+</ol></li>
+<li><strong>Execution Options:</strong>
+<ol>
+<li>Parent and child execute concurrently.</li>
+<li>Parent waits until children terminate.</li>
+</ol></li>
+</ul>
+<h3>Precedence Graph</h3>
+<p>A directed acyclic graph (DAG) used to represent the dependencies and execution order of concurrent processes.</p>
+<ul>
+<li><strong>Nodes:</strong> Represent individual statements or processes (<span class="katex-inline" data-math="S_1, S_2, \dots"></span>).</li>
+<li><strong>Edges:</strong> Represent precedence. An edge from <span class="katex-inline" data-math="S_1 \to S_2"></span> implies <span class="katex-inline" data-math="S_1"></span> must finish before <span class="katex-inline" data-math="S_2"></span> starts.</li>
+<li><strong>Example:</strong> If <span class="katex-inline" data-math="S_1"></span> computes <span class="katex-inline" data-math="a = x + y"></span> and <span class="katex-inline" data-math="S_2"></span> computes <span class="katex-inline" data-math="b = a * z"></span>, <span class="katex-inline" data-math="S_2"></span> depends on <span class="katex-inline" data-math="S_1"></span>.</li>
+</ul>
+<hr/>
+<h2>2. The Critical Section Problem</h2>
+<h3>Definition</h3>
+<p>When multiple co-operating processes access shared data, concurrent access can lead to data inconsistency (Race Condition).</p>
+<ul>
+<li><strong>Critical Section (CS):</strong> A segment of code in a process where it accesses/modifies shared resources (variables, files, tables).</li>
+<li><strong>The Goal:</strong> Protocol design to ensure that when one process is in its CS, no other may be in theirs.</li>
+</ul>
+<h3>Structure of a Process</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">do {
+    entry section      // Request permission to enter
+        critical section
+    exit section       // Announce departure
+        remainder section
+} while (TRUE);
+</code></pre></div></p>
+<h3>Three Requirements for a Solution</h3>
+<ol>
+<li><strong>Mutual Exclusion:</strong> If Process <span class="katex-inline" data-math="P_i"></span> is executing in its critical section, no other processes can be executing in their critical sections.</li>
+<li><strong>Progress:</strong> If no process is executing in its critical section and there exist some processes that wish to enter, only those processes that are not in their remainder sections can participate in the decision, and this selection cannot be postponed indefinitely. (No deadlock).</li>
+<li><strong>Bounded Waiting:</strong> There must be a limit (bound) on the number of times other processes are allowed to enter their critical sections after a process has made a request to enter its critical section and before that request is granted. (No starvation).</li>
+</ol>
+<hr/>
+<h2>3. Solutions to the Critical Section Problem</h2>
+<h3>Classical Two-Process Solution (Peterson’s Algorithm)</h3>
+<p>A software-based solution for two processes (<span class="katex-inline" data-math="P_0"></span> and <span class="katex-inline" data-math="P_1"></span>).</p>
+<ul>
+<li><strong>Variables:</strong>
+<ul>
+<li><code>int turn</code>: Indicates whose turn it is to enter.</li>
+<li><code>boolean flag[2]</code>: Indicates if a process is <em>ready</em> to enter.</li>
+</ul></li>
+</ul>
+<p><strong>Logic for Process <span class="katex-inline" data-math="P_i"></span> (where <span class="katex-inline" data-math="j = 1 - i"></span>):</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">flag[i] = TRUE;
+turn = j;
+while (flag[j] &amp;&amp; turn == j); // Busy wait
+
+// CRITICAL SECTION
+
+flag[i] = FALSE; // Exit section
+</code></pre></div></p>
+<ul>
+<li><em>Mutual Exclusion</em> is preserved because <span class="katex-inline" data-math="P_i"></span> enters only if <code>flag[j] == false</code> or <code>turn == i</code>.</li>
+<li><em>Progress/Bounded Waiting</em> are met because the <code>turn</code> variable prevents strict alternation deadlock.</li>
+</ul>
+<h3>Hardware Primitives for Synchronization</h3>
+<p>Software solutions like Peterson’s are not guaranteed to work on modern architectures due to instruction reordering. Hardware support provides atomic (non-interruptible) instructions.</p>
+<h4>1. TestAndSet</h4>
+<p>An atomic instruction that returns the old value of a memory location and sets it to <code>TRUE</code>.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">boolean TestAndSet(boolean *target) {
+    boolean rv = *target;
+    *target = TRUE;
+    return rv;
+}
+
+// Usage:
+while (TestAndSet(&amp;lock)); // do nothing
+    // critical section
+lock = FALSE;
+</code></pre></div></p>
+<h4>2. CompareAndSwap (CAS)</h4>
+<p>Takes three operands: a memory location, an expected old value, and a new value.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">int CompareAndSwap(int *value, int expected, int new_value) {
+    int temp = *value;
+    if (*value == expected)
+        *value = new_value;
+    return temp;
+}
+</code></pre></div></p>
+<hr/>
+<h2>4. Semaphores</h2>
+<h3>Definition</h3>
+<p>A Semaphore (<span class="katex-inline" data-math="S"></span>) is a synchronization tool in the form of an integer variable that, apart from initialization, is accessed only through two standard atomic operations: <code>wait()</code> and <code>signal()</code>.</p>
+<ul>
+<li>Historically known as <strong>P</strong> (Proberen - to test) and <strong>V</strong> (Verhogen - to increment).</li>
+</ul>
+<h3>Operations</h3>
+<ul>
+<li><strong>wait(S):</strong> Decrements <span class="katex-inline" data-math="S"></span>. If <span class="katex-inline" data-math="S &lt; 0"></span>, the process blocks.</li>
+<li><strong>signal(S):</strong> Increments <span class="katex-inline" data-math="S"></span>. If there are blocked processes, one is woken up.</li>
+</ul>
+<h3>Types</h3>
+<ol>
+<li><strong>Binary Semaphore (Mutex Lock):</strong> Value can range between 0 and 1. Used for mutual exclusion.</li>
+<li><strong>Counting Semaphore:</strong> Value can range over an unrestricted domain. Used to control access to a given number of resources.</li>
+</ol>
+<h3>Implementation (No Busy Waiting)</h3>
+<p>Instead of spinning (busy wait), a process can block itself.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">typedef struct {
+    int value;
+    struct process *list; // Queue of waiting processes
+} semaphore;
+
+wait(semaphore *S) {
+    S-&gt;value--;
+    if (S-&gt;value &lt; 0) {
+        add this process to S-&gt;list;
+        block(); // Context switch
+    }
+}
+
+signal(semaphore *S) {
+    S-&gt;value++;
+    if (S-&gt;value &lt;= 0) {
+        remove a process P from S-&gt;list;
+        wakeup(P); // Move to ready queue
+    }
+}
+</code></pre></div></p>
+<hr/>
+<h2>5. Classical Synchronization Problems</h2>
+<h3>1. The Producer-Consumer Problem (Bounded Buffer)</h3>
+<ul>
+<li><strong>Goal:</strong> Producer generates data into a buffer; Consumer consumes it. Buffer has fixed size <span class="katex-inline" data-math="N"></span>.</li>
+<li><strong>Semaphores:</strong>
+<ul>
+<li><code>mutex</code> = 1 (Binary semaphore for buffer access).</li>
+<li><code>empty</code> = N (Counts empty slots).</li>
+<li><code>full</code> = 0 (Counts full slots).</li>
+</ul></li>
+</ul>
+<p><strong>Producer Code:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">wait(empty);   // Wait for space
+wait(mutex);   // Lock buffer
+// Add item to buffer
+signal(mutex); // Unlock buffer
+signal(full);  // Signal new item available
+</code></pre></div></p>
+<p><strong>Consumer Code:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">wait(full);    // Wait for item
+wait(mutex);   // Lock buffer
+// Remove item from buffer
+signal(mutex); // Unlock buffer
+signal(empty); // Signal space available
+</code></pre></div></p>
+<h3>2. The Readers-Writers Problem</h3>
+<ul>
+<li><strong>Goal:</strong> Allow multiple readers to read simultaneously. Only one writer can access shared data at a time (exclusive access). If a writer is writing, no readers may read.</li>
+<li><strong>Semaphores:</strong>
+<ul>
+<li><code>mutex</code> = 1 (Protects <code>read_count</code>).</li>
+<li><code>wrt</code> = 1 (Protects shared file/data).</li>
+<li><code>int read_count</code> = 0.</li>
+</ul></li>
+</ul>
+<p><strong>Writer Process:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">wait(wrt);
+// WRITING
+signal(wrt);
+</code></pre></div></p>
+<p><strong>Reader Process:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">wait(mutex);
+read_count++;
+if (read_count == 1) wait(wrt); // First reader locks out writers
+signal(mutex);
+
+// READING
+
+wait(mutex);
+read_count--;
+if (read_count == 0) signal(wrt); // Last reader unlocks writers
+signal(mutex);
+</code></pre></div></p>
+<h3>3. The Dining Philosophers Problem</h3>
+<ul>
+<li><strong>Scenario:</strong> 5 philosophers sit at a round table with 5 chopsticks (forks). A philosopher needs 2 forks (left and right) to eat.</li>
+<li><strong>Constraint:</strong> They can only pick up one fork at a time.</li>
+<li><strong>Semaphores:</strong> Array <code>semaphore chopstick[5]</code>, all initialized to 1.</li>
+</ul>
+<p><strong>Naïve Solution (Causes Deadlock):</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">wait(chopstick[i]);         // Pick left
+wait(chopstick[(i+1)%5]);   // Pick right
+// EAT
+signal(chopstick[i]);
+signal(chopstick[(i+1)%5]);
+</code></pre></div></p>
+<ul>
+<li><em>Deadlock:</em> If all 5 pick up their left fork simultaneously, all wait forever for the right fork.</li>
+</ul>
+<p><strong>Deadlock-Free Solutions:</strong></p>
+<ol>
+<li>Allow only 4 philosophers at the table.</li>
+<li>Pick up forks only if both are available (inside a critical section).</li>
+<li><strong>Asymmetric Solution:</strong> Odd philosopher picks left then right; Even philosopher picks right then left.</li>
+</ol>
+<hr/>
+<h2>6. Monitors</h2>
+<h3>Definition</h3>
+<p>A high-level synchronization construct (available in Java, C#) that abstracts away semaphores. It is a class/module/object where only one process can be active within the monitor at any time.</p>
+<h3>Characteristics</h3>
+<ul>
+<li><strong>Automatic Mutual Exclusion:</strong> Procedures inside the monitor are mutually exclusive.</li>
+<li><strong>Shared Data:</strong> Local to the monitor.</li>
+</ul>
+<h3>Condition Variables</h3>
+<p>To allow processes to wait within the monitor, <strong>Condition Variables</strong> (<code>x</code>, <code>y</code>) are used.</p>
+<ul>
+<li><code>x.wait()</code>: The process executing this is suspended and placed in a queue for <code>x</code>. The monitor lock is released.</li>
+<li><code>x.signal()</code>: Resumes exactly one suspended process. If no process is waiting, the signal operation has no effect (unlike semaphores).</li>
+</ul>
+<hr/>
+<h2>7. Threads and Multithreading</h2>
+<h3>Overview</h3>
+<p>A <strong>Thread</strong> (Lightweight Process) is a basic unit of CPU utilization.</p>
+<ul>
+<li><strong>Comprises:</strong> Thread ID, Program Counter (PC), Register set, Stack.</li>
+<li><strong>Shares (with peer threads):</strong> Code section, Data section, OS resources (open files, signals).</li>
+</ul>
+<h3>Benefits</h3>
+<ol>
+<li><strong>Responsiveness:</strong> App continues running even if part of it is blocked (e.g., GUI vs. background calculation).</li>
+<li><strong>Resource Sharing:</strong> Threads share memory naturally (easier than Shared Memory IPC).</li>
+<li><strong>Economy:</strong> Cheaper to create/switch threads than processes (no memory map changes).</li>
+<li><strong>Scalability:</strong> Takes advantage of Multiprocessor architectures.</li>
+</ol>
+<h3>Multithreading Models</h3>
+<p>Mapping between <strong>User Threads</strong> (managed by thread library) and <strong>Kernel Threads</strong> (managed by OS).</p>
+<ol>
+<li>
+<p><strong>Many-to-One Model:</strong></p>
+<ul>
+<li>Many user threads map to one kernel thread.</li>
+<li><em>Pros:</em> Efficient context switching (user space).</li>
+<li><em>Cons:</em> Blocking system call blocks the entire process; no true parallelism on multicore.</li>
+<li><em>Example:</em> Green Threads (Solaris), GNU Portable Threads.</li>
+</ul>
+</li>
+<li>
+<p><strong>One-to-One Model:</strong></p>
+<ul>
+<li>Each user thread maps to a distinct kernel thread.</li>
+<li><em>Pros:</em> True concurrency; blocking one thread doesn't block others.</li>
+<li><em>Cons:</em> Overhead of creating kernel threads.</li>
+<li><em>Example:</em> Linux, Windows, XP/2000.</li>
+</ul>
+</li>
+<li>
+<p><strong>Many-to-Many Model:</strong></p>
+<ul>
+<li>Multiplexes many user threads to a smaller or equal number of kernel threads.</li>
+<li><em>Pros:</em> Best of both worlds (concurrency + efficiency).</li>
+<li><em>Cons:</em> Complex implementation.</li>
+</ul>
+</li>
+</ol>
+<h3>Scheduler Activations</h3>
+<p>A mechanism for communication between the user-thread library and the kernel.</p>
+<ul>
+<li><strong>Problem:</strong> The kernel doesn't know about user threads in Many-to-Many models.</li>
+<li><strong>Solution:</strong> The kernel provides a virtual processor (<strong>LWP</strong> - Light Weight Process) to the application.</li>
+<li><strong>Upcall:</strong> The kernel notifies the application (thread library) about events (e.g., "This processor is about to block") via an upcall handler.</li>
+</ul>
+<h3>Example of Threaded Program (Pseudocode/C-like)</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">C</span></div><pre><code class="language-c">#include &lt;pthread.h&gt;
+#include &lt;stdio.h&gt;
+
+int sum = 0; // Shared data
+
+void *runner(void *param) {
+    int upper = atoi(param);
+    for (int i = 1; i &lt;= upper; i++)
+        sum += i;
+    pthread_exit(0);
+}
+
+int main(int argc, char *argv[]) {
+    pthread_t tid; // Thread ID
+    pthread_attr_t attr; // Thread attributes
+
+    pthread_attr_init(&amp;attr);
+    // Create thread, execute 'runner' function
+    pthread_create(&amp;tid, &amp;attr, runner, argv[1]);
+    
+    // Wait for thread to exit
+    pthread_join(tid, NULL); 
+    
+    printf("Sum = %d\n", sum);
+}
+</code></pre></div><br/>
+<em>Note: In a real scenario, access to <code>sum</code> should be protected by a mutex if multiple threads wrote to it.</em></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem3/CSE316/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem3/CSE316/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

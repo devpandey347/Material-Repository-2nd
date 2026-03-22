@@ -1,0 +1,742 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT252">INT252</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT252">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT252/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT252/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT252</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Refreshing JavaScript and ReactJS installation</h1>
+<h2>1. ES6 Refresher</h2>
+<p>ECMAScript 2015 (ES6) introduced significant features to JavaScript that are essential for modern React development.</p>
+<h3>Variables: <code>let</code>, <code>const</code>, and <code>var</code></h3>
+<ul>
+<li><strong><code>var</code></strong>:
+<ul>
+<li><strong>Scope</strong>: Function scoped. If declared outside a function, it is globally scoped.</li>
+<li><strong>Hoisting</strong>: Variables are hoisted and initialized with <code>undefined</code>.</li>
+<li><strong>Re-declaration</strong>: Can be re-declared and updated.</li>
+</ul></li>
+<li><strong><code>let</code></strong>:
+<ul>
+<li><strong>Scope</strong>: Block scoped (only exists within the <code>{}</code> block where it is defined).</li>
+<li><strong>Hoisting</strong>: Hoisted but <strong>not</strong> initialized (Temporal Dead Zone).</li>
+<li><strong>Re-declaration</strong>: Can be updated but <strong>not</strong> re-declared in the same scope.</li>
+</ul></li>
+<li><strong><code>const</code></strong>:
+<ul>
+<li><strong>Scope</strong>: Block scoped.</li>
+<li><strong>Behavior</strong>: Constant reference. The identifier cannot be reassigned. However, if the value is an object or array, its properties/elements can still be modified.</li>
+</ul></li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">if (true) {
+  var a = 1;
+  let b = 2;
+  const c = 3;
+}
+console.log(a); // 1
+// console.log(b); // ReferenceError
+// console.log(c); // ReferenceError
+</code></pre></div></p>
+<h3>Arrow Functions</h3>
+<p>A concise syntax for writing function expressions.</p>
+<ul>
+<li><strong>Syntax</strong>: Removes the <code>function</code> keyword.</li>
+<li><strong>Implicit Return</strong>: If the function body is a single expression, brackets <code>{}</code> and the <code>return</code> keyword can be omitted.</li>
+<li><strong><code>this</code> keyword</strong>: Arrow functions do not have their own <code>this</code>. They inherit <code>this</code> from the surrounding code (lexical scoping). This is crucial in React class components (though less relevant in functional components).</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// Traditional
+function add(a, b) {
+  return a + b;
+}
+
+// Arrow Function (Explicit Return)
+const add = (a, b) =&gt; {
+  return a + b;
+};
+
+// Arrow Function (Implicit Return)
+const multiply = (a, b) =&gt; a * b;
+</code></pre></div></p>
+<h3>Classes</h3>
+<p>Syntactic sugar over JavaScript's existing prototype-based inheritance. Essential for React Class Components (legacy).</p>
+<ul>
+<li><strong>Constructor</strong>: A special method for creating and initializing an object created with a class.</li>
+<li><strong>Inheritance</strong>: Used via the <code>extends</code> keyword.</li>
+</ul>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">class Person {
+  constructor(name) {
+    this.name = name;
+  }
+  greet() {
+    return `Hello, ${this.name}`;
+  }
+}
+
+class Student extends Person {
+  constructor(name, course) {
+    super(name); // Calls parent constructor
+    this.course = course;
+  }
+}
+</code></pre></div></p>
+<h3>Destructuring</h3>
+<p>Allows unpacking values from arrays or properties from objects into distinct variables.</p>
+<ul>
+<li><strong>Object Destructuring</strong>:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const user = { id: 1, name: 'Alice', age: 25 };
+    const { name, age } = user;
+    // name is 'Alice', age is 25
+    </code></pre></div></li>
+<li><strong>Array Destructuring</strong>:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const colors = ['red', 'green'];
+    const [primary, secondary] = colors;
+    // primary is 'red'
+    </code></pre></div></li>
+</ul>
+<h3>Spread and Rest Operators (<code>...</code>)</h3>
+<ul>
+<li><strong>Spread Operator</strong>: Expands an iterable (like an array) into individual elements. Used heavily in React to copy state immutably.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const oldArr = [1, 2];
+    const newArr = [...oldArr, 3, 4]; // [1, 2, 3, 4]
+    
+    const obj1 = { a: 1 };
+    const obj2 = { ...obj1, b: 2 }; // { a: 1, b: 2 }
+    </code></pre></div></li>
+<li><strong>Rest Operator</strong>: Collects multiple elements into a single array (usually in function arguments).<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    function sum(...numbers) {
+      return numbers.reduce((a, b) =&gt; a + b);
+    }
+    </code></pre></div></li>
+</ul>
+<h3>Modules (Import/Export)</h3>
+<p>JavaScript modules allow breaking code into separate files.</p>
+<ul>
+<li><strong>Named Export</strong>: Can export multiple values. Must be imported with exact names in curly braces.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    // math.js
+    export const add = (a, b) =&gt; a + b;
+    // main.js
+    import { add } from './math';
+    </code></pre></div></li>
+<li><strong>Default Export</strong>: One export per file. Can be imported with any name.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    // user.js
+    export default function User() { ... }
+    // main.js
+    import UserProfile from './user';
+    </code></pre></div></li>
+</ul>
+<hr/>
+<h2>2. Array Methods</h2>
+<p>Modern React relies heavily on array manipulation for rendering lists and managing data.</p>
+<ol>
+<li><strong><code>map()</code></strong>: Creates a new array by applying a function to every element. <strong>Most used method in React for rendering lists.</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const nums = [1, 2, 3];
+    const doubled = nums.map(n =&gt; n * 2); // [2, 4, 6]
+    </code></pre></div></li>
+<li><strong><code>filter()</code></strong>: Creates a new array with all elements that pass the test implemented by the provided function.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const nums = [1, 2, 3, 4];
+    const evens = nums.filter(n =&gt; n % 2 === 0); // [2, 4]
+    </code></pre></div></li>
+<li><strong><code>reduce()</code></strong>: Executes a reducer function on each element, resulting in a single output value.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const nums = [1, 2, 3];
+    const sum = nums.reduce((acc, curr) =&gt; acc + curr, 0); // 6
+    </code></pre></div></li>
+<li><strong><code>forEach()</code></strong>: Executes a provided function once for each array element. Returns <code>undefined</code>. Used for side effects.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    nums.forEach(n =&gt; console.log(n));
+    </code></pre></div></li>
+<li><strong><code>find()</code></strong>: Returns the <strong>value</strong> of the first element that satisfies the provided testing function.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const nums = [5, 12, 8];
+    const result = nums.find(n =&gt; n &gt; 10); // 12
+    </code></pre></div></li>
+<li><strong><code>every()</code></strong>: Tests whether <strong>all</strong> elements in the array pass the test. Returns Boolean.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const nums = [10, 20, 30];
+    const allPositive = nums.every(n =&gt; n &gt; 0); // true
+    </code></pre></div></li>
+<li><strong><code>concat()</code></strong>: Merges two or more arrays. Returns a new array.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const a = [1, 2];
+    const b = [3, 4];
+    const c = a.concat(b); // [1, 2, 3, 4]
+    </code></pre></div></li>
+<li><strong><code>Array.from()</code></strong>: Creates a new, shallow-copied Array instance from an array-like or iterable object.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const str = 'foo';
+    const arr = Array.from(str); // ["f", "o", "o"]
+    </code></pre></div></li>
+<li><strong><code>indexOf()</code></strong>: Returns the first index at which a given element can be found, or -1 if it is not present.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const animals = ['ant', 'bison', 'camel'];
+    console.log(animals.indexOf('bison')); // 1
+    </code></pre></div></li>
+<li><strong><code>reverse()</code></strong>: Reverses an array <strong>in place</strong>. The first array element becomes the last, and the last becomes the first.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">    const arr = [1, 2, 3];
+    arr.reverse(); // arr is now [3, 2, 1]
+    </code></pre></div></li>
+</ol>
+<hr/>
+<h2>3. Introduction to SPA, MPA, and React Framework</h2>
+<h3>SPA (Single Page Application)</h3>
+<ul>
+<li><strong>Definition</strong>: A web application that loads a single HTML page and dynamically updates that page as the user interacts with the app.</li>
+<li><strong>Mechanism</strong>: JavaScript intercepts navigation actions, fetches JSON data from the server, and updates the DOM.</li>
+<li><strong>Pros</strong>: Smoother user experience (no white flash between pages), faster transitions, behaves like a native app.</li>
+<li><strong>Cons</strong>: Initial load can be heavy, SEO requires extra configuration (Server-Side Rendering).</li>
+<li><strong>Examples</strong>: Gmail, Trello, React apps.</li>
+</ul>
+<h3>MPA (Multi-Page Application)</h3>
+<ul>
+<li><strong>Definition</strong>: Traditional web architecture where every interaction requests a new HTML document from the server.</li>
+<li><strong>Mechanism</strong>: The browser fully reloads the page on navigation.</li>
+<li><strong>Pros</strong>: Excellent SEO out of the box, simple to scale.</li>
+<li><strong>Cons</strong>: Slower interaction speed, full page reloads interrupt user experience.</li>
+<li><strong>Examples</strong>: Amazon, eBay (traditional parts), Standard WordPress sites.</li>
+</ul>
+<h3>React Framework (Library)</h3>
+<ul>
+<li><strong>What is it?</strong>: A JavaScript library for building user interfaces, maintained by Meta (Facebook).</li>
+<li><strong>Philosophy</strong>:
+<ul>
+<li><strong>Component-Based</strong>: UI is built by combining small, isolated, reusable pieces of code called components.</li>
+<li><strong>Declarative</strong>: You tell React <em>what</em> the UI should look like based on the state, and React handles <em>how</em> to update the DOM.</li>
+<li><strong>Virtual DOM</strong>: React keeps a lightweight copy of the DOM in memory. When data changes, it compares the Virtual DOM with the real DOM (Diffing) and only updates what changed (Reconciliation).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>4. Installation and Environment</h2>
+<h3>React Environment Prerequisites</h3>
+<p>To run React locally, you need:</p>
+<ol>
+<li><strong>Node.js</strong>: A runtime environment to execute JavaScript outside the browser.</li>
+<li><strong>NPM (Node Package Manager)</strong>: Included with Node.js, used to manage dependencies.</li>
+<li><strong>Code Editor</strong>: VS Code is the industry standard.</li>
+</ol>
+<h3>Installing React</h3>
+<p>There are two primary ways to scaffold a new React project:</p>
+<h4>1. Create React App (CRA)</h4>
+<p>The traditional method recommended for beginners for a long time.</p>
+<ul>
+<li><strong>Command</strong>:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">    npx create-react-app my-app
+    cd my-app
+    npm start
+    </code></pre></div></li>
+<li><strong>Features</strong>: Zero configuration, hides Webpack/Babel logic.</li>
+<li><strong>Cons</strong>: Can be slow to start/build as the project grows.</li>
+</ul>
+<h4>2. Vite (Modern Standard)</h4>
+<p>A build tool that aims to provide a faster and leaner development experience.</p>
+<ul>
+<li><strong>Command</strong>:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">BASH</span></div><pre><code class="language-bash">    npm create vite@latest my-app -- --template react
+    cd my-app
+    npm install
+    npm run dev
+    </code></pre></div></li>
+<li><strong>Features</strong>: Extremely fast server start (uses native ES modules), optimized build.</li>
+</ul>
+<h3>Folder Structure (Standard Vite/CRA)</h3>
+<ul>
+<li><strong><code>node_modules/</code></strong>: Contains all project dependencies.</li>
+<li><strong><code>public/</code></strong>: Static assets. Contains <code>index.html</code> (the single HTML file in SPA).</li>
+<li><strong><code>src/</code></strong>: The main development folder.
+<ul>
+<li><code>App.js</code> or <code>App.jsx</code>: The root component.</li>
+<li><code>main.jsx</code> or <code>index.js</code>: The JavaScript entry point where React attaches to the DOM.</li>
+<li><code>package.json</code>: Lists dependencies and scripts (start, build, test).</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>5. JSX and Component Basics</h2>
+<h3>Understanding Components</h3>
+<p>Components are the building blocks of React.</p>
+<ul>
+<li><strong>Function Components</strong>: JavaScript functions that return JSX. (Modern Standard).</li>
+<li><strong>Class Components</strong>: ES6 classes that extend <code>React.Component</code> and have a <code>render()</code> method. (Legacy).</li>
+</ul>
+<h3>JSX (JavaScript XML)</h3>
+<p>JSX is a syntax extension for JavaScript. It looks like HTML but allows you to write HTML structures within JavaScript files.</p>
+<p><strong>Why use JSX?</strong><br/>
+It visualizes the UI structure within the logic code, making it easier to understand the component's layout.</p>
+<h3><code>React.createElement()</code> vs. JSX</h3>
+<p>Browsers cannot read JSX. It must be compiled (by Babel) into standard JavaScript calls using <code>React.createElement()</code>.</p>
+<p><strong>Using JSX:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">const element = &lt;h1 className="greeting"&gt;Hello, world!&lt;/h1&gt;;
+</code></pre></div></p>
+<p><strong>Using <code>createElement()</code> (What the browser actually receives):</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// Arguments: type, props, ...children
+const element = React.createElement(
+  'h1',
+  { className: 'greeting' },
+  'Hello, world!'
+);
+</code></pre></div></p>
+<p><strong><code>createElement()</code> Arguments:</strong></p>
+<ol>
+<li><strong>type</strong>: The HTML tag string (e.g., 'div', 'h1') or a React Component.</li>
+<li><strong>props</strong>: An object containing attributes (e.g., <code>{id: 'header', className: 'main'}</code>) or <code>null</code>.</li>
+<li><strong>children</strong>: The content between the tags (text, or other elements).</li>
+</ol>
+<h3>JSX Expressions</h3>
+<p>You can embed any valid JavaScript expression inside JSX using curly braces <code>{}</code>.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JSX</span></div><pre><code class="language-jsx">const name = 'John';
+const user = { firstName: 'Jane', lastName: 'Doe' };
+
+const element = (
+  &lt;div&gt;
+    &lt;h1&gt;Hello, {name}&lt;/h1&gt;
+    &lt;p&gt;Full Name: {user.firstName + ' ' + user.lastName}&lt;/p&gt;
+    &lt;p&gt;Math: {2 + 2}&lt;/p&gt;
+    {/* Ternary Operator */}
+    &lt;p&gt;Status: {user.firstName ? 'Active' : 'Inactive'}&lt;/p&gt;
+  &lt;/div&gt;
+);
+</code></pre></div><br/>
+<em>Note: You cannot use statements (like <code>if</code>, <code>for</code>) directly inside <code>{}</code>; use ternary operators or map instead.</em></p>
+<h3>Rendering Elements into DOM</h3>
+<p>To render a React application, we need a root DOM node (usually a <code>div</code> with <code>id="root"</code> in <code>index.html</code>).</p>
+<p><strong>React 18 (Modern Syntax):</strong><br/>
+Uses the Concurrent Mode API.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">// usually in main.jsx or index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+// 1. Select the HTML root element
+const rootElement = document.getElementById('root');
+
+// 2. Create a React Root
+const root = ReactDOM.createRoot(rootElement);
+
+// 3. Render the component
+root.render(
+  &lt;React.StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/React.StrictMode&gt;
+);
+</code></pre></div></p>
+<p><strong>Legacy Syntax (React 17 and older):</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVASCRIPT</span></div><pre><code class="language-javascript">import ReactDOM from 'react-dom';
+ReactDOM.render(&lt;App /&gt;, document.getElementById('root'));
+</code></pre></div></p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT252/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

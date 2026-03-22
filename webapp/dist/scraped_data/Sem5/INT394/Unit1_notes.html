@@ -1,0 +1,605 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT394">INT394</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT394">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT394/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT394/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT394</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Foundations of Machine Learning</h1>
+<h2>1. Introduction to Machine Learning</h2>
+<h3>1.1 Definition</h3>
+<p>Machine Learning (ML) is a subset of artificial intelligence (AI) that focuses on building systems that learn from data, identify patterns, and make decisions with minimal human intervention.</p>
+<p><strong>Standard Definitions:</strong></p>
+<ul>
+<li><strong>Arthur Samuel (1959):</strong> "Field of study that gives computers the ability to learn without being explicitly programmed."</li>
+<li>
+<p><strong>Tom Mitchell (1997) - The Formal Definition:</strong><br/>
+"A computer program is said to learn from experience <strong>E</strong> with respect to some class of tasks <strong>T</strong> and performance measure <strong>P</strong>, if its performance at tasks in <strong>T</strong>, as measured by <strong>P</strong>, improves with experience <strong>E</strong>."</p>
+<ul>
+<li><em>Example (Spam Filter):</em>
+<ul>
+<li><strong>Task (T):</strong> Classifying emails as spam or not spam.</li>
+<li><strong>Experience (E):</strong> Watching you label emails as spam or ham.</li>
+<li><strong>Performance (P):</strong> The percentage of emails correctly classified.</li>
+</ul></li>
+</ul>
+</li>
+</ul>
+<h3>1.2 Need for Machine Learning</h3>
+<p>Traditional programming relies on hard-coded rules (e.g., <code>if-else</code> logic). This approach fails when:</p>
+<ol>
+<li><strong>Tasks are too complex:</strong> Example: Face recognition (cannot write rules for every pixel variation).</li>
+<li><strong>Environments change:</strong> Example: Stock market prediction or malware detection (patterns evolve).</li>
+<li><strong>Human expertise is absent:</strong> Example: Analysis of DNA sequences where patterns are unknown to humans.</li>
+<li><strong>Personalization is required:</strong> Example: Netflix/Amazon recommendation systems unique to every user.</li>
+</ol>
+<h3>1.3 Scope of Machine Learning</h3>
+<ul>
+<li><strong>Computer Vision:</strong> Image classification, object detection, facial recognition.</li>
+<li><strong>Natural Language Processing (NLP):</strong> Translation, sentiment analysis, chatbots (LLMs).</li>
+<li><strong>Healthcare:</strong> Disease diagnosis, drug discovery, personalized medicine.</li>
+<li><strong>Finance:</strong> Fraud detection, credit scoring, algorithmic trading.</li>
+<li><strong>Robotics:</strong> Autonomous navigation, manipulation tasks.</li>
+</ul>
+<hr/>
+<h2>2. Paradigms of Machine Learning</h2>
+<h3>2.1 Supervised Learning</h3>
+<p>The algorithm learns from a <strong>labeled dataset</strong>. The model is trained on input-output pairs <span class="katex-inline" data-math="(x, y)"></span> to learn a mapping function <span class="katex-inline" data-math="f: x \to y"></span>.</p>
+<ul>
+<li><strong>Goal:</strong> Predict the output for new, unseen inputs.</li>
+<li><strong>Types:</strong>
+<ol>
+<li><strong>Regression:</strong> The output variable is continuous (numerical).
+<ul>
+<li><em>Example:</em> Predicting house prices based on square footage.</li>
+</ul></li>
+<li><strong>Classification:</strong> The output variable is categorical (discrete).
+<ul>
+<li><em>Example:</em> Classifying a tumor as malignant or benign (Binary), or classifying handwritten digits 0-9 (Multiclass).</li>
+</ul></li>
+</ol></li>
+<li><strong>Common Algorithms:</strong> Linear Regression, Logistic Regression, Support Vector Machines (SVM), Decision Trees, Neural Networks.</li>
+</ul>
+<h3>2.2 Unsupervised Learning</h3>
+<p>The algorithm learns from an <strong>unlabeled dataset</strong>. The system tries to learn the underlying structure or distribution of the data without specific guidance.</p>
+<ul>
+<li><strong>Goal:</strong> Discover hidden patterns or groupings in data.</li>
+<li><strong>Types:</strong>
+<ol>
+<li><strong>Clustering:</strong> Grouping similar data points together.
+<ul>
+<li><em>Example:</em> Customer segmentation based on purchasing behavior.</li>
+</ul></li>
+<li><strong>Dimensionality Reduction:</strong> Reducing the number of input variables while retaining essential information.
+<ul>
+<li><em>Example:</em> PCA (Principal Component Analysis) for data visualization.</li>
+</ul></li>
+<li><strong>Association:</strong> Discovering rules that describe large portions of data.
+<ul>
+<li><em>Example:</em> Market Basket Analysis ("People who buy bread also buy butter").</li>
+</ul></li>
+</ol></li>
+<li><strong>Common Algorithms:</strong> K-Means Clustering, Hierarchical Clustering, PCA, Apriori.</li>
+</ul>
+<h3>2.3 Reinforcement Learning (RL)</h3>
+<p>An agent interacts with an environment to achieve a goal. The agent learns by trial and error, receiving feedback in the form of <strong>rewards</strong> or <strong>penalties</strong>.</p>
+<ul>
+<li><strong>Components:</strong> Agent, Environment, State, Action, Reward.</li>
+<li><strong>Goal:</strong> Maximize the cumulative reward over time (Policy Optimization).</li>
+<li><strong>Example:</strong> A chess engine playing against itself; a robot learning to walk.</li>
+<li><strong>Distinction:</strong> Unlike supervised learning, feedback is delayed (you might not know a move was bad until you lose the game 50 moves later).</li>
+</ul>
+<hr/>
+<h2>3. Challenges in Machine Learning</h2>
+<ol>
+<li><strong>Insufficient Quantity of Training Data:</strong> Complex problems require thousands or millions of examples.</li>
+<li><strong>Non-Representative Training Data:</strong> If the training data does not reflect the real world, sampling bias occurs.</li>
+<li><strong>Poor Quality Data:</strong> Errors, outliers, and noise in data make it hard for the model to detect the underlying pattern.</li>
+<li><strong>Irrelevant Features:</strong> "Garbage in, garbage out." Success depends on Feature Engineering (selecting the right inputs).</li>
+<li><strong>Overfitting:</strong> The model learns the training data <em>too well</em>, including the noise, and fails to generalize to new data. (Low bias, High variance).</li>
+<li><strong>Underfitting:</strong> The model is too simple to capture the underlying structure of the data. (High bias, Low variance).</li>
+<li><strong>Curse of Dimensionality:</strong> As the number of features (dimensions) grows, the amount of data needed to generalize accurately grows exponentially.</li>
+</ol>
+<hr/>
+<h2>4. Statistical Learning Framework</h2>
+<p>To study ML theoretically, we formalize the learning problem using statistical concepts.</p>
+<h3>4.1 Key Components</h3>
+<ol>
+<li><strong>Domain Set (<span class="katex-inline" data-math="\mathcal{X}"></span>):</strong> The set of all possible inputs (e.g., all possible 28x28 pixel images).</li>
+<li><strong>Label Set (<span class="katex-inline" data-math="\mathcal{Y}"></span>):</strong> The set of all possible outcomes (e.g., <span class="katex-inline" data-math="\{0, 1\}"></span> for binary classification).</li>
+<li><strong>Training Data (<span class="katex-inline" data-math="S"></span>):</strong> A finite sequence of pairs <span class="katex-inline" data-math="\{(x_1, y_1), \dots, (x_m, y_m)\}"></span>.</li>
+<li><strong>Data Distribution (<span class="katex-inline" data-math="\mathcal{D}"></span>):</strong> An unknown probability distribution over <span class="katex-inline" data-math="\mathcal{X}"></span>. We assume data is generated i.i.d. (independently and identically distributed) from <span class="katex-inline" data-math="\mathcal{D}"></span>.</li>
+<li><strong>Labeling Function (<span class="katex-inline" data-math="f"></span>):</strong> The true function <span class="katex-inline" data-math="f: \mathcal{X} \to \mathcal{Y}"></span> such that <span class="katex-inline" data-math="y_i = f(x_i)"></span>. (In probabilistic settings, this is <span class="katex-inline" data-math="P(y|x)"></span>).</li>
+</ol>
+<h3>4.2 The Goal</h3>
+<p>The goal is to find a hypothesis <span class="katex-inline" data-math="h"></span> (a function <span class="katex-inline" data-math="h: \mathcal{X} \to \mathcal{Y}"></span>) that minimizes the error on new data.</p>
+<h3>4.3 Loss Function</h3>
+<p>A measure of the difference between the predicted value and the actual value.<br/>
+<span class="math-display" data-math="L(h(x), y)"></span></p>
+<ul>
+<li><em>0-1 Loss (Classification):</em> <span class="katex-inline" data-math="L = 1"></span> if <span class="katex-inline" data-math="h(x) \neq y"></span>, else $0$.</li>
+<li><em>Squared Loss (Regression):</em> <span class="katex-inline" data-math="L = (h(x) - y)^2"></span>.</li>
+</ul>
+<h3>4.4 True Risk (Generalization Error)</h3>
+<p>The probability that the hypothesis <span class="katex-inline" data-math="h"></span> will make an error on a random sample drawn from distribution <span class="katex-inline" data-math="\mathcal{D}"></span>. This is what we <em>want</em> to minimize.<br/>
+<span class="math-display" data-math="R(h) = \mathbb{E}_{x \sim \mathcal{D}}[L(h(x), f(x))]"></span><br/>
+<em>Problem:</em> We cannot calculate this because we do not know <span class="katex-inline" data-math="\mathcal{D}"></span>.</p>
+<hr/>
+<h2>5. Empirical Risk Minimization (ERM) and Inductive Bias</h2>
+<p>Since we cannot calculate the True Risk (we don't see all future data), we use the training data as a proxy.</p>
+<h3>5.1 Empirical Risk Minimization (ERM)</h3>
+<p>Empirical risk is the average error calculated over the <strong>training set</strong> <span class="katex-inline" data-math="S"></span>.<br/>
+<span class="math-display" data-math="\hat{R}_S(h) = \frac{1}{m} \sum_{i=1}^{m} L(h(x_i), y_i)"></span></p>
+<p><strong>The ERM Principle:</strong> Since we cannot minimize the True Risk directly, we search for the hypothesis <span class="katex-inline" data-math="h"></span> that minimizes the Empirical Risk <span class="katex-inline" data-math="\hat{R}_S(h)"></span>.</p>
+<h3>5.2 The Problem with Pure ERM (Overfitting)</h3>
+<p>If we consider <em>every possible function</em> map, we can find a hypothesis that memorizes the training data perfectly (Empirical Risk = 0) but fails completely on new data (True Risk is high). This is Overfitting.</p>
+<h3>5.3 Inductive Bias</h3>
+<p>To prevent overfitting, we must restrict the set of functions the learner is allowed to choose from. This restriction is called <strong>Inductive Bias</strong>.</p>
+<ul>
+<li><strong>Hypothesis Class (<span class="katex-inline" data-math="\mathcal{H}"></span>):</strong> We restrict our search to a specific class of functions (e.g., "only linear functions" or "only decision trees of depth 5").</li>
+<li><strong>Definition:</strong> Inductive bias refers to the set of assumptions the learner makes to predict outputs for inputs it has not encountered.</li>
+<li><strong>The ERM learner with Inductive Bias:</strong><br/>
+<span class="math-display" data-math="h_{ERM} = \underset{h \in \mathcal{H}}{\text{argmin}} \ \hat{R}_S(h)"></span></li>
+</ul>
+<p><strong>Types of Bias:</strong></p>
+<ol>
+<li><strong>Restriction Bias:</strong> Limiting <span class="katex-inline" data-math="\mathcal{H}"></span> (e.g., assuming the data is linearly separable).</li>
+<li><strong>Preference Bias:</strong> Preferring simpler hypotheses over complex ones (Occam's Razor) within <span class="katex-inline" data-math="\mathcal{H}"></span>.</li>
+</ol>
+<hr/>
+<h2>6. Probably Approximately Correct (PAC) Learning</h2>
+<p>PAC Learning is a theoretical framework introduced by Leslie Valiant (1984) to define what it means for a learning algorithm to "learn" effectively.</p>
+<h3>6.1 The Intuition</h3>
+<p>We cannot expect a learner to produce a hypothesis with <strong>zero error</strong> (approximately correct) with <strong>100% certainty</strong> (probably) because:</p>
+<ol>
+<li>The training sample <span class="katex-inline" data-math="S"></span> is a random subset (we might get unlucky with bad data).</li>
+<li>We generally don't see the whole universe of data.</li>
+</ol>
+<p>Therefore, we demand that the learner creates a hypothesis that is <strong>Probably</strong> (with high probability <span class="katex-inline" data-math="1-\delta"></span>) <strong>Approximately Correct</strong> (with error less than <span class="katex-inline" data-math="\epsilon"></span>).</p>
+<h3>6.2 Formal Definition</h3>
+<p>A hypothesis class <span class="katex-inline" data-math="\mathcal{H}"></span> is <strong>PAC-learnable</strong> if there exists an algorithm <span class="katex-inline" data-math="A"></span> and a polynomial function <span class="katex-inline" data-math="m_{poly}(\dots)"></span> such that:</p>
+<p>For every <span class="katex-inline" data-math="\epsilon &gt; 0"></span> (accuracy parameter) and <span class="katex-inline" data-math="\delta &gt; 0"></span> (confidence parameter), for every distribution <span class="katex-inline" data-math="\mathcal{D}"></span>, and for every target concept <span class="katex-inline" data-math="f"></span>:</p>
+<p>If the algorithm is given <span class="katex-inline" data-math="m"></span> samples where <span class="katex-inline" data-math="m \ge m_{poly}(1/\epsilon, 1/\delta)"></span>, the algorithm produces a hypothesis <span class="katex-inline" data-math="h \in \mathcal{H}"></span> such that:<br/>
+<span class="math-display" data-math="P(\text{True Risk}(h) \le \epsilon) \ge 1 - \delta"></span></p>
+<h3>6.3 Key Parameters</h3>
+<ul>
+<li><strong>Error (<span class="katex-inline" data-math="\epsilon"></span>):</strong> How far off the hypothesis is allowed to be from the truth. If <span class="katex-inline" data-math="\epsilon = 0.05"></span>, we accept 95% accuracy.</li>
+<li><strong>Confidence (<span class="katex-inline" data-math="1 - \delta"></span>):</strong> How sure we are that the hypothesis falls within that error margin. If <span class="katex-inline" data-math="\delta = 0.01"></span>, we are 99% sure.</li>
+<li><strong>Sample Complexity (<span class="katex-inline" data-math="m"></span>):</strong> The number of training examples required to guarantee the PAC bounds.</li>
+</ul>
+<h3>6.4 Implication</h3>
+<p>PAC learning provides the mathematical justification for Machine Learning. It tells us that if we restrict the Hypothesis Class (Inductive Bias) and have enough data (Sample Complexity), we can guarantee generalization.</p>
+<p><strong>Sample Complexity for Finite Hypothesis Classes:</strong><br/>
+For a finite class <span class="katex-inline" data-math="\mathcal{H}"></span>, the number of samples <span class="katex-inline" data-math="m"></span> required to satisfy PAC learning is:<br/>
+<span class="math-display" data-math="m \ge \frac{1}{\epsilon} \left( \ln|\mathcal{H}| + \ln\frac{1}{\delta} \right)"></span></p>
+<ul>
+<li>This formula shows that more complex models (larger <span class="katex-inline" data-math="|\mathcal{H}|"></span>) require more data.</li>
+<li>Higher accuracy (lower <span class="katex-inline" data-math="\epsilon"></span>) requires linearly more data.</li>
+<li>Higher confidence (lower <span class="katex-inline" data-math="\delta"></span>) requires logarithmically more data.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT394/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

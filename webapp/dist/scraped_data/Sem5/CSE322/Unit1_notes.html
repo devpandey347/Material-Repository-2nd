@@ -1,0 +1,649 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/CSE322">CSE322</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/CSE322">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/CSE322/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/CSE322/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/CSE322/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE322</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: FINITE AUTOMATA</h1>
+<h2>1. Basics of Strings and Alphabets</h2>
+<p>Before defining automata, it is essential to understand the mathematical notations regarding data representation.</p>
+<h3>Key Definitions</h3>
+<ul>
+<li><strong>Symbol:</strong> An atomic unit of data (e.g., a character, a digit).</li>
+<li><strong>Alphabet (<span class="katex-inline" data-math="\Sigma"></span>):</strong> A finite, non-empty set of symbols.
+<ul>
+<li><em>Examples:</em> <span class="katex-inline" data-math="\Sigma = \{0, 1\}"></span> (binary), <span class="katex-inline" data-math="\Sigma = \{a, b, c\}"></span> (letters).</li>
+</ul></li>
+<li><strong>String (or Word):</strong> A finite sequence of symbols chosen from some alphabet.
+<ul>
+<li><em>Example:</em> If <span class="katex-inline" data-math="\Sigma = \{0, 1\}"></span>, then $01101$ is a string.</li>
+</ul></li>
+<li><strong>Length of a String (<span class="katex-inline" data-math="|w|"></span>):</strong> The number of symbols in the string.
+<ul>
+<li>If <span class="katex-inline" data-math="w = abc"></span>, then <span class="katex-inline" data-math="|w| = 3"></span>.</li>
+</ul></li>
+<li><strong>Empty String (<span class="katex-inline" data-math="\epsilon"></span> or <span class="katex-inline" data-math="\lambda"></span>):</strong> A string with zero occurrences of symbols.
+<ul>
+<li><span class="katex-inline" data-math="|\epsilon| = 0"></span>.</li>
+<li>Identity property: <span class="katex-inline" data-math="w\epsilon = \epsilon w = w"></span>.</li>
+</ul></li>
+</ul>
+<h3>Powers of an Alphabet</h3>
+<ul>
+<li><span class="katex-inline" data-math="\Sigma^k"></span>: The set of all strings of length <span class="katex-inline" data-math="k"></span> over <span class="katex-inline" data-math="\Sigma"></span>.</li>
+<li><span class="katex-inline" data-math="\Sigma^0 = \{\epsilon\}"></span>.</li>
+<li><span class="katex-inline" data-math="\Sigma^1 = \Sigma"></span>.</li>
+</ul>
+<h3>Kleene Star and Positive Closure</h3>
+<ul>
+<li><strong>Kleene Star (<span class="katex-inline" data-math="\Sigma^*"></span>):</strong> The set of all possible strings over an alphabet <span class="katex-inline" data-math="\Sigma"></span>, including <span class="katex-inline" data-math="\epsilon"></span>.<br/>
+<span class="math-display" data-math="\Sigma^* = \bigcup_{k=0}^{\infty} \Sigma^k = \Sigma^0 \cup \Sigma^1 \cup \Sigma^2 \dots"></span></li>
+<li><strong>Positive Closure (<span class="katex-inline" data-math="\Sigma^+"></span>):</strong> The set of all possible strings over <span class="katex-inline" data-math="\Sigma"></span>, excluding <span class="katex-inline" data-math="\epsilon"></span> (unless <span class="katex-inline" data-math="\epsilon"></span> is explicitly in <span class="katex-inline" data-math="\Sigma"></span>).<br/>
+<span class="math-display" data-math="\Sigma^+ = \bigcup_{k=1}^{\infty} \Sigma^k = \Sigma^* - \{\epsilon\}"></span></li>
+</ul>
+<h3>Language (<span class="katex-inline" data-math="L"></span>)</h3>
+<p>A <strong>Language</strong> is a subset of <span class="katex-inline" data-math="\Sigma^*"></span>. It is a set of strings chosen from <span class="katex-inline" data-math="\Sigma^*"></span>.</p>
+<ul>
+<li><em>Finite Language:</em> <span class="katex-inline" data-math="L = \{ab, aa, baa\}"></span>.</li>
+<li><em>Infinite Language:</em> <span class="katex-inline" data-math="L = \{ a^n b^n \mid n \ge 1 \}"></span>.</li>
+</ul>
+<hr/>
+<h2>2. Definition and Description of a Finite Automaton</h2>
+<p>A <strong>Finite Automaton (FA)</strong> is the simplest abstract computational model. It has a limited amount of memory (states). It processes an input string symbol by symbol and changes its state accordingly.</p>
+<h3>Components of an FA</h3>
+<ol>
+<li><strong>Input Tape:</strong> A linear tape containing the input string.</li>
+<li><strong>Read Head:</strong> Reads one symbol at a time from left to right.</li>
+<li><strong>Finite Control:</strong> Determines the next state based on the current state and the input symbol.</li>
+</ol>
+<h3>Types of Finite Automata</h3>
+<ol>
+<li><strong>Deterministic Finite Automaton (DFA)</strong></li>
+<li><strong>Non-deterministic Finite Automaton (NDFA / NFA)</strong></li>
+<li><strong>NFA with <span class="katex-inline" data-math="\epsilon"></span>-moves (<span class="katex-inline" data-math="\epsilon"></span>-NFA)</strong></li>
+</ol>
+<hr/>
+<h2>3. Transition Systems and Transition Graphs</h2>
+<p>A <strong>Transition System</strong> (or Transition Graph) is a diagrammatic representation of an FA.</p>
+<h3>Graph Components</h3>
+<ul>
+<li><strong>Vertices (Nodes):</strong> Represent the <strong>States</strong>.
+<ul>
+<li>Start State: Indicated by an incoming arrow from nowhere.</li>
+<li>Final (Accepting) State: Indicated by double circles.</li>
+<li>Non-final State: Single circle.</li>
+</ul></li>
+<li><strong>Edges (Arcs):</strong> Represent <strong>Transitions</strong>.
+<ul>
+<li>Directed edges labeled with input symbols.</li>
+<li>An edge from state <span class="katex-inline" data-math="q_1"></span> to <span class="katex-inline" data-math="q_2"></span> labeled <span class="katex-inline" data-math="a"></span> means: "If in state <span class="katex-inline" data-math="q_1"></span> and input is <span class="katex-inline" data-math="a"></span>, go to <span class="katex-inline" data-math="q_2"></span>."</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>4. Deterministic Finite Automata (DFA)</h2>
+<p>A DFA is "deterministic" because for every state and every input symbol, there is exactly one specific next state.</p>
+<h3>Formal Definition</h3>
+<p>A DFA is a 5-tuple <span class="katex-inline" data-math="M = (Q, \Sigma, \delta, q_0, F)"></span> where:</p>
+<ol>
+<li><strong><span class="katex-inline" data-math="Q"></span></strong>: A finite set of states.</li>
+<li><strong><span class="katex-inline" data-math="\Sigma"></span></strong>: A finite set of input symbols (alphabet).</li>
+<li><strong><span class="katex-inline" data-math="\delta"></span></strong>: A transition function (mapping).</li>
+<li><strong><span class="katex-inline" data-math="q_0"></span></strong>: The initial (start) state (<span class="katex-inline" data-math="q_0 \in Q"></span>).</li>
+<li><strong><span class="katex-inline" data-math="F"></span></strong>: A set of accepting (final) states (<span class="katex-inline" data-math="F \subseteq Q"></span>).</li>
+</ol>
+<h3>Properties of Transition Functions in DFA</h3>
+<p>The transition function is defined as:<br/>
+<span class="math-display" data-math="\delta: Q \times \Sigma \rightarrow Q"></span></p>
+<ul>
+<li><strong>Total Function:</strong> <span class="katex-inline" data-math="\delta"></span> must be defined for every pair <span class="katex-inline" data-math="(q, a)"></span> where <span class="katex-inline" data-math="q \in Q"></span> and <span class="katex-inline" data-math="a \in \Sigma"></span>.</li>
+<li><strong>Single Value:</strong> The result is exactly one state.</li>
+</ul>
+<h3>Extended Transition Function (<span class="katex-inline" data-math="\hat{\delta}"></span>)</h3>
+<p>To describe the processing of a string <span class="katex-inline" data-math="w"></span> rather than a single symbol, we define <span class="katex-inline" data-math="\hat{\delta}: Q \times \Sigma^* \rightarrow Q"></span> recursively:</p>
+<ol>
+<li><strong>Base Case:</strong> <span class="katex-inline" data-math="\hat{\delta}(q, \epsilon) = q"></span> (Processing an empty string leaves the state unchanged).</li>
+<li><strong>Recursive Step:</strong> For string <span class="katex-inline" data-math="w = xa"></span> (where <span class="katex-inline" data-math="x"></span> is a string and <span class="katex-inline" data-math="a"></span> is a symbol):<br/>
+<span class="math-display" data-math="\hat{\delta}(q, xa) = \delta(\hat{\delta}(q, x), a)"></span></li>
+</ol>
+<h3>Acceptability of a String by DFA</h3>
+<p>A string <span class="katex-inline" data-math="w"></span> is accepted by a DFA <span class="katex-inline" data-math="M = (Q, \Sigma, \delta, q_0, F)"></span> if and only if:<br/>
+<span class="math-display" data-math="\hat{\delta}(q_0, w) \in F"></span><br/>
+Meaning: After processing the entire string starting from <span class="katex-inline" data-math="q_0"></span>, the automaton halts in a final state. If it halts in a non-final state, the string is <strong>rejected</strong>.</p>
+<hr/>
+<h2>5. Non-deterministic Finite Automata (NDFA/NFA)</h2>
+<p>An NFA allows flexibility in transitions. From a specific state on a specific input, the machine may go to multiple states, one state, or no state at all.</p>
+<h3>Formal Definition</h3>
+<p>An NFA is a 5-tuple <span class="katex-inline" data-math="M = (Q, \Sigma, \delta, q_0, F)"></span> where:</p>
+<ul>
+<li><span class="katex-inline" data-math="Q, \Sigma, q_0, F"></span> are defined exactly as in a DFA.</li>
+<li><strong><span class="katex-inline" data-math="\delta"></span> (Transition Function):</strong> <span class="katex-inline" data-math="Q \times \Sigma \rightarrow 2^Q"></span> (Power set of Q).</li>
+</ul>
+<h3>Properties of Transition Functions in NFA</h3>
+<ul>
+<li>The output of <span class="katex-inline" data-math="\delta(q, a)"></span> is a <strong>set</strong> of states (subset of <span class="katex-inline" data-math="Q"></span>).</li>
+<li>It allows "guessing" the correct path.</li>
+</ul>
+<h3>Acceptability of a String by NFA</h3>
+<p>A string <span class="katex-inline" data-math="w"></span> is accepted by an NFA if there exists <strong>at least one</strong> sequence of transitions (path) corresponding to <span class="katex-inline" data-math="w"></span> that leads from <span class="katex-inline" data-math="q_0"></span> to some state in <span class="katex-inline" data-math="F"></span>.</p>
+<hr/>
+<h2>6. The Equivalence of DFA and NDFA</h2>
+<p>Despite NFA appearing more powerful due to non-determinism, <strong>DFA and NFA are equivalent in computational power.</strong> Both accept the class of <strong>Regular Languages</strong>.</p>
+<h3>Theorem</h3>
+<p>For every NFA <span class="katex-inline" data-math="N"></span>, there exists a DFA <span class="katex-inline" data-math="M"></span> such that <span class="katex-inline" data-math="L(M) = L(N)"></span>.</p>
+<h3>Subset Construction Algorithm (Conversion NFA <span class="katex-inline" data-math="\rightarrow"></span> DFA)</h3>
+<p>To convert an NFA to a DFA, we simulate the NFA by tracking the <em>set of states</em> the NFA could be in at any moment.</p>
+<ol>
+<li><strong>DFA States (<span class="katex-inline" data-math="Q_D"></span>):</strong> The power set of the NFA states (<span class="katex-inline" data-math="2^{Q_N}"></span>). If NFA has <span class="katex-inline" data-math="n"></span> states, DFA can have up to <span class="katex-inline" data-math="2^n"></span> states.</li>
+<li><strong>DFA Start State:</strong> <span class="katex-inline" data-math="\{q_0\}"></span>.</li>
+<li><strong>DFA Transitions:</strong><br/>
+For a set of NFA states <span class="katex-inline" data-math="\{q_1, q_2, \dots, q_k\}"></span> and input <span class="katex-inline" data-math="a"></span>:<br/>
+<span class="math-display" data-math="\delta_D(\{q_1, \dots, q_k\}, a) = \bigcup_{i=1}^k \delta_N(q_i, a)"></span></li>
+<li><strong>DFA Final States (<span class="katex-inline" data-math="F_D"></span>):</strong> Any subset of NFA states that contains <em>at least one</em> final state from the NFA.</li>
+</ol>
+<hr/>
+<h2>7. Regular Languages</h2>
+<p>A language <span class="katex-inline" data-math="L"></span> is called a <strong>Regular Language</strong> if there exists a Finite Automaton (DFA or NFA) that accepts it.</p>
+<h3>Properties</h3>
+<ul>
+<li>Regular languages are closed under:
+<ul>
+<li>Union</li>
+<li>Intersection</li>
+<li>Concatenation</li>
+<li>Kleene Star</li>
+<li>Complementation</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>8. Finite Automata with Output: Mealy and Moore Machines</h2>
+<p>Standard FAs are "acceptors" (output is Yes/No). Mealy and Moore machines are "transducers"—they generate an output string based on the input string.</p>
+<h3>Similarities</h3>
+<ul>
+<li>Both have states (<span class="katex-inline" data-math="Q"></span>), inputs (<span class="katex-inline" data-math="\Sigma"></span>), outputs (<span class="katex-inline" data-math="\Delta"></span>), transition function (<span class="katex-inline" data-math="\delta"></span>), and start state (<span class="katex-inline" data-math="q_0"></span>).</li>
+<li><strong>No Final States:</strong> They run as long as there is input.</li>
+</ul>
+<h3>Moore Machine</h3>
+<ul>
+<li><strong>Output depends only on the current state.</strong></li>
+<li><strong>Definition:</strong> 6-tuple <span class="katex-inline" data-math="(Q, \Sigma, \Delta, \delta, \lambda, q_0)"></span>.</li>
+<li><strong>Output Function:</strong> <span class="katex-inline" data-math="\lambda: Q \rightarrow \Delta"></span>.</li>
+<li>For every state entered, a character is printed.</li>
+<li><em>Note:</em> If input length is <span class="katex-inline" data-math="n"></span>, output length is usually <span class="katex-inline" data-math="n+1"></span> (includes output for initial state).</li>
+</ul>
+<h3>Mealy Machine</h3>
+<ul>
+<li><strong>Output depends on the current state AND the current input symbol.</strong></li>
+<li><strong>Definition:</strong> 6-tuple <span class="katex-inline" data-math="(Q, \Sigma, \Delta, \delta, \lambda, q_0)"></span>.</li>
+<li><strong>Output Function:</strong> <span class="katex-inline" data-math="\lambda: Q \times \Sigma \rightarrow \Delta"></span>.</li>
+<li>Output is generated during the transition.</li>
+<li>If input length is <span class="katex-inline" data-math="n"></span>, output length is <span class="katex-inline" data-math="n"></span>.</li>
+</ul>
+<h3>Equivalence</h3>
+<p>Moore and Mealy machines are equivalent. Any problem solvable by one is solvable by the other.</p>
+<ul>
+<li><strong>Mealy <span class="katex-inline" data-math="\to"></span> Moore:</strong> Split states to accommodate outputs associated with incoming transitions.</li>
+<li><strong>Moore <span class="katex-inline" data-math="\to"></span> Mealy:</strong> Associate the state's output with the incoming transition.</li>
+</ul>
+<hr/>
+<h2>9. Minimization of Finite Automata</h2>
+<p>Minimization creates a unique DFA with the fewest possible states for a given regular language.</p>
+<h3>Distinguishable vs. Indistinguishable States</h3>
+<p>Two states <span class="katex-inline" data-math="p"></span> and <span class="katex-inline" data-math="q"></span> are <strong>indistinguishable</strong> (equivalent) if, for every possible string <span class="katex-inline" data-math="w"></span>:</p>
+<ul>
+<li><span class="katex-inline" data-math="\hat{\delta}(p, w)"></span> is a final state AND <span class="katex-inline" data-math="\hat{\delta}(q, w)"></span> is a final state
+<ul>
+<li>OR</li>
+</ul></li>
+<li><span class="katex-inline" data-math="\hat{\delta}(p, w)"></span> is NOT final AND <span class="katex-inline" data-math="\hat{\delta}(q, w)"></span> is NOT final.</li>
+</ul>
+<p>If there exists even one string <span class="katex-inline" data-math="w"></span> that drives <span class="katex-inline" data-math="p"></span> to a final state and <span class="katex-inline" data-math="q"></span> to a non-final state (or vice versa), <span class="katex-inline" data-math="p"></span> and <span class="katex-inline" data-math="q"></span> are <strong>distinguishable</strong>.</p>
+<h3>Minimization Algorithm (Table Filling Method / Myhill-Nerode)</h3>
+<ol>
+<li><strong>Remove Unreachable States:</strong> Delete states that cannot be reached from <span class="katex-inline" data-math="q_0"></span>.</li>
+<li><strong>Initialize Table:</strong> Create a table of all pairs of states <span class="katex-inline" data-math="(p, q)"></span>.</li>
+<li><strong>Mark Distinguishable Pairs:</strong>
+<ul>
+<li>Mark pair <span class="katex-inline" data-math="(p, q)"></span> if <span class="katex-inline" data-math="p \in F"></span> and <span class="katex-inline" data-math="q \notin F"></span> (or vice versa).</li>
+</ul></li>
+<li><strong>Propagate Marks:</strong>
+<ul>
+<li>For every unmarked pair <span class="katex-inline" data-math="(p, q)"></span> and every input symbol <span class="katex-inline" data-math="a \in \Sigma"></span>:</li>
+<li>If the pair of next states <span class="katex-inline" data-math="(\delta(p, a), \delta(q, a))"></span> is already marked, then mark <span class="katex-inline" data-math="(p, q)"></span>.</li>
+<li>Repeat this step until no new changes occur.</li>
+</ul></li>
+<li><strong>Merge:</strong>
+<ul>
+<li>All pairs <span class="katex-inline" data-math="(p, q)"></span> that remain unmarked are equivalent. Merge them into a single state in the minimized DFA.</li>
+</ul></li>
+</ol> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/CSE322/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

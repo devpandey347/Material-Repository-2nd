@@ -1,0 +1,712 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/LAW352">LAW352</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/LAW352">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/LAW352/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/LAW352/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/LAW352/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>LAW352</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            12 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Introduction</h1>
+<h2>Evolution of Trademark in India</h2>
+<p>The concept of using marks to denote origin and ownership is ancient. However, the legal framework for trademark protection in India has evolved significantly, especially over the last century.</p>
+<h3>1. Pre-Statutory Era (Common Law)</h3>
+<ul>
+<li>Before any specific legislation, trademark protection in India was governed by common law principles inherited from the British legal system.</li>
+<li>The primary remedy available to a trademark owner was the <strong>action for passing off</strong>.</li>
+<li><strong>Passing Off:</strong> This is a tort where one person misrepresents their goods or services as being those of another, causing damage to the goodwill and reputation of the latter. It is based on the principle that "nobody has any right to represent his goods as the goods of somebody else."</li>
+<li>This remedy required the plaintiff to prove their established reputation/goodwill, misrepresentation by the defendant, and resulting damage. It was often a cumbersome and expensive process.</li>
+</ul>
+<h3>2. The Indian Merchandise Marks Act, 1889</h3>
+<ul>
+<li>This was the first statute in India dealing with marks, but it was primarily a <strong>criminal statute</strong>.</li>
+<li>Its main objective was to penalize the fraudulent use of trademarks and false trade descriptions.</li>
+<li>It did <strong>not</strong> provide for a system of trademark registration. The rights and remedies remained rooted in common law.</li>
+</ul>
+<h3>3. The Trade Marks Act, 1940</h3>
+<ul>
+<li>This was the <strong>first comprehensive trademark legislation</strong> in India, enacted to overcome the deficiencies of the common law system.</li>
+<li>It was largely based on the UK Trade Marks Act, 1938.</li>
+<li><strong>Key Features:</strong>
+<ul>
+<li>Introduced a formal mechanism for the <strong>registration of trademarks</strong>.</li>
+<li>Established the <strong>Trade Marks Registry</strong>.</li>
+<li>Provided for statutory rights for registered proprietors, making infringement actions simpler than passing off.</li>
+<li>Registration was deemed prima facie evidence of validity.</li>
+<li>The term of registration was <strong>7 years</strong>, renewable thereafter.</li>
+</ul></li>
+</ul>
+<h3>4. The Trade and Merchandise Marks Act, 1958</h3>
+<ul>
+<li>This Act repealed the 1940 Act and consolidated the law relating to trademarks and merchandise marks.</li>
+<li>It aimed to provide better protection for trademarks and prevent fraud.</li>
+<li><strong>Key Features:</strong>
+<ul>
+<li>Maintained the basic framework of the 1940 Act but made several improvements.</li>
+<li>Introduced provisions for the registration of "defensive marks" to protect well-known marks from dilution.</li>
+<li>Strengthened the penal provisions for infringement and fraud.</li>
+</ul></li>
+</ul>
+<h3>5. The Trade Marks Act, 1999</h3>
+<ul>
+<li>This is the <strong>current governing legislation</strong> for trademarks in India. It repealed the 1958 Act.</li>
+<li>It was enacted to modernize trademark law and to bring it in compliance with India's obligations under the <strong>TRIPS Agreement</strong>.</li>
+<li><strong>Salient Features:</strong>
+<ul>
+<li><strong>Expanded Definition of Mark:</strong> The definition was broadened to include non-conventional marks like the shape of goods, their packaging, and combinations of colours. [Section 2(1)(m)]</li>
+<li><strong>Service Marks:</strong> Provided explicit statutory protection for marks used in relation to services (e.g., banking, transport, education).</li>
+<li><strong>Enhanced Protection for Well-Known Marks:</strong> Introduced specific provisions to identify and protect well-known marks, even across different classes of goods and services.</li>
+<li><strong>Increased Term of Registration:</strong> The term of registration and renewal was increased from 7 to <strong>10 years</strong>.</li>
+<li><strong>Collective Marks:</strong> Introduced provisions for the registration of marks belonging to associations.</li>
+<li><strong>IPAB:</strong> Established the Intellectual Property Appellate Board (IPAB) for speedy adjudication of appeals. <em>(Note: The IPAB was abolished in 2021 by the Tribunals Reforms Act, 2021. Its functions have been transferred back to the High Courts.)</em></li>
+<li><strong>Stringent Penalties:</strong> Enhanced the criminal remedies for trademark infringement.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>Meaning and Characteristics of a Trademark</h2>
+<h3>Meaning of a Trademark</h3>
+<p>A trademark is a sign capable of distinguishing the goods or services of one enterprise from those of other enterprises. It is a badge of origin, a symbol of goodwill, and a tool for advertising.</p>
+<p><strong>Statutory Definition (Section 2(1)(zb) of The Trade Marks Act, 1999):</strong></p>
+<blockquote>
+<p>"trademark" means a mark capable of being represented graphically and which is capable of distinguishing the goods or services of one person from those of others and may include shape of goods, their packaging and combination of colours.</p>
+</blockquote>
+<p><strong>Breakdown of the Definition:</strong></p>
+<ol>
+<li><strong>A Mark:</strong> This includes a device, brand, heading, label, ticket, name, signature, word, letter, numeral, shape of goods, packaging or combination of colours or any combination thereof. [Section 2(1)(m)]</li>
+<li><strong>Capable of being Represented Graphically:</strong> It must be capable of being put on paper or a computer screen in a visual format. This is essential for publication in the Trademarks Journal.</li>
+<li><strong>Capable of Distinguishing:</strong> This is the core function. The mark must be distinctive, either inherently (e.g., a coined word like "KODAK") or through use (e.g., the name "Apple" for computers).</li>
+</ol>
+<h3>Functions of a Trademark</h3>
+<ul>
+<li><strong>Origin Function:</strong> It identifies the source or origin of the goods/services. Consumers associate the mark with a specific manufacturer or service provider.</li>
+<li><strong>Distinguishing Function:</strong> It differentiates a trader's products from those of competitors in the market.</li>
+<li><strong>Quality/Guarantee Function:</strong> It symbolizes a certain standard of quality that consumers expect from goods/services bearing the mark.</li>
+<li><strong>Advertising Function:</strong> It acts as a "silent salesman," promoting the product and building brand recognition without the need for extensive descriptive text.</li>
+<li><strong>Investment Function:</strong> The goodwill and reputation embodied in a trademark are valuable business assets, encouraging businesses to invest in maintaining the quality of their products.</li>
+</ul>
+<h3>Essential Characteristics of a Good Trademark</h3>
+<ol>
+<li><strong>Easy to Pronounce and Remember:</strong> A mark should be easy for consumers to say, spell, and recall.</li>
+<li><strong>Distinctive:</strong> It should be unique and capable of distinguishing the product. Fanciful or coined words are the strongest.</li>
+<li><strong>Suggestive:</strong> It may suggest the quality or character of the goods without being directly descriptive (e.g., "PAMPERS" for diapers).</li>
+<li><strong>Not Deceptive:</strong> It must not mislead the public as to the nature, quality, or origin of the product.</li>
+<li><strong>Legally Registrable:</strong> It must not fall under the absolute [Section 9] or relative [Section 11] grounds for refusal of registration. For example, it should not be scandalous, generic, or identical/similar to an earlier registered mark for similar goods.</li>
+</ol>
+<hr/>
+<h2>Kinds of Trademarks</h2>
+<p>Trademarks can be categorized based on their nature and purpose.</p>
+<ul>
+<li><strong>Word Marks:</strong> Consist of words, letters, numerals, or any combination. They provide broad protection for the word itself, regardless of font or style.
+<ul>
+<li><em>Example: SONY, TATA, 3M</em></li>
+</ul></li>
+<li><strong>Device Marks / Logos:</strong> Comprise artistic or stylized elements, symbols, or logos. Protection is for the specific visual representation.
+<ul>
+<li><em>Example: The Nike "Swoosh", the Apple Inc. logo</em></li>
+</ul></li>
+<li><strong>Service Marks:</strong> Used to identify and distinguish services rather than goods.
+<ul>
+<li><em>Example: ICICI BANK for banking services, FEDEX for courier services</em></li>
+</ul></li>
+<li><strong>Collective Marks:</strong> Owned by an association and used by its members to indicate their membership and compliance with the association's standards.
+<ul>
+<li><em>Example: The "CA" mark used by members of the Institute of Chartered Accountants of India.</em></li>
+</ul></li>
+<li><strong>Certification Marks:</strong> Used to certify that goods or services meet certain defined standards (e.g., regarding origin, material, quality). The proprietor of the mark does not trade in the goods/services but only certifies them.
+<ul>
+<li><em>Example: ISI mark for industrial products, WOOLMARK for pure wool products.</em></li>
+</ul></li>
+<li><strong>Trade Dress:</strong> Refers to the overall commercial image or appearance of a product or service that indicates its source. This can include the shape of goods or their packaging.
+<ul>
+<li><em>Example: The unique shape of the Coca-Cola bottle.</em></li>
+</ul></li>
+<li><strong>Sound Marks:</strong> A sound that is distinctive and can identify the source of a product or service. Must be capable of graphical representation (e.g., through musical notation).
+<ul>
+<li><em>Example: The Intel inside jingle, the MGM lion's roar.</em></li>
+</ul></li>
+<li><strong>Colour Marks:</strong> A single colour or a combination of colours can be registered as a trademark if it has acquired distinctiveness through extensive use and has become a source identifier in the minds of consumers.
+<ul>
+<li><em>Example: Cadbury's specific shade of purple for chocolates.</em></li>
+</ul></li>
+<li><strong>Well-Known Marks:</strong> A mark that has become so well-known to a substantial segment of the public that its use on any goods or services (even unrelated ones) would likely be taken as indicating a connection with the original owner. They are afforded a very high degree of protection against dilution and infringement.
+<ul>
+<li><em>Example: GOOGLE, ROLEX, COCA-COLA</em></li>
+</ul></li>
+</ul>
+<hr/>
+<h2>International Treaties</h2>
+<p>Globalization has made it essential to have international frameworks for protecting intellectual property across borders. These treaties aim to harmonize laws and simplify the process of obtaining protection in multiple countries.</p>
+<h3>Paris Convention for the Protection of Industrial Property (1883)</h3>
+<p>This is one of the foundational international treaties in the field of industrial property (patents, trademarks, industrial designs). It is administered by the World Intellectual Property Organization (WIPO).</p>
+<p><strong>Fundamental Principles:</strong></p>
+<ol>
+<li>
+<p><strong>National Treatment (Article 2):</strong></p>
+<ul>
+<li>Each member country must grant the same protection to nationals of other member countries as it grants to its own nationals.</li>
+<li>This ensures that foreign applicants are not discriminated against and have the same rights and remedies as domestic applicants.</li>
+</ul>
+</li>
+<li>
+<p><strong>Right of Priority (Article 4):</strong></p>
+<ul>
+<li>This is a cornerstone of the convention. When an applicant files a trademark application in one member country (the "first filing"), they are granted a <strong>priority period of 6 months</strong>.</li>
+<li>Within this period, if they file applications for the same mark in any other member country, those later applications will be treated as if they were filed on the same date as the first filing.</li>
+<li><strong>Benefit:</strong> This gives applicants time to decide in which other countries they want protection, without losing their original filing date to an intervening third-party application.</li>
+</ul>
+</li>
+<li>
+<p><strong>Common Rules:</strong></p>
+<ul>
+<li>The convention establishes a set of common rules that all member states must follow.</li>
+<li><strong>Protection of Well-Known Marks (Article 6bis):</strong> Member countries are obligated to refuse or cancel the registration and prohibit the use of a trademark which is a reproduction, imitation, or translation of a well-known mark, if it is likely to cause confusion.</li>
+<li><strong><em>Telle Quelle</em> Principle (Article 6quinquies):</strong> A trademark duly registered in its country of origin must be accepted for filing and protected "as is" (<em>telle quelle</em>) in all other member countries, subject to certain specified exceptions.</li>
+<li><strong>Independence of Marks:</strong> The registration of a mark in one country is independent of its registration (or non-registration) in any other country.</li>
+</ul>
+</li>
+</ol>
+<h3>Trade-Related Aspects of Intellectual Property Rights (TRIPS) Agreement (1995)</h3>
+<p>The TRIPS Agreement is a comprehensive multilateral agreement on intellectual property, administered by the World Trade Organization (WTO). It is significant because it links IP protection to the international trading system.</p>
+<p><strong>Key Features:</strong></p>
+<ol>
+<li>
+<p><strong>Minimum Standards of Protection:</strong></p>
+<ul>
+<li>TRIPS sets out the <strong>minimum levels of protection</strong> that each member country must provide for various IP rights, including trademarks.</li>
+<li>It incorporates the substantive provisions of the Paris Convention (National Treatment, Right of Priority).</li>
+</ul>
+</li>
+<li>
+<p><strong>Scope of Trademark Protection (Article 15):</strong></p>
+<ul>
+<li>Defines a trademark as any sign capable of distinguishing goods or services.</li>
+<li>Explicitly requires member countries to make <strong>service marks</strong> registrable and protect them in the same way as marks for goods.</li>
+</ul>
+</li>
+<li>
+<p><strong>Rights Conferred (Article 16):</strong></p>
+<ul>
+<li>The owner of a registered trademark shall have the exclusive right to prevent all third parties from using identical or similar signs for identical or similar goods/services, where such use would result in a <strong>likelihood of confusion</strong>.</li>
+<li>Extends protection for <strong>well-known marks</strong> to dissimilar goods/services if the use would indicate a connection and likely damage the interests of the mark's owner.</li>
+</ul>
+</li>
+<li>
+<p><strong>Term of Protection:</strong></p>
+<ul>
+<li>Initial registration and each renewal must be for a term of <strong>no less than 7 years</strong>. The registration shall be renewable indefinitely. (India provides for a 10-year term).</li>
+</ul>
+</li>
+<li>
+<p><strong>Enforcement of Rights:</strong></p>
+<ul>
+<li>This is a major contribution of TRIPS. It lays down detailed obligations for member countries to provide effective <strong>enforcement mechanisms</strong>, including:
+<ul>
+<li>Civil and administrative procedures and remedies (injunctions, damages).</li>
+<li>Provisional measures to prevent infringement.</li>
+<li>Criminal penalties for willful trademark counterfeiting on a commercial scale.</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>Dispute Settlement:</strong></p>
+<ul>
+<li>Disputes between WTO member countries concerning TRIPS obligations are subject to the WTO's integrated dispute settlement procedures.</li>
+</ul>
+</li>
+</ol>
+<h3>Trademark Law Treaty (TLT) (1994)</h3>
+<p>Administered by WIPO, the TLT aims to harmonize and streamline the <strong>procedural aspects</strong> of trademark registration and maintenance, not the substantive law.</p>
+<ul>
+<li><strong>Objective:</strong> To make national and regional trademark application and registration procedures simpler and more predictable.</li>
+<li><strong>Key Provisions:</strong>
+<ul>
+<li><strong>Standardization:</strong> It provides a list of maximum requirements that a national trademark office can impose for various procedures (e.g., application, change of name, renewal). An office cannot ask for more than what the treaty allows.</li>
+<li><strong>Simplification:</strong>
+<ul>
+<li>Requires offices to accept multi-class applications.</li>
+<li>Prohibits requirements for attestation or notarization of signatures on application forms (with some exceptions).</li>
+<li>Allows a single power of attorney to cover multiple applications from the same applicant.</li>
+</ul></li>
+<li><strong>Benefit:</strong> The TLT makes the process of obtaining and maintaining a trademark registration less complex and more user-friendly, both for domestic and foreign applicants.</li>
+</ul></li>
+</ul>
+<h3>Madrid System for International Registration of Marks</h3>
+<p>The Madrid System provides a centralized, cost-effective, and efficient mechanism for registering and managing trademarks in multiple countries through a single application. It is administered by WIPO.</p>
+<p><strong>Governing Treaties:</strong></p>
+<ol>
+<li><strong>Madrid Agreement (1891)</strong></li>
+<li><strong>Madrid Protocol (1989)</strong><br/>
+<em>India is a signatory to the Madrid Protocol (joined in 2013).</em></li>
+</ol>
+<p><strong>How the System Works:</strong></p>
+<ol>
+<li>
+<p><strong>Basic Mark (Home Application):</strong></p>
+<ul>
+<li>An applicant must first have a national trademark application or registration (the "basic mark") in their home IP office (the "Office of Origin").</li>
+</ul>
+</li>
+<li>
+<p><strong>File an International Application:</strong></p>
+<ul>
+<li>The applicant files a single international application with their Office of Origin, designating the other member countries where they seek protection.</li>
+<li>The application is filed in one language (English, French, or Spanish) and a single set of fees is paid in one currency (Swiss Francs).</li>
+</ul>
+</li>
+<li>
+<p><strong>Certification and Forwarding to WIPO:</strong></p>
+<ul>
+<li>The Office of Origin certifies that the international application corresponds to the basic mark and forwards it to WIPO.</li>
+</ul>
+</li>
+<li>
+<p><strong>WIPO Formal Examination:</strong></p>
+<ul>
+<li>WIPO checks the application for compliance with formal requirements. If all is in order, the mark is recorded in the International Register and published in the WIPO Gazette of International Marks.</li>
+<li>WIPO then notifies the IP offices in all the designated countries.</li>
+</ul>
+</li>
+<li>
+<p><strong>Substantive Examination by Designated Offices:</strong></p>
+<ul>
+<li>From this point, the application is treated like a national application in each designated country.</li>
+<li>Each national office examines the mark for registrability under its own domestic laws.</li>
+<li>They have a strict deadline (typically 12 or 18 months) to notify WIPO of any refusal of protection.</li>
+<li><strong>If no refusal is issued within the deadline, the mark is automatically granted protection in that country.</strong></li>
+</ul>
+</li>
+</ol>
+<p><strong>Advantages of the Madrid System:</strong></p>
+<ul>
+<li><strong>Convenience:</strong> File one application to seek protection in up to 130 countries.</li>
+<li><strong>Cost-Effective:</strong> Avoids the costs of filing separate national applications, hiring local attorneys in each country at the initial stage, and preparing translations.</li>
+<li><strong>Simplified Management:</strong> Post-registration changes (like change in ownership or address) and renewals for all designated countries can be managed centrally through a single request to WIPO.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/LAW352/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

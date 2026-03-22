@@ -1,0 +1,628 @@
+﻿{
+    "generatedAt":  "2026-03-22T19:30:42.1034870+05:30",
+    "semesters":  [
+                      {
+                          "title":  "📘 Semester 1",
+                          "count":  "9 Subjects",
+                          "subjects":  [
+                                           {
+                                               "code":  "CSE111",
+                                               "name":  "Orientation To Computing-I",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem1/CSE111?name=Orientation+To+Computing-I",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE326",
+                                               "name":  "Internet Programming Laboratory",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem1/CSE326?name=Internet+Programming+Laboratory",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT108",
+                                               "name":  "Python Programming",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem1/INT108?name=Python+Programming",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "MTH165",
+                                               "name":  "Mathematics For Engineers",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem1/MTH165?name=Mathematics+For+Engineers",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CHE110",
+                                               "name":  "Environmental Studies",
+                                               "badge":  "15 files",
+                                               "href":  "webapp/#/subject/CHE110",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "ECE249",
+                                               "name":  "Basic Electrical \u0026 Electronics Engineering",
+                                               "badge":  "30 files",
+                                               "href":  "webapp/#/subject/ECE249",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "MEC136",
+                                               "name":  "Engineering Drawing With AutoCAD",
+                                               "badge":  "35 files",
+                                               "href":  "webapp/#/subject/MEC136",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "PHY110",
+                                               "name":  "Engineering Physics",
+                                               "badge":  "45 files",
+                                               "href":  "webapp/#/subject/PHY110",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "ECE131",
+                                               "name":  "Basic Electrical \u0026 Electronics Engineering",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem1/ECE131?name=Basic+Electrical+%26+Electronics+Engineering",
+                                               "label":  "Browse Notes"
+                                           }
+                                       ]
+                      },
+                      {
+                          "title":  "📗 Semester 2",
+                          "count":  "16 Subjects",
+                          "subjects":  [
+                                           {
+                                               "code":  "CSE101",
+                                               "name":  "Computer Programming",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem2/CSE101?name=Computer+Programming",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE121",
+                                               "name":  "Orientation To Computing-II",
+                                               "badge":  "6 files",
+                                               "href":  "webapp/#/subject/CSE121",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "CSE320",
+                                               "name":  "Software Engineering",
+                                               "badge":  "27 files",
+                                               "href":  "webapp/#/subject/CSE320",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "INT306",
+                                               "name":  "Database Management Systems",
+                                               "badge":  "29 files",
+                                               "href":  "webapp/#/subject/INT306",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "MTH166",
+                                               "name":  "Differential Equations \u0026 Vector Calculus",
+                                               "badge":  "42 files",
+                                               "href":  "webapp/#/subject/MTH166",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "MTH401",
+                                               "name":  "Discrete Mathematics",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem2/MTH401?name=Discrete+Mathematics",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CHE110",
+                                               "name":  "Environmental Studies",
+                                               "badge":  "15 files",
+                                               "href":  "webapp/#/subject/CHE110",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "ECE249",
+                                               "name":  "Basic Electrical \u0026 Electronics Engineering",
+                                               "badge":  "30 files",
+                                               "href":  "webapp/#/subject/ECE249",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "ECE279",
+                                               "name":  "Basic Electrical \u0026 Electronics Engineering Lab",
+                                               "badge":  "64 files",
+                                               "href":  "webapp/#/subject/ECE279",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "MEC136",
+                                               "name":  "Engineering Drawing With AutoCAD",
+                                               "badge":  "35 files",
+                                               "href":  "webapp/#/subject/MEC136",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "PHY110",
+                                               "name":  "Engineering Physics",
+                                               "badge":  "45 files",
+                                               "href":  "webapp/#/subject/PHY110",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "PEL121-125",
+                                               "name":  "Advanced Communication Skills I",
+                                               "badge":  "21 files",
+                                               "href":  "webapp/#/subject/PEL121-125",
+                                               "label":  "Browse Files"
+                                           },
+                                           {
+                                               "code":  "PEL130",
+                                               "name":  "Advanced Communication Skills I",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem2/PEL130?name=Advanced+Communication+Skills+I",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "ECE182",
+                                               "name":  "Electronics For Robots",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem2/ECE182?name=Electronics+For+Robots",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "ECE213",
+                                               "name":  "Digital Electronics",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem2/ECE213?name=Digital+Electronics",
+                                               "label":  "Browse Notes"
+                                           }
+                                       ]
+                      },
+                      {
+                          "title":  "📙 Semester 3",
+                          "count":  "5 Subjects",
+                          "subjects":  [
+                                           {
+                                               "code":  "CSE202",
+                                               "name":  "Object Oriented Programming",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem3/CSE202?name=Object+Oriented+Programming",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE205",
+                                               "name":  "Data Structures \u0026 Algorithms",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem3/CSE205?name=Data+Structures+%26+Algorithms",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE306",
+                                               "name":  "Computer Networks",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem3/CSE306?name=Computer+Networks",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE316",
+                                               "name":  "Operating Systems",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem3/CSE316?name=Operating+Systems",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSC104",
+                                               "name":  "IT Fundamentals",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem3/CSC104?name=IT+Fundamentals",
+                                               "label":  "Browse Notes"
+                                           }
+                                       ]
+                      },
+                      {
+                          "title":  "📕 Semester 4",
+                          "count":  "17 Subjects",
+                          "subjects":  [
+                                           {
+                                               "code":  "CSE211",
+                                               "name":  "Computer Organization \u0026 Design",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE211?name=Computer+Organization+%26+Design",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE273",
+                                               "name":  "CSE273",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE273?name=CSE273",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE310",
+                                               "name":  "Programming In Java",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE310?name=Programming+In+Java",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE316",
+                                               "name":  "Operating Systems",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE316?name=Operating+Systems",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE325",
+                                               "name":  "Operating Systems Laboratory",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE325?name=Operating+Systems+Laboratory",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT428",
+                                               "name":  "Artificial Intelligence Essentials",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/INT428?name=Artificial+Intelligence+Essentials",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "PEA305",
+                                               "name":  "Analytical Skills-I",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/PEA305?name=Analytical+Skills-I",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE274",
+                                               "name":  "Applied Machine Learning",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE274?name=Applied+Machine+Learning",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE275",
+                                               "name":  "Optimization Techniques For ML",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSE275?name=Optimization+Techniques+For+ML",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT219",
+                                               "name":  "Front End Web Developer",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/INT219?name=Front+End+Web+Developer",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT222",
+                                               "name":  "Advanced Web Development",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/INT222?name=Advanced+Web+Development",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT242",
+                                               "name":  "Cyber Security Essentials",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/INT242?name=Cyber+Security+Essentials",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT249",
+                                               "name":  "System Administration",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/INT249?name=System+Administration",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT255",
+                                               "name":  "Mathematics Behind Machine Learning",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/INT255?name=Mathematics+Behind+Machine+Learning",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSC202",
+                                               "name":  "System Administration",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSC202?name=System+Administration",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSC203",
+                                               "name":  "Introduction To Blockchain",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/CSC203?name=Introduction+To+Blockchain",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "ERT425",
+                                               "name":  "Entrepreneurship \u0026 Business Basics",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem4/ERT425?name=Entrepreneurship+%26+Business+Basics",
+                                               "label":  "Browse Notes"
+                                           }
+                                       ]
+                      },
+                      {
+                          "title":  "📓 Semester 5",
+                          "count":  "25 Subjects",
+                          "subjects":  [
+                                           {
+                                               "code":  "CSE322",
+                                               "name":  "CSE322",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/CSE322?name=CSE322",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "PEV301",
+                                               "name":  "Verbal Ability",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/PEV301?name=Verbal+Ability",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT222",
+                                               "name":  "Advanced Web Development",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT222?name=Advanced+Web+Development",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT234",
+                                               "name":  "Predictive Analytics",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT234?name=Predictive+Analytics",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT244",
+                                               "name":  "Securing Computing Systems",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT244?name=Securing+Computing+Systems",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT250",
+                                               "name":  "Digital Evidence Analysis",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT250?name=Digital+Evidence+Analysis",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT252",
+                                               "name":  "Web App Development With ReactJS",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT252?name=Web+App+Development+With+ReactJS",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT344",
+                                               "name":  "Natural Language Processing",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT344?name=Natural+Language+Processing",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT363",
+                                               "name":  "Cloud Microservices",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT363?name=Cloud+Microservices",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT364",
+                                               "name":  "Cloud Architecture \u0026 Implementation-II",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT364?name=Cloud+Architecture+%26+Implementation-II",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT374",
+                                               "name":  "Data Analytics With Power BI",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT374?name=Data+Analytics+With+Power+BI",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT394",
+                                               "name":  "Machine Learning Algorithms",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT394?name=Machine+Learning+Algorithms",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT395",
+                                               "name":  "Supervised Learning",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT395?name=Supervised+Learning",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT423",
+                                               "name":  "Machine Learning-II",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT423?name=Machine+Learning-II",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "ENG606",
+                                               "name":  "Contemporary Short Stories",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/ENG606?name=Contemporary+Short+Stories",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "FIN212",
+                                               "name":  "Basic Financial Management",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/FIN212?name=Basic+Financial+Management",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "FST801",
+                                               "name":  "Fashion Studies",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/FST801?name=Fashion+Studies",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "GEO295",
+                                               "name":  "Physical Geography",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/GEO295?name=Physical+Geography",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "HIS291",
+                                               "name":  "Ancient Indian History \u0026 Culture",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/HIS291?name=Ancient+Indian+History+%26+Culture",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "HRM203",
+                                               "name":  "Human Resource Planning \u0026 Development",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/HRM203?name=Human+Resource+Planning+%26+Development",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT323",
+                                               "name":  "Database Essentials Toward Informatica",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT323?name=Database+Essentials+Toward+Informatica",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT331",
+                                               "name":  "Fundamentals Of DevOps",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT331?name=Fundamentals+Of+DevOps",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT346",
+                                               "name":  "Robotic Process Automation",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/INT346?name=Robotic+Process+Automation",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "PSY291",
+                                               "name":  "Psychological Testing",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/PSY291?name=Psychological+Testing",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "SOC371",
+                                               "name":  "Sociology Of Media",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem5/SOC371?name=Sociology+Of+Media",
+                                               "label":  "Browse Notes"
+                                           }
+                                       ]
+                      },
+                      {
+                          "title":  "📒 Semester 6",
+                          "count":  "11 Subjects",
+                          "subjects":  [
+                                           {
+                                               "code":  "CSE332",
+                                               "name":  "Industry Ethics \u0026 Legal Issues",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/CSE332?name=Industry+Ethics+%26+Legal+Issues",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "CSE357",
+                                               "name":  "Combinatorial Studies",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/CSE357?name=Combinatorial+Studies",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "PES319",
+                                               "name":  "Soft Skills-II",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/PES319?name=Soft+Skills-II",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT221",
+                                               "name":  "MVC Programming",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/INT221?name=MVC+Programming",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT245",
+                                               "name":  "Penetration Testing",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/INT245?name=Penetration+Testing",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "INT327",
+                                               "name":  "Cloud Infrastructure \u0026 Resource Management",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/INT327?name=Cloud+Infrastructure+%26+Resource+Management",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "ENG607",
+                                               "name":  "Contemporary Prose \u0026 Poetry",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/ENG607?name=Contemporary+Prose+%26+Poetry",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "FIN215",
+                                               "name":  "Mutual Funds \u0026 Exchange Traded Funds",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/FIN215?name=Mutual+Funds+%26+Exchange+Traded+Funds",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "HIS292",
+                                               "name":  "Medieval Indian History \u0026 Culture",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/HIS292?name=Medieval+Indian+History+%26+Culture",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "LAW352",
+                                               "name":  "Trademarks \u0026 Allied Laws",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/LAW352?name=Trademarks+%26+Allied+Laws",
+                                               "label":  "Browse Notes"
+                                           },
+                                           {
+                                               "code":  "PSY292",
+                                               "name":  "Positive Psychology",
+                                               "badge":  "Notes",
+                                               "href":  "webapp/#/notes/Sem6/PSY292?name=Positive+Psychology",
+                                               "label":  "Browse Notes"
+                                           }
+                                       ]
+                      },
+                      {
+                          "title":  "📚 Extra Resources",
+                          "count":  "1 Resource",
+                          "subjects":  [
+                                           {
+                                               "code":  "Books",
+                                               "name":  "Handbooks \u0026 Reference Materials",
+                                               "badge":  "6 files",
+                                               "href":  "webapp/#/subject/BOOKS",
+                                               "label":  "Browse Files"
+                                           }
+                                       ]
+                      }
+                  ]
+}

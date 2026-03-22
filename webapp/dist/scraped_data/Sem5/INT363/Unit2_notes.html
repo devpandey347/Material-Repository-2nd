@@ -1,0 +1,643 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT363">INT363</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 2</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT363">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT363/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT363/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT363/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT363</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Evolution of Cloud Microservices</h1>
+<h2>1. Application Architectures: Monolithic &amp; Distributed</h2>
+<p>To understand the evolution of cloud microservices, one must first understand the architectural paradigms that preceded them.</p>
+<h3>A. Monolithic Architecture</h3>
+<p>A monolithic application is built as a single, unified unit. All business logic, database access layers, and UI components are packaged into a single deployable artifact (e.g., a <code>.war</code> file in Java or a single directory in Node.js).</p>
+<ul>
+<li>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li><strong>Single Codebase:</strong> All developers work in the same repository.</li>
+<li><strong>Tightly Coupled:</strong> Components depend heavily on each other; changing one module often requires recompiling the whole application.</li>
+<li><strong>Centralized Database:</strong> Usually connects to a single, large relational database schema.</li>
+</ul>
+</li>
+<li>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li><strong>Simplicity:</strong> Easier to develop, test, and deploy in early stages.</li>
+<li><strong>Performance:</strong> Inter-module communication is in-memory (function calls), which is faster than network calls.</li>
+<li><strong>Cross-cutting Concerns:</strong> Logging, security, and caching are easily handled globally.</li>
+</ul>
+</li>
+<li>
+<p><strong>Disadvantages (The Cloud Problem):</strong></p>
+<ul>
+<li><strong>Scalability Limits:</strong> You must scale the <em>entire</em> application, even if only one module (e.g., "Billing") is experiencing high load.</li>
+<li><strong>Technology Lock-in:</strong> Extremely difficult to change languages or frameworks once development has started.</li>
+<li><strong>CI/CD Friction:</strong> A small change requires a full redeployment of the massive artifact, increasing downtime risks.</li>
+<li><strong>Single Point of Failure:</strong> A memory leak in one module can crash the entire system.</li>
+</ul>
+</li>
+</ul>
+<h3>B. Distributed Architecture</h3>
+<p>Distributed architecture disperses application components across multiple networked computers, which communicate and coordinate their actions by passing messages.</p>
+<ul>
+<li><strong>Service-Oriented Architecture (SOA):</strong> The precursor to microservices. It utilized an Enterprise Service Bus (ESB) for communication, emphasizing reusability via SOAP/XML interfaces.</li>
+<li><strong>The Shift:</strong> Modern distributed systems (Microservices) favor "dumb pipes and smart endpoints" over the heavy logic of ESBs found in SOA.</li>
+</ul>
+<hr/>
+<h2>2. Microservice Fundamentals</h2>
+<p>Microservices are an architectural style that structures an application as a collection of services that are distinct, autonomous, and focused.</p>
+<h3>Core Principles</h3>
+<ol>
+<li><strong>Single Responsibility Principle (SRP):</strong> Each service should do one thing and do it well (e.g., an Order Service manages orders, nothing else).</li>
+<li><strong>Autonomous:</strong> Each service can be developed, deployed, operated, and scaled without affecting other services.</li>
+<li><strong>Decentralized Data Management:</strong> "Database-per-service." Services do not share database schemas to avoid tight coupling.</li>
+<li><strong>Infrastructure Automation:</strong> Reliance on CI/CD pipelines, containerization (Docker), and orchestration (Kubernetes) is mandatory due to the complexity of managing many services.</li>
+</ol>
+<h3>Microservices vs. Monolith Comparison</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Monolithic Architecture</th>
+<th style="text-align: left;">Microservices Architecture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Coupling</strong></td>
+<td style="text-align: left;">Tightly coupled</td>
+<td style="text-align: left;">Loosely coupled</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Deployment</strong></td>
+<td style="text-align: left;">All-or-nothing</td>
+<td style="text-align: left;">Independent per service</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Scalability</strong></td>
+<td style="text-align: left;">Vertical (bigger hardware) or Cloning</td>
+<td style="text-align: left;">Horizontal (more instances of specific services)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Technology</strong></td>
+<td style="text-align: left;">Single stack (e.g., all Java)</td>
+<td style="text-align: left;">Polyglot (Java, Go, Python, Node.js mixed)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Complexity</strong></td>
+<td style="text-align: left;">Low architecture complexity, High code complexity</td>
+<td style="text-align: left;">High architecture/operational complexity, Low code complexity</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>3. Microservices Architecture</h2>
+<p>The architecture focuses on breaking down a system into independent units that communicate over a network.</p>
+<h3>Architectural Components</h3>
+<ol>
+<li><strong>Services:</strong> The core logic units (e.g., User Service, Product Service).</li>
+<li><strong>Communication Protocols:</strong>
+<ul>
+<li><strong>Synchronous:</strong> HTTP/REST, gRPC (Request/Response). Best for real-time queries.</li>
+<li><strong>Asynchronous:</strong> AMQP, Kafka, RabbitMQ (Event-driven). Best for decoupling systems and handling high throughput.</li>
+</ul></li>
+<li><strong>Service Discovery:</strong> A mechanism (like Netflix Eureka or Consul) allowing services to find each other dynamically without hardcoded IP addresses.</li>
+<li><strong>Configuration Server:</strong> Centralized management of configuration files (e.g., Spring Cloud Config) so services don't need redeployment to change settings.</li>
+</ol>
+<h3>The "Share-Nothing" Philosophy</h3>
+<p>In a pure microservices architecture, services share nothing but APIs.</p>
+<ul>
+<li><strong>No Shared State:</strong> No global variables or shared in-memory caches.</li>
+<li><strong>No Shared Libraries (Logic):</strong> While utility libraries are okay, sharing business logic libraries creates "hidden monoliths."</li>
+<li><strong>No Shared Database:</strong> If Service A needs data from Service B, it must ask Service B via API; it cannot query Service B's database directly.</li>
+</ul>
+<hr/>
+<h2>4. Domain-Driven Design (DDD) Principles</h2>
+<p>DDD is a software design approach that focuses on modeling software to match a domain (business logic). It is the <strong>primary method used to determine how to split a monolith into microservices.</strong></p>
+<h3>Strategic Design (The "Big Picture")</h3>
+<p>The goal is to define boundaries between large chunks of the system.</p>
+<ol>
+<li>
+<p><strong>Bounded Context:</strong></p>
+<ul>
+<li>The central concept in mapping DDD to microservices.</li>
+<li>A Bounded Context defines a linguistic boundary where a specific domain model applies.</li>
+<li><strong>Rule of Thumb:</strong> One Bounded Context <span class="katex-inline" data-math="\approx"></span> One Microservice.</li>
+<li><em>Example:</em> In an e-commerce app, "Product" means something different to the <em>Sales Context</em> (price, image) than it does to the <em>Inventory Context</em> (weight, aisle location). These should be separate services.</li>
+</ul>
+</li>
+<li>
+<p><strong>Ubiquitous Language:</strong></p>
+<ul>
+<li>A common language shared by developers and domain experts (business stakeholders).</li>
+<li>The code (class names, variables) should match the spoken language of the business.</li>
+</ul>
+</li>
+<li>
+<p><strong>Context Mapping:</strong></p>
+<ul>
+<li>Defining how different Bounded Contexts relate to each other (e.g., Shared Kernel, Customer/Supplier, Anti-Corruption Layer).</li>
+</ul>
+</li>
+</ol>
+<h3>Tactical Design (The "Implementation")</h3>
+<p>Tools used within a specific microservice/bounded context.</p>
+<ol>
+<li><strong>Entities:</strong> Objects defined by their identity (e.g., a User with a generic UUID). Even if attributes change, the identity remains.</li>
+<li><strong>Value Objects:</strong> Objects defined by their attributes, not identity (e.g., an Address or Money). They are immutable.</li>
+<li><strong>Aggregates &amp; Aggregate Roots:</strong>
+<ul>
+<li>A cluster of domain objects that can be treated as a single unit.</li>
+<li><strong>Aggregate Root:</strong> The only entity that outside objects are allowed to hold references to.</li>
+<li><em>Microservice Rule:</em> Transactions should not span across Aggregates.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>5. Service Boundaries and API Gateway</h2>
+<p>Once the domain is modeled, technical implementation requires defining strict boundaries and managing external access.</p>
+<h3>A. Service Boundaries</h3>
+<p>Defining where one service ends and another begins is the hardest part of microservices.</p>
+<p><strong>Strategies for defining boundaries:</strong></p>
+<ol>
+<li><strong>By Business Capability:</strong> Align services with what the business <em>does</em> (e.g., Shipping, Accounting, Marketing).</li>
+<li><strong>By Subdomain (DDD):</strong> Align services with the complexity of the data models (Core domains vs. Supporting domains).</li>
+</ol>
+<p><strong>Coupling and Cohesion:</strong></p>
+<ul>
+<li><strong>High Cohesion:</strong> Things that change together should stay together (inside the same service).</li>
+<li><strong>Low Coupling:</strong> Services should know as little about each other as possible.</li>
+</ul>
+<h3>B. API Gateway</h3>
+<p>An API Gateway is a server that acts as a single entry point into the system. It sits between the client apps (Mobile, Web) and the internal microservices.</p>
+<p><strong>Why is it needed?</strong><br/>
+Without a gateway, a client would have to make dozens of requests to different internal IP addresses to render a single page (the "Chatty Client" problem).</p>
+<p><strong>Core Functions:</strong></p>
+<ol>
+<li><strong>Routing:</strong> Forwards requests to the appropriate microservice (e.g., <code>/api/users</code> -&gt; User Service).</li>
+<li><strong>Aggregation:</strong> Gathers data from multiple services and returns a single response to the client (reduces round-trips).</li>
+<li><strong>Cross-Cutting Concerns:</strong> Handles logic that every service needs, offloading it from the services themselves:
+<ul>
+<li>Authentication (OAuth2/JWT verification).</li>
+<li>SSL Termination.</li>
+<li>Rate Limiting and Throttling.</li>
+<li>Logging and Analytics.</li>
+</ul></li>
+</ol>
+<p><strong>Backend for Frontend (BFF) Pattern:</strong><br/>
+A variation of the API Gateway where you create separate gateways for different client types (e.g., one Gateway for Mobile with a lightweight payload, one for Web with detailed payloads).</p>
+<p><strong>Example: API Gateway Routing Logic (Pseudo-code)</strong></p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">YAML</span></div><pre><code class="language-yaml"># Example configuration for an API Gateway (like Zuul or Spring Cloud Gateway)
+routes:
+  - id: product-service
+    uri: lb://PRODUCT-SERVICE  # Load balanced URI
+    predicates:
+      - Path=/api/products/**
+  
+  - id: order-service
+    uri: lb://ORDER-SERVICE
+    predicates:
+      - Path=/api/orders/**
+    filters:
+      - AddRequestHeader=X-Request-Foo, Bar
+      - CircuitBreaker=name:myCircuitBreaker
+</code></pre></div></p>
+<p><strong>Pros and Cons of API Gateway:</strong></p>
+<ul>
+<li><strong>Pros:</strong> Hides internal architecture, simplifies client code, centralized security.</li>
+<li><strong>Cons:</strong> Potential bottleneck, single point of failure (if not clustered), adds latency.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT363/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT363/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

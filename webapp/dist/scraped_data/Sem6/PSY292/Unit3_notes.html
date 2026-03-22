@@ -1,0 +1,663 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/PSY292">PSY292</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 3</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/PSY292">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/PSY292/Unit3/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/PSY292/Unit3/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/PSY292/Unit2/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/PSY292/Unit4/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 3 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>PSY292</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 3: Positive Traits</h1>
+<h2>1. Defining Traits</h2>
+<h3>Definition</h3>
+<p>In psychology, a <strong>trait</strong> is defined as a relatively enduring pattern of thoughts, feelings, and behaviors that distinguish one person from another. Traits are the building blocks of personality and are considered internal characteristics that influence how an individual interacts with the world.</p>
+<h3>Key Characteristics of Traits</h3>
+<ul>
+<li><strong>Consistency:</strong> Traits show regularity across different situations (e.g., a talkative person tends to be talkative at work and at parties).</li>
+<li><strong>Stability:</strong> Traits are relatively stable over time, particularly in adulthood.</li>
+<li><strong>Individual Differences:</strong> Traits are useful for comparing individuals (e.g., Person A is higher in agreeableness than Person B).</li>
+</ul>
+<h3>Traits vs. States</h3>
+<p>It is crucial to distinguish between <em>traits</em> and <em>states</em>:</p>
+<ul>
+<li><strong>Trait:</strong> A stable, long-term characteristic (e.g., being generally an anxious person).</li>
+<li><strong>State:</strong> A temporary, fleeting condition usually caused by situational factors (e.g., feeling anxious before a specific exam).</li>
+</ul>
+<hr/>
+<h2>2. Trait Theories of Personality</h2>
+<p>Trait theories attempt to describe the structure of personality by identifying the fundamental traits that define human behavior.</p>
+<h3>A. Gordon Allport’s Trait Theory</h3>
+<p>Allport is considered the "father of personality psychology." He categorized traits into a hierarchy:</p>
+<ol>
+<li><strong>Cardinal Traits:</strong> Dominant traits that characterize a person’s life as a whole (e.g., "Machiavellian" or "Christ-like"). These are rare.</li>
+<li><strong>Central Traits:</strong> The basic building blocks of personality (e.g., honesty, intelligence, shyness). Most people have 5–10 central traits.</li>
+<li><strong>Secondary Traits:</strong> Characteristics that surface only in certain situations (e.g., getting impatient only when waiting in line).</li>
+</ol>
+<h3>B. Raymond Cattell’s 16PF</h3>
+<p>Cattell used factor analysis to reduce thousands of descriptive words into 16 personality factors.</p>
+<ul>
+<li><strong>Surface Traits:</strong> Observable behaviors that appear to go together.</li>
+<li><strong>Source Traits:</strong> The underlying variables that determine surface manifestations.</li>
+<li><strong>The 16PF:</strong> A psychometric assessment measuring 16 source traits (e.g., Warmth, Reasoning, Emotional Stability).</li>
+</ul>
+<h3>C. Hans Eysenck’s PEN Model</h3>
+<p>Eysenck proposed that personality is biologically based and can be reduced to three "super-factors":</p>
+<ol>
+<li><strong>Psychoticism (P):</strong> Aggression, impulsivity, lack of empathy vs. Superego control.</li>
+<li><strong>Extraversion (E):</strong> Sociability, liveliness, sensation-seeking vs. Introversion.</li>
+<li><strong>Neuroticism (N):</strong> Emotional instability, anxiety vs. Emotional stability.</li>
+</ol>
+<h3>D. The Big Five (Five-Factor Model)</h3>
+<p>This is the most widely accepted trait theory in modern psychology. It uses the acronym <strong>OCEAN</strong>:</p>
+<ol>
+<li><strong>Openness to Experience:</strong> Creativity, curiosity, preference for novelty.</li>
+<li><strong>Conscientiousness:</strong> Organization, dependability, discipline (highly correlated with work performance).</li>
+<li><strong>Extraversion:</strong> Sociability, assertiveness, energy (highly correlated with positive affect).</li>
+<li><strong>Agreeableness:</strong> Compassion, cooperativeness, trust.</li>
+<li><strong>Neuroticism:</strong> Tendency toward unstable emotions (highly correlated with negative affect).</li>
+</ol>
+<p><strong>Relevance to Positive Psychology:</strong></p>
+<ul>
+<li><strong>High Extraversion</strong> and <strong>Low Neuroticism</strong> are the strongest personality predictors of subjective well-being (happiness).</li>
+</ul>
+<hr/>
+<h2>3. Personal Strengths (Character Strengths)</h2>
+<p>Positive Psychology shifts the focus from "what is wrong with people" (pathology) to "what is right with people" (strengths).</p>
+<h3>The VIA Classification of Strengths</h3>
+<p>Developed by Christopher Peterson and Martin Seligman, the <strong>Values in Action (VIA)</strong> classification is the "DSM of strengths." It identifies 24 character strengths organized under 6 broad virtues.</p>
+<h4>The 6 Virtues and 24 Strengths</h4>
+<ol>
+<li>
+<p><strong>Wisdom and Knowledge</strong> (Cognitive strengths involving acquiring and using knowledge)</p>
+<ul>
+<li>Creativity</li>
+<li>Curiosity</li>
+<li>Judgment (Critical Thinking)</li>
+<li>Love of Learning</li>
+<li>Perspective (Wisdom)</li>
+</ul>
+</li>
+<li>
+<p><strong>Courage</strong> (Emotional strengths involving the exercise of will to accomplish goals in the face of opposition)</p>
+<ul>
+<li>Bravery</li>
+<li>Perseverance (Persistence)</li>
+<li>Honesty (Integrity)</li>
+<li>Zest (Vitality)</li>
+</ul>
+</li>
+<li>
+<p><strong>Humanity</strong> (Interpersonal strengths that involve tending to and befriending others)</p>
+<ul>
+<li>Love</li>
+<li>Kindness</li>
+<li>Social Intelligence</li>
+</ul>
+</li>
+<li>
+<p><strong>Justice</strong> (Civic strengths that underlie healthy community life)</p>
+<ul>
+<li>Teamwork</li>
+<li>Fairness</li>
+<li>Leadership</li>
+</ul>
+</li>
+<li>
+<p><strong>Temperance</strong> (Strengths that protect against excess)</p>
+<ul>
+<li>Forgiveness</li>
+<li>Humility</li>
+<li>Prudence</li>
+<li>Self-Regulation</li>
+</ul>
+</li>
+<li>
+<p><strong>Transcendence</strong> (Strengths that forge connections to the larger universe and provide meaning)</p>
+<ul>
+<li>Appreciation of Beauty and Excellence</li>
+<li>Gratitude</li>
+<li>Hope</li>
+<li>Humor</li>
+<li>Spirituality</li>
+</ul>
+</li>
+</ol>
+<h3>Signature Strengths</h3>
+<ul>
+<li><strong>Definition:</strong> These are the top strengths (usually the top 5) that a person owns, celebrates, and frequently exercises.</li>
+<li><strong>Criteria for a Signature Strength:</strong>
+<ul>
+<li>A sense of ownership ("This is the real me").</li>
+<li>A feeling of excitement while displaying it.</li>
+<li>A rapid learning curve when using the strength.</li>
+<li>Invigoration rather than exhaustion when using it.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>4. Forgiveness</h2>
+<h3>Definition</h3>
+<p>Forgiveness is a voluntary, conscious decision to release feelings of resentment or vengeance toward a person or group who has harmed you, regardless of whether they actually deserve your forgiveness.</p>
+<h3>What Forgiveness is NOT:</h3>
+<ul>
+<li><strong>Condoning:</strong> Accepting the wrong behavior.</li>
+<li><strong>Forgetting:</strong> Removing the memory of the event.</li>
+<li><strong>Reconciliation:</strong> Restoring the relationship (forgiveness is internal; reconciliation requires two people).</li>
+</ul>
+<h3>The REACH Model of Forgiveness (Everett Worthington)</h3>
+<p>A clinically applied method to help individuals forgive:</p>
+<ol>
+<li><strong>R = Recall the Hurt:</strong> To remember the event as objectively as possible without ruminating on the pain.</li>
+<li><strong>E = Empathize:</strong> To try to understand the viewpoint of the offender (e.g., were they under stress? hurt?).</li>
+<li><strong>A = Altruistic Gift:</strong> To offer forgiveness as a gift to the offender, recalling times when you needed forgiveness.</li>
+<li><strong>C = Commit:</strong> To make a public or written commitment to forgive.</li>
+<li><strong>H = Hold onto Forgiveness:</strong> To remind oneself that the choice has been made when memories resurface.</li>
+</ol>
+<h3>Benefits of Forgiveness</h3>
+<ul>
+<li><strong>Physical:</strong> Lower blood pressure, improved immune response, better sleep.</li>
+<li><strong>Psychological:</strong> Reduced anxiety, stress, and depression; higher self-esteem.</li>
+<li><strong>Relational:</strong> Restoration of trust and relationship maintenance.</li>
+</ul>
+<hr/>
+<h2>5. Gratitude</h2>
+<h3>Definition</h3>
+<p>Gratitude is the appreciation for what is valuable and meaningful to oneself. It is a general state of thankfulness and/or appreciation. Robert Emmons defines it as a two-step process:</p>
+<ol>
+<li><strong>Affirmation of Goodness:</strong> Recognizing that there are good things in the world.</li>
+<li><strong>Recognition of Sources:</strong> Recognizing that the source of this goodness lies at least partially outside the self.</li>
+</ol>
+<h3>Functions of Gratitude</h3>
+<ul>
+<li><strong>Moral Barometer:</strong> It helps us recognize when someone has treated us well.</li>
+<li><strong>Moral Motive:</strong> It stimulates us to behave prosocially (pay it forward).</li>
+<li><strong>Moral Reinforcer:</strong> Expressions of gratitude encourage others to continue behaving well.</li>
+</ul>
+<h3>Gratitude Interventions</h3>
+<ul>
+<li><strong>Gratitude Journaling:</strong> Writing down 3–5 things one is grateful for on a daily or weekly basis. (Note: Research suggests once a week may be more effective than daily to prevent "gratitude fatigue").</li>
+<li><strong>The Gratitude Visit:</strong> Writing a detailed letter of thanks to someone who changed your life and reading it to them in person.</li>
+<li><strong>Three Good Things:</strong> Identifying three things that went well during the day and identifying the cause for them.</li>
+</ul>
+<h3>Impact on Well-being</h3>
+<ul>
+<li>Increases positive affect and life satisfaction.</li>
+<li>Reduces the effects of <strong>Hedonic Adaptation</strong> (the tendency to get used to good things and return to a baseline level of happiness). Gratitude keeps the appreciation fresh.</li>
+</ul>
+<hr/>
+<h2>6. Positive Belief (Optimism and Hope)</h2>
+<p>Positive belief refers to the cognitive expectation that the future will be good.</p>
+<h3>A. Optimism (Seligman’s Explanatory Style)</h3>
+<p>Martin Seligman defines optimism not just as "positive thinking," but as how people explain the causes of bad events.</p>
+<p><strong>The 3 Ps of Explanatory Style:</strong></p>
+<ol>
+<li><strong>Permanence (Time):</strong>
+<ul>
+<li><em>Pessimist:</em> "This bad situation will last forever."</li>
+<li><em>Optimist:</em> "This is a temporary setback."</li>
+</ul></li>
+<li><strong>Pervasiveness (Space):</strong>
+<ul>
+<li><em>Pessimist:</em> "This ruins everything in my life" (Universal).</li>
+<li><em>Optimist:</em> "This is just one specific area; my life is otherwise fine" (Specific).</li>
+</ul></li>
+<li><strong>Personalization (Cause):</strong>
+<ul>
+<li><em>Pessimist:</em> "It’s all my fault" (Internal).</li>
+<li><em>Optimist:</em> "Circumstances or others contributed to this" (External—note: this applies to bad events; optimists internalize good events).</li>
+</ul></li>
+</ol>
+<h3>B. Dispositional Optimism (Scheier &amp; Carver)</h3>
+<p>This theory views optimism as a stable trait: the general expectation that good things will happen. It is measured by the Life Orientation Test (LOT-R).</p>
+<ul>
+<li><strong>Mechanism:</strong> Optimists use <strong>approach coping strategies</strong> (tackling problems head-on) rather than <strong>avoidance coping</strong> (denial or withdrawal).</li>
+</ul>
+<h3>C. Hope Theory (C.R. Snyder)</h3>
+<p>Snyder defines hope as a cognitive process, not an emotion. It consists of three components ("The Trilogy of Hope"):</p>
+<ol>
+<li><strong>Goals:</strong> Mental targets that anchor our behavior.</li>
+<li><strong>Pathways Thinking (Waypower):</strong> The perceived ability to generate routes to achieve those goals.</li>
+<li><strong>Agency Thinking (Willpower):</strong> The perceived ability to initiate and sustain movement along those pathways.</li>
+</ol>
+<p><em>Equation:</em> <strong>Hope = Willpower + Waypower</strong></p>
+<h3>Difference between Optimism and Hope</h3>
+<ul>
+<li><strong>Optimism:</strong> A generalized belief that things will turn out well (e.g., "It will be okay").</li>
+<li><strong>Hope:</strong> A specific belief that <em>I can make</em> things turn out well through my actions and plans.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem6/PSY292/Unit2/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/PSY292/Unit4/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

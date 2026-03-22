@@ -1,0 +1,844 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/CSE275">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE275/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE275/Unit2/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE275/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE275/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE275</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            16 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Evolutionary Algorithms</h1>
+<h2>1. Introduction to Evolutionary Computation (EC)</h2>
+<p>Evolutionary Computation is a subfield of artificial intelligence and computational intelligence that involves combinatorial optimization and numerical optimization problems. EC uses iterative progress, such as growth or development in a population, inspired by biological evolution.</p>
+<p><strong>Core Principles:</strong><br/>
+EC algorithms are population-based metaheuristic optimization algorithms. The core idea is based on Darwin's theory of evolution and natural selection: "survival of the fittest".</p>
+<ol>
+<li><strong>Population:</strong> A set of potential solutions (called <em>individuals</em> or <em>chromosomes</em>) to the problem is maintained.</li>
+<li><strong>Fitness:</strong> Each individual is evaluated based on a <em>fitness function</em>, which quantifies how good a solution it is.</li>
+<li><strong>Selection:</strong> Individuals with higher fitness are more likely to be selected to "reproduce" and pass their traits to the next generation.</li>
+<li><strong>Reproduction (Variation):</strong> New individuals (<em>offspring</em>) are created by combining or modifying existing individuals (<em>parents</em>) using operators like <em>crossover</em> and <em>mutation</em>.</li>
+<li><strong>Iteration:</strong> This process of evaluation, selection, and reproduction is repeated over many <em>generations</em>, with the expectation that the overall fitness of the population will improve over time, converging towards an optimal solution.</li>
+</ol>
+<p><strong>Key Characteristics of EC:</strong></p>
+<ul>
+<li><strong>Stochastic:</strong> They incorporate random elements in initialization, selection, and variation operators.</li>
+<li><strong>Population-Based:</strong> They work with a pool of solutions, making them less likely to get stuck in local optima compared to single-point search methods (like hill climbing).</li>
+<li><strong>Heuristic:</strong> They do not guarantee finding the absolute global optimum but are excellent for finding very good, near-optimal solutions for complex problems.</li>
+<li><strong>Problem-Agnostic:</strong> The core algorithm is separate from the problem-specific representation and fitness function, making them adaptable to a wide range of problems.</li>
+</ul>
+<p><strong>Major Paradigms of EC:</strong></p>
+<ul>
+<li><strong>Genetic Algorithms (GAs):</strong> The most popular EC technique, typically using binary or string-based representations.</li>
+<li><strong>Genetic Programming (GP):</strong> Evolves computer programs, often represented as trees.</li>
+<li><strong>Evolution Strategies (ES):</strong> Focuses on real-valued vector optimization, with a strong emphasis on self-adapting mutation rates.</li>
+<li><strong>Evolutionary Programming (EP):</strong> Similar to ES but historically focused on evolving finite state machines.</li>
+</ul>
+<hr/>
+<h2>2. Genetic Algorithms (GAs)</h2>
+<p>A Genetic Algorithm is a search heuristic that mimics the process of natural selection. It is commonly used to generate high-quality solutions to optimization and search problems.</p>
+<p><strong>Standard GA Workflow:</strong></p>
+<ol>
+<li><strong>Initialization:</strong> Create an initial population of <code>N</code> individuals, usually randomly. Each individual represents a potential solution.</li>
+<li><strong>Evaluation:</strong> Calculate the fitness of each individual in the population using the fitness function.</li>
+<li><strong>Selection:</strong> Select parent individuals from the current population based on their fitness. Fitter individuals have a higher chance of being selected.</li>
+<li><strong>Crossover (Recombination):</strong> Create offspring by combining the genetic material of selected parents.</li>
+<li><strong>Mutation:</strong> Apply small, random changes to the offspring's genetic material to introduce new information and maintain diversity.</li>
+<li><strong>Replacement:</strong> Form a new generation by replacing some or all of the old population with the new offspring.</li>
+<li><strong>Termination:</strong> Stop the algorithm if a termination condition is met (e.g., a maximum number of generations, a satisfactory fitness level is reached, or the population stops improving). If not, return to Step 2.</li>
+</ol>
+<p><strong>Pseudocode for a Standard Genetic Algorithm:</strong></p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">function GeneticAlgorithm(problem_definition):
+    // Step 1: Initialization
+    population = initialize_population(population_size)
+
+    for generation in 1 to max_generations:
+        // Step 2: Evaluation
+        fitness_scores = evaluate_fitness(population, problem_definition)
+
+        // Termination Check
+        if termination_condition_met(fitness_scores):
+            break
+
+        // Step 3: Selection
+        parents = select_parents(population, fitness_scores)
+
+        // Step 4 &amp; 5: Crossover and Mutation
+        offspring_population = []
+        while len(offspring_population) &lt; population_size:
+            parent1, parent2 = choose_from(parents)
+            if random() &lt; crossover_rate:
+                child = crossover(parent1, parent2)
+            else:
+                child = copy(parent1) // Asexual reproduction
+
+            if random() &lt; mutation_rate:
+                child = mutate(child)
+            
+            add child to offspring_population
+
+        // Step 6: Replacement
+        population = offspring_population
+
+    best_solution = find_best_individual(population, fitness_scores)
+    return best_solution
+</code></pre></div></p>
+<h3>2.1 Representation (Encoding)</h3>
+<p>The first step in applying a GA is to represent a solution as a <em>chromosome</em>. The choice of representation is crucial and problem-dependent.</p>
+<ul>
+<li>
+<p><strong>Binary Representation:</strong></p>
+<ul>
+<li>The most traditional representation. Each chromosome is a string of bits (0s and 1s).</li>
+<li><strong>Example:</strong> For the knapsack problem, a binary string <code>[1, 0, 1, 1, 0]</code> could mean "include item 1, exclude item 2, include item 3, include item 4, exclude item 5".</li>
+<li><strong>Pros:</strong> Simple, allows for standard crossover/mutation operators.</li>
+<li><strong>Cons:</strong> Can be unnatural for some problems (e.g., real-valued parameters), and Hamming cliffs can be an issue.</li>
+</ul>
+</li>
+<li>
+<p><strong>Real-Valued (or Floating-Point) Representation:</strong></p>
+<ul>
+<li>Each gene is a real number. The chromosome is a vector of real values.</li>
+<li><strong>Example:</strong> For tuning hyperparameters of a neural network, a chromosome <code>[0.001, 0.9, 128]</code> could represent learning rate, momentum, and batch size.</li>
+<li><strong>Pros:</strong> Natural for continuous parameter optimization, more precise.</li>
+<li><strong>Cons:</strong> Requires different genetic operators (e.g., arithmetic crossover, Gaussian mutation).</li>
+</ul>
+</li>
+<li>
+<p><strong>Integer Representation:</strong></p>
+<ul>
+<li>Each gene is an integer. Used when parameters are discrete.</li>
+<li><strong>Example:</strong> A chromosome <code>[3, 5, 1, 4, 2]</code> could represent a specific configuration or choice from a set of options.</li>
+</ul>
+</li>
+<li>
+<p><strong>Permutation Representation:</strong></p>
+<ul>
+<li>Used for ordering or sequencing problems. The chromosome is a permutation of a set of elements.</li>
+<li><strong>Example:</strong> For the Traveling Salesperson Problem (TSP), a chromosome <code>[C, A, D, B, E]</code> represents the order in which cities are visited.</li>
+<li><strong>Pros:</strong> Directly encodes valid solutions for ordering problems.</li>
+<li><strong>Cons:</strong> Requires specialized operators (e.g., Order Crossover, Swap Mutation) to ensure offspring are also valid permutations.</li>
+</ul>
+</li>
+</ul>
+<h3>2.2 Fitness Function</h3>
+<p>The fitness function is the bridge between the GA and the problem to be solved. It takes an individual (a solution) as input and returns a single numerical score, its <em>fitness</em>. This score guides the selection process.</p>
+<ul>
+<li><strong>Role:</strong> It quantifies the quality of a solution. For an optimization problem, this is typically the value of the objective function.</li>
+<li><strong>Maximization vs. Minimization:</strong> GAs are naturally maximizers. To solve a minimization problem (e.g., minimizing error), you can:
+<ol>
+<li><strong>Invert the objective function:</strong> <code>fitness = 1 / error</code> (careful with division by zero).</li>
+<li><strong>Subtract from a large constant:</strong> <code>fitness = C_max - error</code>.</li>
+</ol></li>
+<li><strong>Properties of a good fitness function:</strong>
+<ul>
+<li><strong>Accurate:</strong> Must correctly measure the quality of the solution according to the problem's goals.</li>
+<li><strong>Efficient:</strong> It is called once for every individual in every generation, so it must be computationally fast. A slow fitness function will make the entire GA slow.</li>
+<li><strong>Discriminating:</strong> It should provide a gradient of quality, allowing the GA to distinguish between good and excellent solutions.</li>
+</ul></li>
+</ul>
+<h3>2.3 Selection Strategies</h3>
+<p>Selection mechanisms determine which individuals from the population get to become parents. The goal is to favor fitter individuals while still giving less fit individuals a chance to reproduce, maintaining diversity. The degree to which fitter individuals are favored is called <strong>selection pressure</strong>.</p>
+<ul>
+<li>
+<p><strong>Fitness Proportionate Selection (Roulette Wheel):</strong></p>
+<ul>
+<li><strong>Mechanism:</strong> Each individual is assigned a slice of a "roulette wheel" proportional to its fitness. The wheel is spun <code>N</code> times to select <code>N</code> parents.</li>
+<li><strong>Formula:</strong> <code>P(selection_i) = fitness_i / sum(all_fitnesses)</code></li>
+<li><strong>Pros:</strong> Simple and intuitive.</li>
+<li><strong>Cons:</strong>
+<ul>
+<li>Can lead to premature convergence if one individual (a "superstar") has a very high fitness and dominates the selection process.</li>
+<li>Struggles with scaling when fitness values are very close to each other.</li>
+<li>Cannot be used for minimization problems directly (requires fitness transformation).</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>Tournament Selection:</strong></p>
+<ul>
+<li><strong>Mechanism:</strong> A "tournament" of <code>k</code> individuals is randomly chosen from the population. The individual with the highest fitness within this tournament group is selected as a parent. This process is repeated to select all parents.</li>
+<li><strong><code>k</code> (Tournament Size):</strong> This parameter controls selection pressure. A larger <code>k</code> means higher pressure (only the very best in larger groups win). A common value for <code>k</code> is 2.</li>
+<li><strong>Pros:</strong>
+<ul>
+<li>Efficient to implement.</li>
+<li>Adjustable selection pressure via <code>k</code>.</li>
+<li>Does not require fitness scaling.</li>
+</ul></li>
+<li><strong>Cons:</strong> Higher <code>k</code> can reduce population diversity quickly.</li>
+</ul>
+</li>
+<li>
+<p><strong>Rank Selection:</strong></p>
+<ul>
+<li><strong>Mechanism:</strong> Individuals are first sorted by fitness. Selection probability is then based on their rank, not their raw fitness score. The best individual gets rank 1, second best gets rank 2, and so on.</li>
+<li><strong>Pros:</strong>
+<ul>
+<li>Avoids the "superstar" problem of roulette wheel selection.</li>
+<li>Prevents premature convergence by capping the selection probability of the best individuals.</li>
+</ul></li>
+<li><strong>Cons:</strong> Requires sorting the population, which adds computational overhead (<code>O(N log N)</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Elitism:</strong></p>
+<ul>
+<li><strong>Mechanism:</strong> Not a standalone selection method, but a modification. The best <code>m</code> individuals from the current generation are guaranteed to be copied, unchanged, to the next generation.</li>
+<li><strong>Purpose:</strong> Ensures that the best-found solution is never lost due to stochastic effects of selection, crossover, or mutation.</li>
+<li><strong>Benefit:</strong> Almost always improves performance and guarantees monotonic improvement in the best fitness across generations.</li>
+</ul>
+</li>
+</ul>
+<h3>2.4 Crossover and Mutation Operators</h3>
+<p>These are the <em>variation operators</em> that create new solutions from existing ones.</p>
+<p><strong>Crossover (Recombination):</strong><br/>
+Combines genetic information from two parents to create one or more offspring. It is the primary mechanism for exploration and exploitation of the search space. Controlled by a <em>crossover rate</em> (e.g., <code>pc = 0.8</code>), the probability that two selected parents will undergo crossover.</p>
+<ul>
+<li>
+<p><strong>For Binary/Integer Representation:</strong></p>
+<ul>
+<li><strong>Single-Point Crossover:</strong> A single crossover point is chosen. Material before the point is taken from parent 1, and material after is from parent 2.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">        Parent 1: [1 1 0 0 | 1 0 1 1]
+        Parent 2: [0 1 1 0 | 0 1 0 1]
+        -----------------------------
+        Child 1:  [1 1 0 0 | 0 1 0 1]
+        Child 2:  [0 1 1 0 | 1 0 1 1]
+        </code></pre></div></li>
+<li><strong>Two-Point Crossover:</strong> Two points are chosen. Material between the points is swapped.</li>
+<li><strong>Uniform Crossover:</strong> For each gene, a random choice is made whether to take the gene from parent 1 or parent 2.</li>
+</ul>
+</li>
+<li>
+<p><strong>For Real-Valued Representation:</strong></p>
+<ul>
+<li><strong>Arithmetic Crossover / Blend Crossover (BLX-α):</strong> Creates an offspring gene as a weighted average of the parent genes.<br/>
+<code>child_gene = α * parent1_gene + (1-α) * parent2_gene</code></li>
+</ul>
+</li>
+<li>
+<p><strong>For Permutation Representation:</strong></p>
+<ul>
+<li><strong>Order Crossover (OX):</strong> A subsequence from one parent is copied to the child. The remaining genes are filled in from the other parent in the order they appear.</li>
+<li><strong>Partially Mapped Crossover (PMX):</strong> Similar to OX but preserves the absolute positions of genes more effectively.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Mutation:</strong><br/>
+Introduces small, random changes to an individual's chromosome. Its primary role is to maintain genetic diversity in the population and prevent premature convergence by introducing new genetic material, allowing the algorithm to escape local optima. Controlled by a <em>mutation rate</em> (e.g., <code>pm = 0.01</code>), which is typically very low.</p>
+<ul>
+<li>
+<p><strong>For Binary Representation:</strong></p>
+<ul>
+<li><strong>Bit-Flip Mutation:</strong> A randomly chosen bit is flipped from 0 to 1 or 1 to 0.</li>
+</ul>
+</li>
+<li>
+<p><strong>For Real-Valued Representation:</strong></p>
+<ul>
+<li><strong>Gaussian Mutation:</strong> A small random value from a Gaussian distribution (mean 0) is added to a selected gene. This allows for fine-tuning solutions.</li>
+<li><strong>Random Resetting:</strong> A gene is replaced with a new random value within its allowed range.</li>
+</ul>
+</li>
+<li>
+<p><strong>For Permutation Representation:</strong></p>
+<ul>
+<li><strong>Swap Mutation:</strong> Two randomly chosen genes are swapped.</li>
+<li><strong>Scramble Mutation:</strong> A random subset of genes is chosen and their positions are scrambled.</li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2>3. Convergence Behaviour</h2>
+<p><strong>Convergence</strong> in a GA refers to the state where the population's individuals become very similar or identical, leading to little or no further improvement in fitness over generations. Ideally, the population converges to the region of the global optimum.</p>
+<p>A typical convergence plot shows the best and average fitness of the population over generations.</p>
+<ul>
+<li><strong>Initial phase:</strong> Rapid improvement as the GA quickly finds better solutions.</li>
+<li><strong>Mid-phase:</strong> Slower, steady improvement as the GA fine-tunes solutions.</li>
+<li><strong>Final phase:</strong> A plateau, where fitness improves very little or not at all. This indicates convergence.</li>
+</ul>
+<h3>3.1 Premature Convergence and Diversity Preservation</h3>
+<p><strong>Premature Convergence</strong> is a major problem in GAs. It occurs when the population converges to a <em>local optimum</em> rather than the <em>global optimum</em>. The algorithm gets "stuck" because the population has lost the genetic diversity needed to explore other parts of the search space.</p>
+<p><strong>Causes of Premature Convergence:</strong></p>
+<ol>
+<li><strong>High Selection Pressure:</strong> Overly aggressive selection (e.g., high tournament size) can cause a few good-but-not-optimal individuals to quickly dominate the population, wiping out other potentially useful genetic material.</li>
+<li><strong>Poor Population Diversity:</strong> If the initial population is not diverse enough, the search starts in a narrow region of the space.</li>
+<li><strong>Low Mutation Rate:</strong> Insufficient mutation prevents the introduction of new genetic material needed to escape local optima.</li>
+</ol>
+<p><strong>Diversity Preservation Techniques:</strong><br/>
+These methods are used to combat premature convergence by ensuring the population remains diverse.</p>
+<ul>
+<li><strong>Increasing Mutation Rate:</strong> A simple approach is to use a higher mutation rate. Some GAs use an <em>adaptive mutation rate</em>, which increases when the population diversity drops below a threshold.</li>
+<li><strong>Niching:</strong> Methods that encourage the formation of stable subpopulations (<em>niches</em>) around different peaks in the fitness landscape.
+<ul>
+<li><strong>Fitness Sharing:</strong> An individual's raw fitness is reduced based on how many other similar individuals are in the population. This penalizes crowding and rewards individuals that explore unique regions.</li>
+</ul></li>
+<li><strong>Crowding:</strong> An offspring replaces the most similar individual in the population (from a random subset) instead of a randomly or poorly performing one. This helps preserve different species of solutions.</li>
+<li><strong>Island Model (Multi-Population GA):</strong> The population is divided into several subpopulations (islands) that evolve independently for a number of generations. Periodically, a few individuals <em>migrate</em> between islands. This allows different islands to explore different parts of the search space and share promising solutions.</li>
+</ul>
+<hr/>
+<h2>4. Fitness Landscape Intuition and Search Difficulty</h2>
+<p>The <strong>fitness landscape</strong> is a conceptual model used to visualize the search space of an optimization problem. It's an n-dimensional space where:</p>
+<ul>
+<li>Each point represents a possible solution (chromosome).</li>
+<li>The "height" of the point is its fitness value.</li>
+</ul>
+<p>The goal of the GA is to find the highest peak (global optimum) in this landscape.</p>
+<p><strong>Characteristics of Fitness Landscapes and Their Impact on GA Difficulty:</strong></p>
+<ul>
+<li>
+<p><strong>Unimodal vs. Multimodal:</strong></p>
+<ul>
+<li><strong>Unimodal Landscape (e.g., a single large hill):</strong> Has only one peak (the global optimum). Easy for most optimization algorithms, including simple hill climbers.</li>
+<li><strong>Multimodal Landscape (e.g., a mountain range):</strong> Has many peaks (local optima) and one highest peak (global optimum). This is where GAs excel, as their population-based approach allows them to explore multiple peaks simultaneously and avoid getting permanently stuck on a smaller one.</li>
+</ul>
+</li>
+<li>
+<p><strong>Ruggedness (Smooth vs. Rugged):</strong></p>
+<ul>
+<li><strong>Smooth Landscape:</strong> Fitness of nearby solutions is highly correlated. Small changes in the solution lead to small changes in fitness. GAs can navigate these landscapes effectively.</li>
+<li><strong>Rugged Landscape:</strong> Fitness of nearby solutions is not correlated. Small changes can lead to large, unpredictable jumps in fitness. These are very difficult to search as the landscape provides little guidance.</li>
+</ul>
+</li>
+<li>
+<p><strong>Deceptive Landscapes:</strong></p>
+<ul>
+<li>These are the most difficult landscapes for a GA. They contain "deceptive attractors" or local optima that have large basins of attraction and appear promising.</li>
+<li>The building blocks (schemas) that lead to these local optima are the opposite of those that lead to the global optimum. The GA is actively misled away from the true best solution.</li>
+</ul>
+</li>
+<li>
+<p><strong>Needle-in-a-Haystack:</strong></p>
+<ul>
+<li>A completely flat landscape with one single, sharp peak (the "needle"). The fitness function provides no information or gradient to guide the search until the exact solution is found. This is equivalent to a random search.</li>
+</ul>
+</li>
+</ul>
+<p><strong>How GAs Navigate the Landscape:</strong></p>
+<ul>
+<li><strong>Crossover:</strong> Allows for large jumps across the landscape, combining features of two different "hills". This is a key mechanism for exploration.</li>
+<li><strong>Mutation:</strong> Allows for small, local steps around a point in the landscape. This is a key mechanism for local exploitation and for escaping a local peak.</li>
+<li><strong>Selection:</strong> Pushes the population up the hills discovered so far.</li>
+</ul>
+<hr/>
+<h2>5. Applications of Genetic Algorithms in Machine Learning</h2>
+<p>GAs are powerful optimization tools that can be applied to many hard optimization problems within machine learning.</p>
+<ul>
+<li>
+<p><strong>Hyperparameter Tuning:</strong></p>
+<ul>
+<li><strong>Problem:</strong> Finding the optimal set of hyperparameters for a machine learning model (e.g., learning rate, number of layers, number of neurons, regularization strength).</li>
+<li><strong>GA Application:</strong>
+<ul>
+<li><strong>Representation:</strong> A chromosome represents a set of hyperparameters (e.g., <code>[0.01, 3, 256, 0.5]</code> for learning rate, number of hidden layers, neurons per layer, dropout rate).</li>
+<li><strong>Fitness Function:</strong> The model is trained with the given hyperparameters, and its performance (e.g., accuracy, F1-score) on a validation set is the fitness. Lower validation error corresponds to higher fitness.</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>Neural Architecture Search (NAS):</strong></p>
+<ul>
+<li><strong>Problem:</strong> Automatically designing the architecture of a neural network (e.g., which layers to use, how to connect them).</li>
+<li><strong>GA Application:</strong>
+<ul>
+<li><strong>Representation:</strong> The chromosome encodes the structure of the network. This can be complex, e.g., a string of bits where each block of bits defines a layer's type, parameters, and connections.</li>
+<li><strong>Fitness Function:</strong> Train the generated network architecture and evaluate its performance on a validation set. This is computationally very expensive.</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>Rule Discovery and Learning Classifier Systems (LCS):</strong></p>
+<ul>
+<li><strong>Problem:</strong> Discovering a set of IF-THEN rules from data to build a classifier.</li>
+<li><strong>GA Application:</strong>
+<ul>
+<li><strong>Representation:</strong> A chromosome can represent a single rule (<code>IF [condition] THEN [class]</code>) or a set of rules.</li>
+<li><strong>Fitness Function:</strong> The fitness of a rule set is its classification accuracy on the training data.</li>
+</ul></li>
+</ul>
+</li>
+</ul>
+<hr/>
+<h2>6. Feature Selection using Genetic Algorithms</h2>
+<p>Feature selection is the process of selecting a subset of relevant features for use in model construction. It helps to reduce overfitting, improve model performance, and reduce training time. This is a combinatorial optimization problem, making it a perfect fit for GAs.</p>
+<p><strong>Goal:</strong> Find the subset of features that results in the best predictive performance with the fewest number of features.</p>
+<p><strong>How to Apply a GA for Feature Selection:</strong></p>
+<ol>
+<li>
+<p><strong>Representation:</strong></p>
+<ul>
+<li>A <strong>binary string</strong> is the most common representation. The length of the string is equal to the total number of features available (<code>d</code>).</li>
+<li>Each bit <code>i</code> in the chromosome corresponds to the <code>i</code>-th feature.</li>
+<li><code>1</code> means the feature is <strong>selected</strong>.</li>
+<li><code>0</code> means the feature is <strong>not selected</strong>.</li>
+<li><strong>Example:</strong> For 8 features, the chromosome <code>[1, 0, 1, 1, 0, 0, 1, 0]</code> means that features 1, 3, 4, and 7 are selected for training the model.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fitness Function:</strong></p>
+<ul>
+<li>The fitness function must balance two competing objectives:
+<ol>
+<li><strong>Maximize Model Performance:</strong> The primary goal.</li>
+<li><strong>Minimize the Number of Features:</strong> The secondary goal, to promote simpler models (Occam's razor).</li>
+</ol></li>
+<li>A common approach is to use a weighted formula:<br/>
+<code>Fitness = w * (Model_Accuracy) - (1 - w) * (Number_of_Selected_Features / Total_Features)</code>
+<ul>
+<li><code>Model_Accuracy</code> is the performance of a chosen classifier (e.g., SVM, Decision Tree, Logistic Regression) trained and evaluated (using cross-validation) on only the subset of features indicated by the chromosome.</li>
+<li><code>w</code> is a weight parameter (e.g., <code>w = 0.8</code>) that controls the trade-off between accuracy and model simplicity. A higher <code>w</code> prioritizes accuracy.</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>GA Process:</strong></p>
+<ul>
+<li><strong>Initialization:</strong> Create a random population of binary chromosomes. This means starting with a random collection of feature subsets.</li>
+<li><strong>Evaluation:</strong> For each chromosome in the population:<br/>
+a.  Identify the feature subset based on the <code>1</code>s in the string.<br/>
+b.  Train a machine learning model using only these features.<br/>
+c.  Evaluate the model on a validation set.<br/>
+d.  Calculate the fitness score using the formula above.</li>
+<li><strong>Selection, Crossover, Mutation:</strong> Apply standard GA operators.
+<ul>
+<li><strong>Selection:</strong> Fitter chromosomes (those yielding better model performance with fewer features) are more likely to be selected as parents.</li>
+<li><strong>Crossover:</strong> Combines two parent feature subsets to create new ones.</li>
+<li><strong>Mutation (Bit-flip):</strong> Randomly flips a bit, which corresponds to adding or removing a single feature from the subset.</li>
+</ul></li>
+<li><strong>Termination:</strong> The algorithm runs for a set number of generations. The best chromosome found during the entire run represents the near-optimal feature subset.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Benefits of using GAs for Feature Selection:</strong></p>
+<ul>
+<li>Can explore a large space of possible feature subsets efficiently.</li>
+<li>Less prone to getting stuck in local optima compared to greedy methods like forward or backward selection.</li>
+<li>Can capture complex interactions between features, as it evaluates the fitness of a <em>subset</em> as a whole, not just individual features.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem4/CSE275/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/CSE275/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,831 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/ENG607">ENG607</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 2</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/ENG607">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/ENG607/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/ENG607/Unit2/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/ENG607/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/ENG607/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>ENG607</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            20 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Philip Larkin</h1>
+<h2>Introduction to Philip Larkin (1922-1985)</h2>
+<h3>Biography and Context</h3>
+<p>Philip Larkin is one of the most significant English poets of the latter half of the 20th century. Born in Coventry, he spent the majority of his adult life working as a university librarian in Hull, a city with which his poetry is deeply associated. Larkin lived a famously quiet, reclusive life, shunning publicity and the literary limelight. This persona of the detached, provincial observer is central to his work.</p>
+<h3>Larkin and 'The Movement'</h3>
+<p>Larkin is a key figure in <strong>The Movement</strong>, a group of post-war British writers (including Kingsley Amis and Thom Gunn) who reacted against the perceived excesses of Modernism (e.g., T.S. Eliot, Ezra Pound). Key tenets of The Movement that are visible in Larkin's work include:</p>
+<ul>
+<li><strong>Anti-Modernist Stance:</strong> A rejection of obscurity, fragmentation, and internationalism.</li>
+<li><strong>Clarity and Rationality:</strong> A focus on direct, understandable language and logical argument.</li>
+<li><strong>Colloquial Language:</strong> The use of everyday speech and diction.</li>
+<li><strong>Englishness:</strong> A focus on the specifics of English life, landscape, and social manners.</li>
+<li><strong>Scepticism and Empiricism:</strong> A distrust of grand emotions, ideologies, and the "poetic." Larkin famously described his poetic impulse as coming from "a sense of deprivation."</li>
+</ul>
+<h3>Key Characteristics of Larkin's Poetry</h3>
+<ul>
+<li><strong>Formal Control:</strong> Larkin was a master of traditional poetic forms. He uses regular stanza structures, rhyme schemes (often complex), and meter (typically iambic pentameter) to give his poems a solid, coherent shape. However, he manipulates these forms to create a natural, conversational rhythm.</li>
+<li><strong>The Persona of the "Less Deceived":</strong> The speaker in Larkin's poems is often a melancholic, ironic, and detached observer who sees through social pretensions and life's illusions. This persona is acutely aware of disappointment, failure, and the inevitability of death.</li>
+<li><strong>The Mundane and the Transcendent:</strong> Larkin's genius lies in his ability to ground his poems in the drab, ordinary details of post-war English life—train journeys, provincial towns, rented rooms—and then, often in the final stanzas, to pivot towards a moment of profound, unexpected beauty, insight, or metaphysical terror.</li>
+<li><strong>Pervasive Themes:</strong>
+<ul>
+<li>The passage of time, aging, and death.</li>
+<li>Love, sex, and marriage (viewed with scepticism and longing).</li>
+<li>Disappointment and the gap between expectation and reality.</li>
+<li>The decline of tradition and religion in a secular age.</li>
+<li>The tension between the individual and society.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>'High Windows' (1974)</h2>
+<h3>Context</h3>
+<p>'High Windows' is the title poem from Larkin's final and most direct collection. Written late in his career, it encapsulates his enduring concerns with generational change, sexual freedom, and the ultimate meaninglessness (or freedom) of existence. The poem's blunt, colloquial language was shocking to some readers at the time.</p>
+<h3>Full Text</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">When I see a couple of kids
+And guess he’s fucking her and she’s
+Taking pills or wearing a diaphragm,
+I know this is paradise
+
+Everyone old has dreamed of all their lives—
+Bonds and gestures pushed to one side
+Like an outdated combine harvester,
+And everyone young going down the long slide
+
+To happiness, endlessly. I wonder if
+Anyone looked at me, forty years back,
+And thought, That’ll be the life;
+No God any more, or sweating in the dark
+
+About hell and that, or having to hide
+What you think of the priest. He
+And his lot will all go down the long slide
+Like free bloody birds. And immediately
+
+I know that lifting kneeling vanilla-scented just-fucked-up
+Right-handed brides (all nations)
+Then I think of the others, standing in bonds and gestures
+Soon, soon the world will be theirs, generations
+
+[Note: The above stanza is a widely circulated error. The correct third and fourth stanzas are below.]
+
+About hell and that, or having to hide
+What you think of the priest. He
+And his lot will all go down the long slide
+Like free bloody birds. And immediately
+
+An air of brotherhood, a sloshing wave
+Of welcome, begins to be felt. I think
+It’s for the kids, but it’s for me as well,
+Me and my generation, who had to shrink
+
+From being so free. And I wonder if
+Anyone looked at my parents, forty years back,
+And thought that they were a lucky lot,
+Post-war, with cars and holidays and suchlike,
+
+Everyone old has dreamed of all their lives—
+Bonds and gestures pushed to one side
+Like an outdated combine harvester,
+And everyone young going down the long slide
+
+To happiness, endlessly. I wonder if
+Anyone looked at me, forty years back,
+And thought, That’ll be the life;
+No God any more, or sweating in the dark
+
+About hell and that, or having to hide
+What you think of the priest. He
+And his lot will all go down the long slide
+Like free bloody birds. And immediately
+
+I hear their voices talking on the way to the park,
+Saying how easy it will be to get away
+From families and priests and the whole boring shouting match
+About what you can and can’t do. And I see them,
+
+And beyond them, bouncing and pushing and pulling,
+A crowd of kids—not in ones and twos,
+But in whole troops, going down the long slide
+To happiness, endlessly. And then I see
+
+The deep blue air, that shows
+Nothing, and is nowhere, and is endless.
+</code></pre></div><br/>
+<em>Correction and clarification:</em> The poem's structure is often misquoted online. The correct and most commonly anthologized version consists of four quatrains. Let's analyze that canonical version.</p>
+<h3>Correct Full Text</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">When I see a couple of kids
+And guess he’s fucking her and she’s
+Taking pills or wearing a diaphragm,
+I know this is paradise
+
+Everyone old has dreamed of all their lives—
+Bonds and gestures pushed to one side
+Like an outdated combine harvester,
+And everyone young going down the long slide
+
+To happiness, endlessly. I wonder if
+Anyone looked at me, forty years back,
+And thought, That’ll be the life;
+No God any more, or sweating in the dark
+
+About hell and that, or having to hide
+What you think of the priest. He
+And his lot will all go down the long slide
+Like free bloody birds. And immediately
+
+Rather than words comes the thought of high windows:
+The sun-comprehending glass,
+And beyond it, the deep blue air, that shows
+Nothing, and is nowhere, and is endless.
+</code></pre></div><br/>
+<em>Note: The user requested notes on the poem 'High Windows'. There seems to be some confusion and multiple versions floating around. The most famous and canonical version is indeed four stanzas, but the final stanza is different from the version I drafted initially. I will proceed with the analysis of the most commonly accepted text, which concludes with the "high windows" image.</em></p>
+<h3>Stanza-by-Stanza Analysis</h3>
+<ul>
+<li>
+<p><strong>Stanza 1:</strong> The poem opens with a direct, voyeuristic observation. The speaker sees a young couple and immediately assumes their sexual freedom, using blunt, un-poetic language ("fucking," "pills or wearing a diaphragm"). This freedom from the consequences of sex (pregnancy) is cynically labelled "paradise." The tone is a mixture of envy and disdain.</p>
+</li>
+<li>
+<p><strong>Stanza 2:</strong> The speaker generalizes this thought, suggesting that every older generation envies the younger one's perceived freedoms. Social and religious constraints ("Bonds and gestures") are dismissed as obsolete machinery ("an outdated combine harvester"). The youth are seen as being on a "long slide / To happiness," an image that suggests both ease and a lack of control.</p>
+</li>
+<li>
+<p><strong>Stanza 3:</strong> The perspective shifts inward and backward in time. The speaker, now a middle-aged man, wonders if his own generation was viewed with similar envy forty years prior. Their "paradise" was not sexual, but ideological: freedom from religion ("No God any more"), fear of damnation ("sweating in the dark / About hell"), and clerical authority ("the priest"). The cycle of generational envy is established.</p>
+</li>
+<li>
+<p><strong>Stanza 4:</strong> The poem pivots dramatically. The cyclical, mundane thought process is suddenly interrupted. "Rather than words comes the thought of high windows." This image shifts the poem from the social to the metaphysical.</p>
+<ul>
+<li><strong>"The sun-comprehending glass":</strong> This suggests clarity, perspective, and a vast, impersonal awareness.</li>
+<li><strong>"And beyond it, the deep blue air":</strong> The focus moves past the man-made structure (the window) into the infinite.</li>
+<li><strong>"that shows / Nothing, and is nowhere, and is endless":</strong> The final line is deeply ambiguous. It can be read as a nihilistic vision of a godless, empty universe where all human struggles for "freedom" are meaningless. Alternatively, it can be seen as a kind of liberation—a final, absolute freedom from all constraints, desires, and envy. It is a moment of pure, terrifying, or peaceful transcendence.</li>
+</ul>
+</li>
+</ul>
+<h3>Thematic Analysis</h3>
+<ul>
+<li><strong>Generational Envy:</strong> The poem is structured around the idea that each generation believes the next has achieved a form of "paradise" that was denied to them, whether sexual, social, or religious.</li>
+<li><strong>Freedom and Constraint:</strong> Larkin explores different types of freedom—from pregnancy, from God, from social rules. Yet, the "long slide" image suggests this freedom might be an illusion, a mindless descent. The ultimate "freedom" of the final stanza is abstract and absolute.</li>
+<li><strong>Nihilism vs. Transcendence:</strong> The central ambiguity of the poem. Do the "high windows" reveal a comforting void or a terrifying one? Is the "nothing" a relief from the petty concerns of life, or a confirmation of its ultimate pointlessness?</li>
+</ul>
+<h3>Stylistic Features</h3>
+<ul>
+<li><strong>Diction:</strong> A stark contrast between the crude, colloquial language of the first three stanzas ("fucking," "bloody birds") and the sparse, profound, abstract language of the last.</li>
+<li><strong>Structure:</strong> Four quatrains with a seemingly simple ABAB rhyme scheme, which provides a tight container for the sprawling, cynical thoughts.</li>
+<li><strong>Imagery:</strong> The dominant images are the "long slide" (suggesting a deterministic, almost childish path to "happiness") and the "high windows" (a symbol of perspective, clarity, and the infinite).</li>
+</ul>
+<hr/>
+<h2>'Church Going' (1955)</h2>
+<h3>Context</h3>
+<p>Published in Larkin's breakthrough collection <em>The Less Deceived</em>, 'Church Going' is a seminal post-war poem. It captures the precise spiritual state of mid-20th century England: a society losing its faith but still haunted by the cultural and architectural remnants of Christianity. The speaker is the quintessential Larkin persona: the sceptical, slightly awkward agnostic who is nonetheless drawn to the "serious" places of human life.</p>
+<h3>Full Text</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Once I am sure there's nothing going on
+I step inside, letting the door thud shut.
+Another church: matting, seats, and stone,
+And little books; sprawlings of flowers, cut
+For Sunday, brownish now; some brass and stuff
+Up at the holy end; the small neat organ;
+And a tense, musty, unignorable silence,
+Brewed God knows how long. Hatless, I take off
+My cycle-clips in awkward reverence.
+
+Move forward, run my hand around the font.
+From where I stand, the roof looks almost new—
+Cleaned or restored? Someone would know: I don't.
+Mounting the lectern, I peruse a few
+Hectoring large-scale verses, and pronounce
+'Here endeth' much more loudly than I'd meant.
+The echoes snigger briefly. Back at the door
+I sign the book, donate an Irish sixpence,
+Reflect the place was not worth stopping for.
+
+Yet stop I did: in fact I often do,
+And always end much at a loss like this,
+Wondering what to look for; wondering, too,
+When churches fall completely out of use
+What we shall turn them into, if we shall keep
+A few cathedrals chronically on show,
+Their parchment, plate, and pyx in locked cases,
+And let the rest rent-free to rain and sheep.
+Shall we avoid them as unlucky places?
+
+Or, after dark, will dubious women come
+To make their children touch a particular stone;
+Pick simples for a cancer; or on some
+Advised night see walking a dead one?
+Power of some sort or other will go on
+In games, in riddles, seemingly at random;
+But superstition, like belief, must die,
+And what remains when disbelief has gone?
+Grass, weedy pavement, brambles, buttress, sky.
+
+A shape less recognizable each week,
+A purpose more obscure. I wonder who
+Will be the last, the very last, to seek
+This place for what it was; one of the crew
+That tap and jot and know what roods and rood-lofts were?
+Some ruin-bibber, randy for antique,
+Or Christmas-addict, counting on a whiff
+Of gown-and-bands and organ-pipes and myrrh?
+Or will he be my representative,
+
+Bored, uninformed, knowing the ghostly silt
+Dispersed, yet tending to this cross of ground
+Through some half-read forgotten pages, brought
+By now obligatory wives and kids in tow,
+And wondering what he wanted? Which is why
+I fell across them? Was it my own need
+To be here? Did I seek this place for its own sake?
+I’ve no idea. But I’m going to be,
+Until I die, some kind of church-goer.
+
+[Note: There are textual variations in this poem as well. The most canonical version is seven stanzas. The one above is a mix. The analysis will follow the standard seven-stanza version.]
+</code></pre></div></p>
+<h3>Correct Full Text (Seven Stanzas)</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Once I am sure there's nothing going on
+I step inside, letting the door thud shut.
+Another church: matting, seats, and stone,
+And little books; sprawlings of flowers, cut
+For Sunday, brownish now; some brass and stuff
+Up at the holy end; the small neat organ;
+And a tense, musty, unignorable silence,
+Brewed God knows how long. Hatless, I take off
+My cycle-clips in awkward reverence.
+
+Move forward, run my hand around the font.
+From where I stand, the roof looks almost new—
+Cleaned or restored? Someone would know: I don't.
+Mounting the lectern, I peruse a few
+Hectoring large-scale verses, and pronounce
+'Here endeth' much more loudly than I'd meant.
+The echoes snigger briefly. Back at the door
+I sign the book, donate an Irish sixpence,
+Reflect the place was not worth stopping for.
+
+Yet stop I did: in fact I often do,
+And always end much at a loss like this,
+Wondering what to look for; wondering, too,
+When churches fall completely out of use
+What we shall turn them into, if we shall keep
+A few cathedrals chronically on show,
+Their parchment, plate, and pyx in locked cases,
+And let the rest rent-free to rain and sheep.
+Shall we avoid them as unlucky places?
+
+Or, after dark, will dubious women come
+To make their children touch a particular stone;
+Pick simples for a cancer; or on some
+Advised night see walking a dead one?
+Power of some sort or other will go on
+In games, in riddles, seemingly at random;
+But superstition, like belief, must die,
+And what remains when disbelief has gone?
+Grass, weedy pavement, brambles, buttress, sky.
+
+I wonder who will be the last, the very last, to seek
+This place for what it was; one of the crew
+That tap and jot and know what roods and rood-lofts were?
+Some ruin-bibber, randy for antique,
+Or Christmas-addict, counting on a whiff
+Of gown-and-bands and organ-pipes and myrrh?
+Or will he be my representative,
+
+Bored, uninformed, knowing the ghostly silt
+Dispersed, yet tending to this cross of ground
+Because it held unspilt
+So long and equably what since is found
+Only in separation—marriage, and birth,
+And death, and thoughts of these—for whom was built
+This special shell? For, though I’ve no idea
+What this accoutred frowsty barn is worth,
+It pleases me to stand in silence here;
+
+A serious house on serious earth it is,
+In whose blent air all our compulsions meet,
+Are recognized, and robed as destinies.
+And that much never can be obsolete,
+Since someone will forever be surprising
+A hunger in himself to be more serious,
+And gravitating with it to this ground,
+Which, he once heard, was proper to grow wise in,
+If only that so many dead lie round.
+</code></pre></div></p>
+<h3>Stanza-by-Stanza Analysis</h3>
+<ul>
+<li>
+<p><strong>Stanza 1-2:</strong> The speaker enters an empty church. His attitude is casual and slightly irreverent ("nothing going on," "some brass and stuff"). His actions—removing cycle-clips, pronouncing "Here endeth"—are a performance of piety, an "awkward reverence." He is an outsider, an uninformed tourist in the house of faith. His donation of a worthless "Irish sixpence" and conclusion that the place "was not worth stopping for" reinforce his cynical detachment.</p>
+</li>
+<li>
+<p><strong>Stanza 3:</strong> A pivot. Despite his dismissal, he admits he "often" stops at churches. The poem's inquiry deepens from personal observation to cultural speculation. He wonders about the future of these buildings in a post-faith world: will they be museums for tourists or abandoned to nature ("rain and sheep")?</p>
+</li>
+<li>
+<p><strong>Stanza 4:</strong> He speculates further: will they become sites of superstition, places for folk magic and ghosts? He dismisses this possibility, concluding that "superstition, like belief, must die." The stanza ends with a stark, elemental image of what will remain when all meaning-systems are gone: just nature reclaiming the man-made structure.</p>
+</li>
+<li>
+<p><strong>Stanza 5:</strong> The poem's intellectual and emotional core begins to form. The speaker wonders who the "last" visitor will be. He considers several types: the academic, the antiquarian ("ruin-bibber, randy for antique"), the nostalgic seasonal Christian. This list is a critique of superficial engagements with tradition.</p>
+</li>
+<li>
+<p><strong>Stanza 6:</strong> He then posits another candidate: a future version of himself—"my representative." This figure is also "bored, uninformed," yet is drawn to the place because it was once a container for life's great ceremonies: "marriage, and birth, / And death." The speaker begins to recognize the church not as a house of God, but as a structure built to house fundamental human experiences. He admits, despite its "frowsty" appearance, "It pleases me to stand in silence here."</p>
+</li>
+<li>
+<p><strong>Stanza 7:</strong> The poem culminates in a powerful, affirmative conclusion. The church is <strong>"A serious house on serious earth."</strong> This is its enduring value. It is a space dedicated to confronting the most important aspects of human existence ("all our compulsions meet, / Are recognized, and robed as destinies"). Larkin argues that the human "hunger... to be more serious" will always exist, and people will forever be drawn to places like this, consecrated by the presence of the dead, to seek wisdom. The agnostic finds a profound, secular purpose for the sacred space.</p>
+</li>
+</ul>
+<h3>Thematic Analysis</h3>
+<ul>
+<li><strong>Decline of Faith:</strong> The poem is a primary document of secularization, exploring what happens to meaning, ritual, and architecture after religious belief wanes.</li>
+<li><strong>The Persistence of the Sacred:</strong> Despite the decline of doctrine, Larkin suggests that the human need for "serious" spaces—places to contemplate birth, death, and meaning—is permanent.</li>
+<li><strong>Tradition and Modernity:</strong> The speaker is a modern, sceptical man grappling with the weight and pull of a tradition he can no longer intellectually accept but feels emotionally drawn to.</li>
+<li><strong>The Search for Meaning:</strong> The poem charts a journey from cynical tourism to a profound meditation on where meaning resides in a godless world.</li>
+</ul>
+<h3>Stylistic Features</h3>
+<ul>
+<li><strong>Structure:</strong> Seven nine-line stanzas. The complex ABABCADCD rhyme scheme provides a tight, formal structure that contrasts with the rambling, conversational tone of the speaker's thoughts.</li>
+<li><strong>Iambic Pentameter:</strong> The poem's steady rhythm lends gravity to the speaker's reflections.</li>
+<li><strong>Tone:</strong> The tone masterfully shifts from casual irony and detachment to deep seriousness and unexpected reverence.</li>
+<li><strong>Diction:</strong> Larkin combines precise, descriptive language ("sprawlings of flowers, cut / For Sunday, brownish now") with colloquialisms ("brass and stuff") and abstract, philosophical language ("robed as destinies").</li>
+</ul>
+<hr/>
+<h2>'The Whitsun Weddings' (1964)</h2>
+<h3>Context</h3>
+<p>This is the title poem of Larkin's 1964 collection and one of his most celebrated works. It is based on a real train journey he took from Hull to London on a Whit Saturday in 1955. Whit Monday was a traditional public holiday and a popular day for working-class weddings. The poem is a masterpiece of social observation, moving from detached, almost satirical commentary to a communal, transcendent vision.</p>
+<h3>Full Text</h3>
+<p><em>(Due to its length, the poem is summarized in the stanza-by-stanza analysis below.)</em></p>
+<h3>Stanza-by-Stanza Analysis</h3>
+<ul>
+<li>
+<p><strong>Stanza 1:</strong> The journey begins late on a hot Whit Saturday afternoon. The speaker is passive, a detached observer. The initial imagery is of heat, emptiness, and industrial decline: "canal with its industrial froth," "A hothouse flashed uniquely." The mood is one of post-coital languor and boredom.</p>
+</li>
+<li>
+<p><strong>Stanza 2:</strong> The train travels through the Lincolnshire landscape. The description is precise but unremarkable: "short-shadowed cattle," "fields of grain." The speaker remains isolated, "all windows down, all cushions hot, all sense / Of being in a hurry gone."</p>
+</li>
+<li>
+<p><strong>Stanza 3:</strong> The first sign of the "weddings" appears. At a station, the speaker notices the "girls in parodies of fashion," the loud families, and the general celebratory chaos on the platform. His initial observations are sharp, critical, and slightly snobbish, noting the "vulgar" outfits and behaviour.</p>
+</li>
+<li>
+<p><strong>Stanza 4:</strong> The pattern becomes clear as the train stops at more stations. He realizes it's a "Whitsun" phenomenon. He catalogues the wedding guests with an almost anthropological eye: the "fathers with broad belts," the "mothers loud and fat," the "uncle shouting smut." It's a vivid portrait of post-war, provincial working-class life.</p>
+</li>
+<li>
+<p><strong>Stanza 5:</strong> The train begins to fill with the wedding parties. The speaker, still separate, feels the carriage is "packed" with their "freshness." He is an outsider looking in on a communal ritual he is not part of. There's a sense of pathos in the "sun-striped" couples who are now "New couples" launched into their shared life.</p>
+</li>
+<li>
+<p><strong>Stanza 6:</strong> The speaker's perspective deepens from observation to imagination. He thinks about the private, slightly tawdry reality behind the public celebration: the "nylon gloves and jewellery-substitutes," the "lemons, mauves, and olive-greens" of the dresses. He imagines the wedding feasts and the awkward goodbyes, capturing a sense of poignant reality.</p>
+</li>
+<li>
+<p><strong>Stanza 7:</strong> As the train nears London, the momentum builds. The landscape changes, becoming more urban. The atmosphere inside the train transforms from a collection of separate groups into a collective sense of "fruiting-fullness." The speaker's detachment begins to dissolve as he feels himself part of this shared human experience.</p>
+</li>
+<li>
+<p><strong>Stanza 8:</strong> The final, transformative stanza. The train slows for its arrival in London. This physical deceleration creates a moment of intense perception. He sees the city's "postal districts packed like squares of wheat." The disparate lives of the couples are unified into a single, powerful image: <strong>"a sense of falling, like an arrow-shower / Sent out of sight, somewhere becoming rain."</strong></p>
+<ul>
+<li><strong>Arrow-shower:</strong> Suggests purpose, direction, and perhaps even fate or danger.</li>
+<li><strong>Becoming rain:</strong> Suggests fertility, dispersion, and the merging of individual destinies into the vast, anonymous life of the city. The ending is ambiguous but deeply moving, transforming the tawdry, mundane weddings into a moment of profound, almost mystical significance.</li>
+</ul>
+</li>
+</ul>
+<h3>Thematic Analysis</h3>
+<ul>
+<li><strong>Social Observation and Class:</strong> The poem is a detailed snapshot of post-war English society, particularly the working class. Larkin's tone hovers between satirical critique and deep empathy.</li>
+<li><strong>The Individual and the Collective:</strong> The poem dramatizes the journey of a detached individual (the speaker) being drawn into a collective human experience. His initial isolation gives way to a sense of shared destiny.</li>
+<li><strong>Marriage as a Ritual:</strong> Larkin examines the social performance of marriage—its customs, clothes, and behaviours—while also sensing the profound reality of the lives being launched by this ritual.</li>
+<li><strong>The Journey as Metaphor:</strong> The train journey is a classic metaphor for the journey of life. The couples are literally and figuratively being transported from their provincial origins into their new, unknown future in the city.</li>
+<li><strong>Transcendence in the Mundane:</strong> This is a quintessential Larkin theme. The poem takes a series of seemingly un-poetic, even "vulgar" events and, through the power of observation and imagery, elevates them to a moment of breathtaking, transcendent beauty.</li>
+</ul>
+<h3>Stylistic Features</h3>
+<ul>
+<li><strong>Structure:</strong> Eight eight-line stanzas (octaves) with a regular ABCABCDE rhyme scheme and iambic pentameter. The strict form provides a framework that contains and orders the sprawling, unfolding journey.</li>
+<li><strong>Cinematic Quality:</strong> The poem unfolds like a film. The speaker's perspective is the camera, first taking in wide shots of the landscape, then zooming in on details of the wedding parties, and finally pulling back for the panoramic, symbolic final image.</li>
+<li><strong>Pacing:</strong> The rhythm of the poem mirrors the train's movement—the slow start, the gathering speed, and the final braking and arrival, which coincides with the poem's moment of epiphany.</li>
+<li><strong>Imagery:</strong> Rich in precise, sensory detail that grounds the poem in a specific time and place, making the final, abstract image of the "arrow-shower" all the more powerful.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem6/ENG607/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/ENG607/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

@@ -1,0 +1,732 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/INT327">INT327</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 2</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/INT327">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/INT327/Unit2/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/INT327/Unit2/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/INT327/Unit1/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/INT327/Unit3/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 2 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT327</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            13 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 2: Cloud Governance and Manage Identities</h1>
+<h2>1. Authentication vs. Authorisation</h2>
+<p>These two terms are foundational to security and are often confused, but they represent distinct, sequential steps in an access control process.</p>
+<h3>1.1 Authentication (AuthN) - "Who are you?"</h3>
+<p><strong>Authentication</strong> is the process of verifying the identity of a user, service, or device. It's about proving that you are who you claim to be. The system asks for credentials and checks if they are valid.</p>
+<ul>
+<li><strong>Purpose:</strong> To establish and verify identity.</li>
+<li><strong>Question Answered:</strong> "Who are you?"</li>
+<li><strong>Process:</strong> A user presents credentials (something they know, have, or are). The system validates these credentials against a trusted directory or identity provider.</li>
+<li><strong>Common Factors of Authentication:</strong>
+<ul>
+<li><strong>Something you know:</strong> Password, PIN, security question answer.</li>
+<li><strong>Something you have:</strong> A physical token, a one-time password (OTP) from a mobile app (e.g., Microsoft Authenticator), a smart card.</li>
+<li><strong>Something you are:</strong> Biometrics like a fingerprint, facial scan, or iris scan.</li>
+</ul></li>
+<li><strong>Multi-Factor Authentication (MFA):</strong> A security enhancement that requires users to provide two or more different authentication factors. This provides layered security, making it much harder for unauthorized users to gain access.</li>
+</ul>
+<h3>1.2 Authorisation (AuthZ) - "What are you allowed to do?"</h3>
+<p><strong>Authorisation</strong> is the process that occurs <em>after</em> successful authentication. It determines what level of access an authenticated user, service, or device has to specific resources.</p>
+<ul>
+<li><strong>Purpose:</strong> To grant or deny permissions to resources.</li>
+<li><strong>Question Answered:</strong> "What are you allowed to do?"</li>
+<li><strong>Process:</strong> Once a user is authenticated, the system checks their assigned permissions (roles, policies, access control lists) to decide if they can perform the requested action (e.g., read a file, delete a virtual machine, access a database).</li>
+<li><strong>Implementation:</strong> In the cloud, this is commonly handled by systems like <strong>Role-Based Access Control (RBAC)</strong>.</li>
+</ul>
+<h3>1.3 Analogy: Airport Security</h3>
+<ol>
+<li><strong>Authentication:</strong> You arrive at the airport and show your passport and boarding pass to the agent. They verify that your face matches the passport photo and that the name on the ticket matches the passport. You have been <strong>authenticated</strong> as a legitimate passenger for that flight.</li>
+<li><strong>Authorisation:</strong> Your boarding pass has a zone number printed on it. This <strong>authorises</strong> you to board the plane at a specific time. You are also authorised to access the departures lounge but not the cockpit or the baggage handling area.</li>
+</ol>
+<hr/>
+<h2>2. Zero Trust</h2>
+<p>Zero Trust is a modern security model founded on the principle of <strong>"never trust, always verify."</strong> It assumes that the traditional corporate network perimeter is no longer a reliable security boundary and that breaches are inevitable.</p>
+<h3>2.1 Core Principles of Zero Trust</h3>
+<ol>
+<li><strong>Verify Explicitly:</strong> Always authenticate and authorize based on all available data points. This includes user identity, location, device health, service or workload, data classification, and anomalies. Every access request is treated as if it originates from an untrusted network.</li>
+<li><strong>Use Least Privileged Access:</strong> Limit user access with Just-In-Time (JIT) and Just-Enough-Access (JEA) policies. Grant only the permissions needed to complete a task, for the shortest time necessary. This minimizes the potential damage if an account is compromised.</li>
+<li><strong>Assume Breach:</strong> Segment access by network, user, device, and application. Minimize the "blast radius" of an attack by assuming a breach has already occurred. All sessions are encrypted end-to-end, and analytics are used to get visibility, detect threats, and improve defenses.</li>
+</ol>
+<h3>2.2 Traditional vs. Zero Trust Model</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Traditional (Castle-and-Moat) Model</th>
+<th style="text-align: left;">Zero Trust Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Trust Assumption</strong></td>
+<td style="text-align: left;">Trusts anything inside the corporate network. Focuses on defending the perimeter.</td>
+<td style="text-align: left;">Trusts nothing by default, whether inside or outside the network.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Security Focus</strong></td>
+<td style="text-align: left;">Network perimeter security (firewalls).</td>
+<td style="text-align: left;">Identity, device, and data security.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Access Control</strong></td>
+<td style="text-align: left;">Broad network access once authenticated.</td>
+<td style="text-align: left;">Granular, per-request access based on dynamic policies.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Vulnerability</strong></td>
+<td style="text-align: left;">Once the perimeter is breached, an attacker can move laterally with ease.</td>
+<td style="text-align: left;">Lateral movement is difficult because every request is re-evaluated.</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>3. Cloud Security</h2>
+<p>Cloud security is a collection of policies, technologies, and controls designed to protect cloud-based data, applications, and infrastructure from threats. A key concept is the <strong>Shared Responsibility Model</strong>.</p>
+<h3>3.1 Shared Responsibility Model</h3>
+<p>This model delineates the security obligations of the cloud provider (e.g., Microsoft, AWS) and the customer. The responsibility shifts depending on the service model (IaaS, PaaS, SaaS).</p>
+<ul>
+<li><strong>IaaS (Infrastructure as a Service):</strong> The customer is responsible for the most, including the OS, middleware, runtime, data, and applications. The provider is responsible for the physical security of the data center, network, and hosts.</li>
+<li><strong>PaaS (Platform as a Service):</strong> The provider manages the underlying infrastructure, including the OS and middleware. The customer is responsible for their applications and data.</li>
+<li><strong>SaaS (Software as a Service):</strong> The provider manages almost everything. The customer is primarily responsible for their data and managing user access.</li>
+</ul>
+<p><strong>In all models, the customer is ALWAYS responsible for:</strong></p>
+<ul>
+<li><strong>Data:</strong> Classification and accountability.</li>
+<li><strong>Endpoints:</strong> Security of PCs, mobile phones, etc.</li>
+<li><strong>Accounts and Identities:</strong> Proper management of users, groups, and permissions. This is where topics like Entra ID and RBAC are critical.</li>
+</ul>
+<hr/>
+<h2>4. Understand Microsoft Entra ID</h2>
+<p><strong>Microsoft Entra ID</strong> (formerly Azure Active Directory or Azure AD) is Microsoft's cloud-based identity and access management (IAM) service. It is the backbone for authentication and authorisation for Microsoft cloud services like Azure, Microsoft 365, and Dynamics 365, as well as thousands of third-party SaaS applications.</p>
+<h3>4.1 Core Features</h3>
+<ul>
+<li><strong>Authentication and Authorisation:</strong> The core engine that verifies user identities and enforces access policies.</li>
+<li><strong>Single Sign-On (SSO):</strong> Allows users to sign in once with a single set of credentials to access multiple applications and services.</li>
+<li><strong>Multi-Factor Authentication (MFA):</strong> Provides an additional layer of security by requiring a second form of verification.</li>
+<li><strong>Conditional Access:</strong> A powerful policy engine that enforces access controls based on specific conditions (signals).</li>
+<li><strong>Identity Management:</strong> Manages the lifecycle of users, groups, and devices.</li>
+<li><strong>Business-to-Business (B2B):</strong> Allows collaboration with external users (guests) by letting them use their own credentials to access your resources.</li>
+<li><strong>Business-to-Consumer (B2C):</strong> A separate service that provides identity management for customer-facing applications.</li>
+</ul>
+<h3>4.2 Key Concepts</h3>
+<ul>
+<li><strong>Tenant:</strong> A dedicated and trusted instance of Microsoft Entra ID. When an organization signs up for a Microsoft cloud service, a new tenant is created. It's a secure container for your organization's users, groups, and apps.</li>
+<li><strong>Directory:</strong> The Entra ID instance itself, containing all the identity objects for a tenant.</li>
+<li><strong>User Principal Name (UPN):</strong> The primary sign-in name for a user (e.g., <code>user@yourtenant.onmicrosoft.com</code>).</li>
+</ul>
+<h3>4.3 Entra ID vs. Active Directory Domain Services (AD DS)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Active Directory Domain Services (AD DS)</th>
+<th style="text-align: left;">Microsoft Entra ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Use</strong></td>
+<td style="text-align: left;">On-premises identity management for Windows domains.</td>
+<td style="text-align: left;">Cloud-based identity management for cloud and web apps.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Protocols</strong></td>
+<td style="text-align: left;">Kerberos, NTLM, LDAP.</td>
+<td style="text-align: left;">Modern protocols: OpenID Connect, OAuth 2.0, SAML 2.0.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Structure</strong></td>
+<td style="text-align: left;">Hierarchical (Forests, Domains, OUs).</td>
+<td style="text-align: left;">Flat structure (no OUs).</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Authentication</strong></td>
+<td style="text-align: left;">Primarily authenticates devices on the local network.</td>
+<td style="text-align: left;">Authenticates users and devices over the internet.</td>
+</tr>
+</tbody>
+</table>
+<p>Organizations often use <strong>Microsoft Entra Connect</strong> to synchronize their on-premises AD DS identities to Entra ID, creating a <strong>hybrid identity</strong> environment.</p>
+<hr/>
+<h2>5. Configure User and Group Accounts</h2>
+<p>Effective identity management starts with properly configuring user and group objects in Microsoft Entra ID.</p>
+<h3>5.1 User Accounts</h3>
+<ul>
+<li><strong>Cloud-only users:</strong> Created directly in Entra ID. Their identity exists only in the cloud.</li>
+<li><strong>Directory-synchronized users:</strong> Created in an on-premises AD DS and synchronized to Entra ID. These are the most common in hybrid environments.</li>
+<li><strong>Guest users (B2B):</strong> External users invited into your tenant to collaborate. They are authenticated by their home directory but are authorized to access resources in your tenant.</li>
+</ul>
+<p><strong>Creating a User (Azure Portal):</strong></p>
+<ol>
+<li>Navigate to <strong>Microsoft Entra ID &gt; Users</strong>.</li>
+<li>Select <strong>+ New user</strong>.</li>
+<li>Choose to <strong>Create user</strong> or <strong>Invite external user</strong>.</li>
+<li>Fill in the identity details like User principal name, Display name, and initial password.</li>
+<li>Assign properties, groups, and roles as needed.</li>
+</ol>
+<h3>5.2 Group Accounts</h3>
+<p>Groups are used to simplify management by bundling users (or other objects) together. It's best practice to assign permissions and application access to groups rather than individual users.</p>
+<h4>Group Types:</h4>
+<ul>
+<li><strong>Security:</strong> The primary type used for granting access to resources (e.g., assigning an RBAC role to a group).</li>
+<li><strong>Microsoft 365:</strong> A special type of group used for collaboration services like Teams, SharePoint, and a shared mailbox. It also functions as a security group.</li>
+</ul>
+<h4>Membership Types:</h4>
+<ul>
+<li><strong>Assigned:</strong> The most basic type. An administrator manually adds and removes members.</li>
+<li><strong>Dynamic User:</strong> Membership is determined automatically based on user attributes (e.g., department, location). You define a rule, and Entra ID automatically keeps the membership up to date.</li>
+<li><strong>Dynamic Device:</strong> Similar to dynamic user, but membership is based on device attributes (e.g., OS type).</li>
+</ul>
+<p><strong>Example of a Dynamic User Group Rule:</strong><br/>
+To create a group of all users in the "Marketing" department:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">(user.department -eq "Marketing")
+</code></pre></div><br/>
+To create a group of all users in the Marketing department who are also located in the US:<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">(user.department -eq "Marketing") -and (user.country -eq "USA")
+</code></pre></div></p>
+<hr/>
+<h2>6. Configure Role-Based Access Control (Azure RBAC)</h2>
+<p><strong>Azure Role-Based Access Control (Azure RBAC)</strong> is the authorisation system used to manage access to Azure resources. It allows you to grant specific permissions to users, groups, and services at a defined scope. This is a core part of implementing the principle of least privilege.</p>
+<h3>6.1 The Components of an RBAC Assignment</h3>
+<p>An RBAC role assignment consists of three parts:</p>
+<ol>
+<li>
+<p><strong>Security Principal (Who?):</strong> The object that is receiving the permissions.</p>
+<ul>
+<li><strong>User:</strong> An individual with a profile in Microsoft Entra ID.</li>
+<li><strong>Group:</strong> A set of users created in Microsoft Entra ID.</li>
+<li><strong>Service Principal:</strong> An identity used by applications or services to access specific Azure resources.</li>
+<li><strong>Managed Identity:</strong> An identity for an Azure resource (like a VM or Function App) that allows it to authenticate to other services that support Entra ID authentication without needing credentials in code.</li>
+</ul>
+</li>
+<li>
+<p><strong>Role Definition (What permissions?):</strong> A collection of permissions. A permission defines an action that can be performed, such as <code>read</code>, <code>write</code>, or <code>delete</code>.</p>
+<ul>
+<li><strong>Built-in Roles:</strong> Azure provides many pre-defined roles. The most common are:
+<ul>
+<li><strong>Owner:</strong> Has full access to all resources, including the right to delegate access to others.</li>
+<li><strong>Contributor:</strong> Can create and manage all types of Azure resources, but cannot grant access to others.</li>
+<li><strong>Reader:</strong> Can view existing Azure resources.</li>
+<li><strong>User Access Administrator:</strong> Can manage user access to Azure resources.</li>
+</ul></li>
+<li><strong>Custom Roles:</strong> You can create your own roles if the built-in roles don't meet your specific needs.</li>
+</ul>
+</li>
+<li>
+<p><strong>Scope (Where?):</strong> The set of resources that the access applies to. In Azure, you can specify a scope at four levels:</p>
+<ul>
+<li><strong>Management Group:</strong> A collection of subscriptions. Permissions apply to all subscriptions within the group.</li>
+<li><strong>Subscription:</strong> Permissions apply to all resource groups and resources within the subscription.</li>
+<li><strong>Resource Group:</strong> Permissions apply to all resources within the resource group.</li>
+<li><strong>Resource:</strong> Permissions apply only to a specific resource.</li>
+</ul>
+</li>
+</ol>
+<p><strong>Inheritance:</strong> RBAC permissions are inherited. A role assigned at a parent scope (e.g., a Subscription) is inherited by child scopes (e.g., Resource Groups and Resources within that subscription).</p>
+<hr/>
+<h2>7. Secure Your Azure Resources with Azure RBAC (Best Practices)</h2>
+<p>Applying RBAC effectively is crucial for securing your cloud environment.</p>
+<ul>
+<li><strong>Assign roles to groups, not users:</strong> This simplifies management. To grant a new user access, you simply add them to the appropriate group. To revoke access, you remove them. This is much easier than managing individual role assignments.</li>
+<li><strong>Use the principle of least privilege:</strong> Assign the minimum permissions required for a user or service to perform its job. Start with the <code>Reader</code> role and add permissions as needed. Avoid using the <code>Owner</code> role unless absolutely necessary.</li>
+<li><strong>Assign roles at the narrowest scope possible:</strong> If a developer only needs access to a single resource group, assign the <code>Contributor</code> role at the resource group scope, not the subscription scope.</li>
+<li><strong>Use built-in roles whenever possible:</strong> These roles are maintained and updated by Microsoft. Only create custom roles when you have a specific need that a built-in role cannot meet.</li>
+<li><strong>Regularly audit access:</strong> Use tools like Azure's <strong>Access control (IAM)</strong> blade and <strong>Activity Log</strong> to review who has access to what and what changes have been made. Use <strong>Access Reviews</strong> (part of Identity Governance) to automate this process.</li>
+</ul>
+<hr/>
+<h2>8. Identity Governance and Conditional Access Policies</h2>
+<p>These are advanced features in Microsoft Entra ID (often requiring Premium licenses) that provide finer-grained control and automated management of identities and access.</p>
+<h3>8.1 Identity Governance</h3>
+<p>Identity Governance helps organizations balance the need for security and employee productivity by ensuring the right people have the right access to the right resources at the right time.</p>
+<ul>
+<li><strong>Entitlement Management:</strong> Streamlines access requests and lifecycle management. You can bundle resources (group memberships, application access, SharePoint sites) into an <strong>Access Package</strong>. Users can then request access to this package, which can go through an approval workflow. Access can also be set to expire automatically.</li>
+<li><strong>Access Reviews:</strong> An automated way to review and recertify user access to resources. You can configure reviews that ask users to re-justify their own access or have managers review their team's access on a recurring basis. This helps eliminate "permission creep."</li>
+<li><strong>Privileged Identity Management (PIM):</strong> Manages, controls, and monitors access to important resources. It provides <strong>Just-In-Time (JIT)</strong> privileged access, meaning users must request and justify activation of a high-privilege role (like Global Administrator or Owner). Access is granted for a limited time, and all activations are audited.</li>
+<li><strong>Terms of Use (ToU):</strong> Allows you to present users with terms and conditions that they must accept before gaining access. This is often used for legal or compliance disclaimers.</li>
+</ul>
+<h3>8.2 Conditional Access Policies</h3>
+<p>Conditional Access is the core policy engine of the Zero Trust model in the Microsoft ecosystem. It uses an <strong>If-Then</strong> logic to make access decisions.</p>
+<p><strong>If</strong> a user tries to access a resource, <strong>Then</strong> enforce a specific action.</p>
+<h4>Components of a Conditional Access Policy:</h4>
+<ol>
+<li>
+<p><strong>Assignments (The "IF" part - Signals):</strong></p>
+<ul>
+<li><strong>Users and groups:</strong> Who the policy applies to. You can include specific users/groups and exclude others (e.g., apply to all users except emergency access accounts).</li>
+<li><strong>Cloud apps or actions:</strong> Which applications or user actions (e.g., registering security information) the policy protects.</li>
+<li><strong>Conditions (Context):</strong>
+<ul>
+<li><strong>Sign-in risk:</strong> The likelihood that a sign-in is not from the legitimate user (requires Entra ID Protection).</li>
+<li><strong>Device platforms:</strong> The operating system of the device (e.g., Windows, iOS, Android).</li>
+<li><strong>Locations:</strong> The IP address location of the user (e.g., trusted corporate network vs. an untrusted country).</li>
+<li><strong>Client apps:</strong> The type of application used for access (e.g., browser, mobile app, legacy clients).</li>
+<li><strong>Device state:</strong> Whether the device is compliant with policies or Hybrid Entra joined.</li>
+</ul></li>
+</ul>
+</li>
+<li>
+<p><strong>Access Controls (The "THEN" part - Decision):</strong></p>
+<ul>
+<li><strong>Block access:</strong> The most restrictive control.</li>
+<li><strong>Grant access:</strong> Allows access but requires the user to satisfy one or more grant controls:
+<ul>
+<li><strong>Require multi-factor authentication:</strong> The most common and effective control.</li>
+<li><strong>Require device to be marked as compliant:</strong> Device must meet Intune or other MDM compliance policies.</li>
+<li><strong>Require Hybrid Azure AD joined device:</strong> Device must be joined to both on-premises AD and Entra ID.</li>
+<li><strong>Require approved client app:</strong> Requires the use of a specific application (e.g., Outlook mobile).</li>
+<li><strong>Require app protection policy:</strong> Part of Intune's mobile application management.</li>
+</ul></li>
+</ul>
+</li>
+</ol>
+<p><strong>Example Policy:</strong></p>
+<ul>
+<li><strong>Name:</strong> Require MFA for all Admins</li>
+<li><strong>IF:</strong>
+<ul>
+<li><strong>Users:</strong> Directory Role is 'Global Administrator'</li>
+<li><strong>Apps:</strong> Any cloud app</li>
+<li><strong>Conditions:</strong> Any</li>
+</ul></li>
+<li><strong>THEN:</strong>
+<ul>
+<li><strong>Grant access:</strong> Require multi-factor authentication</li>
+</ul></li>
+</ul>
+<p><strong>What If Tool:</strong> A powerful tool in the Azure portal that allows you to simulate the impact of your Conditional Access policies on a specific user under specific conditions, helping you test policies before deployment.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem6/INT327/Unit1/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 1</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/INT327/Unit3/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 3</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

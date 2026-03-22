@@ -1,0 +1,773 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6">Sem 6</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem6/INT327">INT327</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 1</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem6/INT327">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/INT327/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem6/INT327/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem6/INT327/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT327</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            15 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Introduction to Cloud Computing and Cloud Economics</h1>
+<h2>1. History of Cloud Computing</h2>
+<p>The concept of "cloud computing" is not new; it's an evolution of decades of advancements in computing and networking.</p>
+<ul>
+<li><strong>1950s-1960s (Mainframes and Time-Sharing):</strong> Large, expensive mainframe computers were the norm. The concept of <strong>time-sharing</strong> emerged, allowing multiple users to share the resources of a single mainframe computer through terminals. This was an early form of resource pooling and shared computing.</li>
+<li><strong>1960s-1970s (ARPANET and Interconnectivity):</strong> The creation of ARPANET, the precursor to the modern internet, established the foundational principles of a resilient, interconnected network. This "network of networks" was a crucial prerequisite for cloud computing.</li>
+<li><strong>1970s-1990s (Virtualization):</strong> Virtualization, the technology that allows a single physical machine to run multiple virtual machines (VMs), was developed by IBM in the 1970s. It saw a massive resurgence in the late 1990s with companies like VMware, making it practical to abstract hardware and dramatically improve server utilization. Virtualization is a cornerstone of modern IaaS.</li>
+<li><strong>Late 1990s (Application Service Providers - ASPs):</strong> ASPs were an early, and largely unsuccessful, attempt at the Software as a Service (SaaS) model. They hosted and managed third-party software for businesses. However, they were often plagued by slow internet speeds and a lack of scalability.</li>
+<li><strong>1999 (The Birth of Modern SaaS):</strong> Salesforce.com pioneered the successful delivery of enterprise applications over the internet with a multi-tenant architecture. This demonstrated the viability of the SaaS model.</li>
+<li><strong>2006 (The Birth of Modern IaaS):</strong> Amazon Web Services (AWS) launched its Simple Storage Service (S3) followed by the Elastic Compute Cloud (EC2). This was a revolutionary moment, as it allowed anyone to rent raw computing infrastructure (storage, servers, networking) on-demand, paying only for what they used. This marked the beginning of the modern cloud era.</li>
+<li><strong>2008-Present (Expansion and Competition):</strong> Google launched its Platform as a Service (PaaS) offering, Google App Engine, in 2008. Microsoft entered the market with Windows Azure (now Microsoft Azure) in 2010. Since then, the market has matured with intense competition, leading to rapid innovation, price reductions, and a vast portfolio of services from providers.</li>
+</ul>
+<h2>2. Fundamentals of Cloud Computing</h2>
+<p>Cloud computing is defined by a set of core principles and models. The most widely accepted definition comes from the National Institute of Standards and Technology (NIST).</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">TEXT</span></div><pre><code class="language-text">Cloud computing is a model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources (e.g., networks, servers, storage, applications, and services) that can be rapidly provisioned and released with minimal management effort or service provider interaction.
+</code></pre></div></p>
+<h3>The 5 Essential Characteristics (NIST)</h3>
+<ol>
+<li><strong>On-demand self-service:</strong> A consumer can unilaterally provision computing capabilities, such as server time and network storage, as needed automatically without requiring human interaction with each service provider.</li>
+<li><strong>Broad network access:</strong> Capabilities are available over the network and accessed through standard mechanisms that promote use by heterogeneous thin or thick client platforms (e.g., mobile phones, tablets, laptops, and workstations).</li>
+<li><strong>Resource pooling:</strong> The provider's computing resources are pooled to serve multiple consumers using a <strong>multi-tenant model</strong>, with different physical and virtual resources dynamically assigned and reassigned according to consumer demand. The customer generally has no control or knowledge over the exact location of the provided resources but may be able to specify location at a higher level of abstraction (e.g., country, state, or datacenter).</li>
+<li><strong>Rapid elasticity:</strong> Capabilities can be elastically provisioned and released, in some cases automatically, to scale rapidly outward and inward commensurate with demand. To the consumer, the capabilities available for provisioning often appear to be unlimited and can be appropriated in any quantity at any time.</li>
+<li><strong>Measured service:</strong> Cloud systems automatically control and optimize resource use by leveraging a metering capability at some level of abstraction appropriate to the type of service (e.g., storage, processing, bandwidth, and active user accounts). Resource usage can be monitored, controlled, and reported, providing transparency for both the provider and consumer of the utilized service.</li>
+</ol>
+<h3>Deployment Models</h3>
+<ul>
+<li>
+<p><strong>Public Cloud:</strong> The cloud infrastructure is provisioned for open use by the general public. It is owned, managed, and operated by a business, academic, or government organization (or some combination of them). It exists on the premises of the cloud provider.</p>
+<ul>
+<li><strong>Examples:</strong> AWS, Microsoft Azure, Google Cloud Platform (GCP).</li>
+<li><strong>Pros:</strong> Massive economies of scale, no hardware maintenance, high reliability, nearly unlimited scalability.</li>
+<li><strong>Cons:</strong> Less control over security and data residency, potential for "noisy neighbors" (competing for resources in a multi-tenant environment).</li>
+</ul>
+</li>
+<li>
+<p><strong>Private Cloud:</strong> The cloud infrastructure is provisioned for exclusive use by a single organization comprising multiple consumers (e.g., business units). It may be owned, managed, and operated by the organization, a third party, or some combination of them, and it may exist on or off premises.</p>
+<ul>
+<li><strong>Pros:</strong> Maximum control, enhanced security, compliance with strict regulations.</li>
+<li><strong>Cons:</strong> High initial cost, responsibility for all maintenance, limited scalability compared to public cloud.</li>
+</ul>
+</li>
+<li>
+<p><strong>Hybrid Cloud:</strong> The cloud infrastructure is a composition of two or more distinct cloud infrastructures (private or public) that remain unique entities but are bound together by standardized or proprietary technology that enables data and application portability (e.g., cloud bursting for load balancing between clouds).</p>
+<ul>
+<li><strong>Use Case:</strong> An organization might keep sensitive customer data on a private cloud while using a public cloud for its public-facing website, with the two clouds connected.</li>
+</ul>
+</li>
+<li>
+<p><strong>Multi-Cloud:</strong> A strategy that involves using two or more public cloud services from different providers. This is a subset of hybrid cloud, but specifically refers to multiple public clouds.</p>
+<ul>
+<li><strong>Pros:</strong> Avoids vendor lock-in, allows use of "best-of-breed" services from different providers, increased resiliency.</li>
+<li><strong>Cons:</strong> Increased management complexity, potential for security gaps between clouds, challenges in cost management.</li>
+</ul>
+</li>
+</ul>
+<h2>3. Cost Efficiency</h2>
+<p>One of the primary drivers for cloud adoption is economic.</p>
+<ul>
+<li>
+<p><strong>CapEx vs. OpEx Shift:</strong></p>
+<ul>
+<li><strong>Capital Expenditure (CapEx):</strong> The money spent upfront to buy, upgrade, and maintain physical assets like servers, storage, and networking equipment. This involves long procurement cycles and forecasting demand years in advance.</li>
+<li><strong>Operational Expenditure (OpEx):</strong> The ongoing, day-to-day cost of running a business, such as paying for cloud services on a monthly or yearly basis. Cloud computing converts large upfront CapEx into a predictable (or variable) monthly OpEx.</li>
+</ul>
+</li>
+<li>
+<p><strong>Economies of Scale:</strong> Cloud providers like AWS, Azure, and GCP are "hyperscalers." They purchase computing hardware at a massive scale, driving down the cost per unit. They also optimize their data centers for power, cooling, and administration efficiency. These savings are passed on to customers.</p>
+</li>
+<li>
+<p><strong>Total Cost of Ownership (TCO):</strong> Cloud significantly reduces TCO by eliminating or reducing costs associated with:</p>
+<ul>
+<li>Data center real estate (leasing or building).</li>
+<li>Power and cooling.</li>
+<li>Hardware procurement and maintenance contracts.</li>
+<li>IT personnel for managing physical infrastructure.</li>
+</ul>
+</li>
+</ul>
+<h2>4. Disaster Recovery and Business Continuity</h2>
+<p>Cloud computing fundamentally changes how organizations approach disaster recovery (DR) and business continuity (BC).</p>
+<ul>
+<li>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li><strong>Recovery Time Objective (RTO):</strong> The maximum acceptable amount of time an application can be offline following a disaster or failure. <em>Example: "The website must be back online within 1 hour."</em></li>
+<li><strong>Recovery Point Objective (RPO):</strong> The maximum acceptable amount of data loss, measured in time. <em>Example: "We can't lose more than 15 minutes of transaction data."</em></li>
+</ul>
+</li>
+<li>
+<p><strong>Traditional vs. Cloud DR:</strong></p>
+<ul>
+<li><strong>Traditional DR:</strong> Often involved maintaining a secondary, physical "hot-site" or "cold-site," which was extremely expensive, rarely tested, and slow to failover to.</li>
+<li><strong>Cloud-based DR:</strong> Utilizes the cloud provider's global infrastructure. Organizations can replicate data and applications across multiple <strong>Availability Zones</strong> (distinct data centers within a region) or even across different geographic <strong>Regions</strong>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Cloud DR Benefits:</strong></p>
+<ul>
+<li><strong>Lower Cost:</strong> No need to own and operate a second data center. Pay only for the resources needed during a failover event.</li>
+<li><strong>Faster RTO/RPO:</strong> Automated failover and continuous data replication can achieve RTOs and RPOs of minutes or even seconds.</li>
+<li><strong>Increased Reliability &amp; Flexibility:</strong> Easily test DR plans without impacting production systems. Scale DR resources up or down as needed.</li>
+</ul>
+</li>
+</ul>
+<h2>5. Industry Use Cases</h2>
+<p>Cloud computing is a general-purpose platform that has been adapted by virtually every industry.</p>
+<ul>
+<li><strong>Media &amp; Entertainment:</strong>
+<ul>
+<li><strong>Video Streaming:</strong> Netflix runs almost its entire infrastructure on AWS, allowing it to scale globally to serve millions of concurrent viewers.</li>
+<li><strong>Content Rendering:</strong> Visual effects studios use massive fleets of Spot Instances to render complex 3D graphics, paying a fraction of the cost of on-demand instances.</li>
+</ul></li>
+<li><strong>Financial Services:</strong>
+<ul>
+<li><strong>Risk Analysis:</strong> Investment banks run complex Monte Carlo simulations on high-performance computing (HPC) grids in the cloud to assess market risk.</li>
+<li><strong>Fraud Detection:</strong> Real-time analysis of transaction data using cloud-based machine learning services to detect and prevent fraudulent activity.</li>
+</ul></li>
+<li><strong>Healthcare:</strong>
+<ul>
+<li><strong>Electronic Health Records (EHR):</strong> Storing and managing sensitive patient data in a secure, compliant cloud environment.</li>
+<li><strong>Medical Imaging:</strong> Using cloud-based AI/ML to analyze MRIs, X-rays, and CT scans to assist radiologists in detecting diseases earlier.</li>
+</ul></li>
+<li><strong>Retail &amp; E-commerce:</strong>
+<ul>
+<li><strong>Scalability:</strong> Automatically scaling website infrastructure to handle massive traffic spikes during events like Black Friday or product launches.</li>
+<li><strong>Personalization:</strong> Using machine learning to provide personalized product recommendations to shoppers in real-time.</li>
+</ul></li>
+</ul>
+<h2>6. Service Models: IaaS, PaaS, SaaS</h2>
+<p>These models define the level of control and management you have over your cloud resources. The key differentiator is the <strong>Shared Responsibility Model</strong>.</p>
+<h3>Shared Responsibility Model</h3>
+<p>This concept dictates which security and management tasks are handled by the cloud provider and which are handled by the customer. As you move from IaaS to PaaS to SaaS, the provider takes on more responsibility.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Manages</th>
+<th style="text-align: center;">On-Premises</th>
+<th style="text-align: center;">IaaS (Infrastructure)</th>
+<th style="text-align: center;">PaaS (Platform)</th>
+<th style="text-align: center;">SaaS (Software)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Applications</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Data</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Runtime</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Middleware</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operating System</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Virtualization</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Servers</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Storage</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+<tr>
+<td style="text-align: left;">Networking</td>
+<td style="text-align: center;"><strong>You</strong></td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+<td style="text-align: center;">Provider</td>
+</tr>
+</tbody>
+</table>
+<h3>Infrastructure as a Service (IaaS)</h3>
+<p>IaaS provides the fundamental building blocks of computing infrastructure: virtual servers, storage, and networking. It offers the highest level of flexibility and management control.</p>
+<ul>
+<li><strong>Analogy:</strong> Leasing a plot of land where you can build anything you want. You are responsible for the house, plumbing, and electricity.</li>
+<li><strong>Customer Manages:</strong> Operating System, middleware, runtime, data, and applications.</li>
+<li><strong>Provider Manages:</strong> The underlying physical hardware and virtualization layer.</li>
+<li><strong>Use Cases:</strong> Lift-and-shift migrations of existing applications, high-performance computing, workloads with specific OS or software requirements.</li>
+<li><strong>Examples:</strong> Amazon EC2, Azure Virtual Machines, Google Compute Engine.</li>
+</ul>
+<h3>Platform as a Service (PaaS)</h3>
+<p>PaaS provides a platform that allows customers to develop, run, and manage applications without the complexity of building and maintaining the infrastructure typically associated with developing and launching an app.</p>
+<ul>
+<li><strong>Analogy:</strong> Renting a fully-built house where the landlord manages the structure, plumbing, and electricity. You are responsible for your furniture and how you live in it.</li>
+<li><strong>Customer Manages:</strong> Applications and data.</li>
+<li><strong>Provider Manages:</strong> Everything from the OS up to the runtime environment.</li>
+<li><strong>Use Cases:</strong> Rapid application development and deployment, web and mobile backends, API development.</li>
+<li><strong>Examples:</strong> Heroku, AWS Elastic Beanstalk, Azure App Service, Google App Engine.</li>
+</ul>
+<h3>Software as a Service (SaaS)</h3>
+<p>SaaS provides a completed software product that is run and managed by the service provider. The software is typically accessed via a web browser or mobile app.</p>
+<ul>
+<li><strong>Analogy:</strong> Renting a fully furnished apartment in a hotel. You just show up with your suitcase and use the service.</li>
+<li><strong>Customer Manages:</strong> Their data within the application and user access.</li>
+<li><strong>Provider Manages:</strong> The entire technology stack.</li>
+<li><strong>Use Cases:</strong> Email and collaboration, Customer Relationship Management (CRM), Enterprise Resource Planning (ERP).</li>
+<li><strong>Examples:</strong> Microsoft 365, Salesforce, Google Workspace, Dropbox.</li>
+</ul>
+<h2>7. Pricing Models</h2>
+<p>Understanding cloud pricing is critical for cost management.</p>
+<h3>Pay-as-you-go (On-Demand)</h3>
+<p>This is the most flexible pricing model. You pay a fixed rate by the hour (or second) for the resources you use, with no long-term commitment.</p>
+<ul>
+<li><strong>Pros:</strong> Extreme flexibility, no upfront costs, ideal for short-term or unpredictable workloads.</li>
+<li><strong>Cons:</strong> Highest cost per hour.</li>
+</ul>
+<h3>Reserved Instances (RIs) / Savings Plans</h3>
+<p>You make a commitment to use a specific amount of compute power (e.g., a specific instance type in a specific region) for a 1- or 3-year term. In return, you receive a significant discount compared to on-demand pricing (up to 75%).</p>
+<ul>
+<li><strong>Pros:</strong> Substantial cost savings for predictable, steady-state workloads.</li>
+<li><strong>Cons:</strong> Less flexibility; you are locked into a contract. (Note: Modern "Savings Plans" from providers like AWS offer more flexibility than traditional RIs).</li>
+</ul>
+<h3>Spot Instances</h3>
+<p>You bid on spare, unused compute capacity in the cloud provider's data center. Spot prices fluctuate based on supply and demand.</p>
+<ul>
+<li><strong>Pros:</strong> Massive discounts (often up to 90% off the on-demand price).</li>
+<li><strong>Cons:</strong> <strong>The instance can be terminated by the cloud provider with very short notice</strong> (e.g., a 2-minute warning).</li>
+<li><strong>Use Cases:</strong> Only suitable for fault-tolerant, stateless, or interruptible workloads such as batch processing, big data analysis, and rendering farms.</li>
+</ul>
+<h2>8. Azure Pricing Calculator</h2>
+<p>This is a free web-based tool provided by Microsoft to help you estimate the costs of using Azure services.</p>
+<ul>
+<li>
+<p><strong>Purpose:</strong> To create a cost estimate for a solution <em>before</em> you deploy any resources. This is crucial for budgeting, comparing different solution architectures, and understanding the financial impact of your design choices.</p>
+</li>
+<li>
+<p><strong>How to Use It (Simple Example):</strong></p>
+<ol>
+<li><strong>Go to the Calculator:</strong> Navigate to the official Azure Pricing Calculator website.</li>
+<li><strong>Add Products:</strong> Search for and add the services you need. For example, add "Virtual Machines".</li>
+<li><strong>Configure:</strong> A configuration pane will appear. You must specify details like:
+<ul>
+<li><strong>Region:</strong> (e.g., West US 2) - <em>Prices vary by region!</em></li>
+<li><strong>Operating System:</strong> (e.g., Windows or Linux)</li>
+<li><strong>Type:</strong> (e.g., OS Only or with SQL Server)</li>
+<li><strong>Tier:</strong> (e.g., Standard)</li>
+<li><strong>Instance:</strong> (e.g., D2s v3 - this defines the CPU, RAM)</li>
+</ul></li>
+<li><strong>Specify Usage:</strong>
+<ul>
+<li><strong>Quantity:</strong> Enter the number of VMs (e.g., 2).</li>
+<li><strong>Usage Hours:</strong> Enter how long they will run per month (e.g., 730 hours for 24/7).</li>
+</ul></li>
+<li><strong>Choose Pricing:</strong>
+<ul>
+<li>Select <strong>Pay-as-you-go</strong> or a <strong>1-year/3-year Reserved</strong> option to see the price difference.</li>
+</ul></li>
+<li><strong>Review Estimate:</strong> The calculator will display an estimated monthly cost at the bottom of the page. You can export this estimate for reports.</li>
+</ol>
+</li>
+</ul>
+<h2>9. Introduction to FinOps</h2>
+<p>FinOps (Cloud Financial Management) is a cultural practice and operational model that brings financial accountability to the variable spending model of the cloud, enabling organizations to get maximum business value. It is a collaboration between Finance, Technology (Engineering/Ops), and Business teams.</p>
+<h3>Core Principles</h3>
+<ol>
+<li><strong>Teams need to collaborate:</strong> Silos between Engineering and Finance must be broken down. Engineers need to understand cost implications, and Finance needs to understand the technical drivers of spend.</li>
+<li><strong>Business value of cloud drives decisions:</strong> Decisions are not just about saving money but about making money. The focus is on metrics like cost per feature, cost per customer, etc.</li>
+<li><strong>Everyone takes ownership of their cloud usage:</strong> Centralized control doesn't scale. FinOps pushes cost ownership to the individual feature teams who are provisioning resources, empowering them with the data they need to make intelligent trade-offs between cost, speed, and quality.</li>
+</ol>
+<h3>The FinOps Lifecycle</h3>
+<p>This is an iterative process for managing cloud spend.</p>
+<ul>
+<li><strong>Inform (See):</strong> The first step is gaining visibility. You can't manage what you can't see.
+<ul>
+<li><strong>Activities:</strong> Implementing a consistent resource <strong>tagging</strong> strategy, allocating costs to specific teams or projects, creating dashboards and reports.</li>
+</ul></li>
+<li><strong>Optimize (Save):</strong> Once you have visibility, you can identify areas for efficiency and cost reduction.
+<ul>
+<li><strong>Activities:</strong> <strong>Rightsizing</strong> oversized instances, shutting down unused resources (e.g., dev environments on weekends), purchasing Reserved Instances or Savings Plans for predictable workloads, leveraging Spot Instances.</li>
+</ul></li>
+<li><strong>Operate (Act):</strong> This phase is about continuous improvement and operationalizing cost-consciousness.
+<ul>
+<li><strong>Activities:</strong> Setting budgets and alerts, tracking key performance indicators (KPIs), automating cost optimization policies, and integrating cost awareness into CI/CD pipelines.</li>
+</ul></li>
+</ul>
+<h2>10. Sustainability and Green Cloud Practices</h2>
+<p>Data centers consume vast amounts of energy and resources. The cloud industry is a leader in driving efficiency and sustainability in computing.</p>
+<h3>The Environmental Impact</h3>
+<ul>
+<li><strong>Energy Consumption:</strong> Data centers are responsible for an estimated 1-2% of global electricity consumption.</li>
+<li><strong>Water Usage:</strong> Large amounts of water are often used in traditional cooling systems.</li>
+<li><strong>E-waste:</strong> The lifecycle of servers and networking equipment contributes to electronic waste.</li>
+</ul>
+<h3>How Cloud Providers Address Sustainability</h3>
+<ul>
+<li><strong>Hyperscale Efficiency:</strong> Large public cloud data centers are significantly more energy-efficient than typical on-premises data centers due to optimized cooling, power distribution, and server utilization. Their <strong>Power Usage Effectiveness (PUE)</strong> is often close to the ideal of 1.0.</li>
+<li><strong>Renewable Energy:</strong> Major providers like Google, Microsoft, and Amazon are among the largest corporate purchasers of renewable energy in the world, with goals to power their operations with 100% renewable energy.</li>
+<li><strong>Advanced Cooling:</strong> Developing innovative cooling methods like using outside air ("free-air cooling"), recycled water, or even building underwater data centers (Microsoft's Project Natick) to reduce energy spent on cooling.</li>
+<li><strong>Hardware &amp; Software Optimization:</strong> Designing custom, highly efficient server hardware and optimizing software to perform more work with less power.</li>
+</ul>
+<h3>Green Cloud Practices for Customers</h3>
+<p>Customers can also contribute to more sustainable computing.</p>
+<ul>
+<li><strong>Region Selection:</strong> Choose to run workloads in cloud regions that are powered by a higher percentage of renewable or carbon-free energy sources.</li>
+<li><strong>Carbon-Aware Computing:</strong> Using tools and APIs to schedule non-urgent, flexible workloads to run at times of day when the carbon intensity of the local grid is lowest (e.g., when solar or wind power is abundant).</li>
+<li><strong>Rightsizing and Automation:</strong> The core FinOps principle of eliminating waste (overprovisioned resources) is also a core sustainability principle. Automating the shutdown of non-production environments saves both money and energy.</li>
+<li><strong>Architectural Choices:</strong> Using more efficient services like serverless (e.g., AWS Lambda, Azure Functions) and managed services (e.g., managed databases) can be more resource-efficient than running dedicated VMs 24/7.</li>
+<li><strong>Use Provider Tools:</strong> Leverage tools like the <strong>AWS Customer Carbon Footprint Tool</strong> or the <strong>Microsoft Sustainability Calculator</strong> to measure, track, and forecast the carbon emissions associated with your cloud usage.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem6/INT327/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

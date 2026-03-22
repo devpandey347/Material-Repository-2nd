@@ -1,0 +1,628 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT394">INT394</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 5</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT394">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT394/Unit5/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT394/Unit4/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT394/Unit6/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 5 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT394</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            7 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 5: Reinforcement Learning</h1>
+<h2>1. Fundamentals of Reinforcement Learning</h2>
+<p>Reinforcement Learning (RL) is a subfield of machine learning concerned with how intelligent agents ought to take actions in an environment in order to maximize the notion of cumulative reward. Unlike supervised learning, RL does not rely on labeled data; instead, it learns through trial and error.</p>
+<h3>1.1 Core Characteristics</h3>
+<ul>
+<li><strong>No Supervisor:</strong> The agent is not told which action to take; it must discover good actions by trying them.</li>
+<li><strong>Reward Signal:</strong> The only feedback is a scalar number (reward), which may be delayed.</li>
+<li><strong>Sequential Decision Making:</strong> Time matters. Decisions affect not only the immediate reward but also the next state and, through that, all subsequent rewards.</li>
+<li><strong>Feedback Loop:</strong> The agent’s actions influence the subsequent data it receives.</li>
+</ul>
+<h3>1.2 Exploration vs. Exploitation Dilemma</h3>
+<p>A fundamental challenge in RL is balancing two competing objectives:</p>
+<ol>
+<li><strong>Exploration:</strong> The agent tries new actions to discover their rewards. This is necessary to find better strategies but risks lower short-term rewards.</li>
+<li><strong>Exploitation:</strong> The agent uses its current knowledge to select the action known to yield the highest reward. This maximizes short-term performance but prevents learning optimal long-term strategies.</li>
+</ol>
+<h3>1.3 Comparison with Other ML Types</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Supervised Learning</th>
+<th style="text-align: left;">Unsupervised Learning</th>
+<th style="text-align: left;">Reinforcement Learning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Data</strong></td>
+<td style="text-align: left;">Labeled (<span class="katex-inline" data-math="x, y"></span>)</td>
+<td style="text-align: left;">Unlabeled (<span class="katex-inline" data-math="x"></span>)</td>
+<td style="text-align: left;">State-Action-Reward Interaction</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Goal</strong></td>
+<td style="text-align: left;">Minimize error</td>
+<td style="text-align: left;">Find hidden structures</td>
+<td style="text-align: left;">Maximize cumulative reward</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Feedback</strong></td>
+<td style="text-align: left;">Instant and correct</td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">Delayed and evaluative</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>2. Components of Reinforcement Learning</h2>
+<p>The RL process is modeled as a loop of interaction between an <strong>Agent</strong> and an <strong>Environment</strong>.</p>
+<h3>2.1 The Major Elements</h3>
+<ol>
+<li><strong>Agent:</strong> The learner or decision-maker.</li>
+<li><strong>Environment:</strong> The physical or virtual world outside the agent.</li>
+<li><strong>State (<span class="katex-inline" data-math="S_t"></span>):</strong> A representation of the current situation of the environment at time step <span class="katex-inline" data-math="t"></span>.</li>
+<li><strong>Action (<span class="katex-inline" data-math="A_t"></span>):</strong> The move or decision made by the agent at time step <span class="katex-inline" data-math="t"></span>.</li>
+<li><strong>Reward (<span class="katex-inline" data-math="R_t"></span>):</strong> A numerical value received from the environment after an action is taken. It indicates the immediate success of an action.</li>
+</ol>
+<h3>2.2 The Interaction Loop</h3>
+<ol>
+<li>The agent observes state <span class="katex-inline" data-math="S_t"></span>.</li>
+<li>The agent selects action <span class="katex-inline" data-math="A_t"></span>.</li>
+<li>The environment responds with a new state <span class="katex-inline" data-math="S_{t+1}"></span> and a reward <span class="katex-inline" data-math="R_{t+1}"></span>.</li>
+<li>The cycle repeats.</li>
+</ol>
+<h3>2.3 Policy (<span class="katex-inline" data-math="\pi"></span>)</h3>
+<p>The policy is the agent's behavior strategy. It is a mapping from state to action.</p>
+<ul>
+<li><strong>Deterministic Policy:</strong> <span class="katex-inline" data-math="a = \pi(s)"></span> (Always takes the same action in a specific state).</li>
+<li><strong>Stochastic Policy:</strong> <span class="katex-inline" data-math="\pi(a|s) = P(A_t=a | S_t=s)"></span> (Probabilities of taking specific actions).</li>
+</ul>
+<h3>2.4 Model of the Environment</h3>
+<p>The model is the agent’s representation of how the environment works.</p>
+<ul>
+<li><strong>Transition Probability:</strong> Predicts the next state.</li>
+<li><strong>Reward Function:</strong> Predicts the immediate reward.</li>
+<li><strong>Model-Based RL:</strong> The agent learns a model and plans using it.</li>
+<li><strong>Model-Free RL:</strong> The agent learns a policy or value function directly from experience without learning the physics of the environment.</li>
+</ul>
+<hr/>
+<h2>3. Markov Decision Processes (MDPs)</h2>
+<p>An MDP is a discrete-time stochastic control process. It provides the mathematical framework for modeling decision-making in situations where outcomes are partly random and partly under the control of a decision-maker.</p>
+<h3>3.1 The Markov Property</h3>
+<p>A state <span class="katex-inline" data-math="S_t"></span> is Markov if and only if:<br/>
+<span class="math-display" data-math="P(S_{t+1} | S_t) = P(S_{t+1} | S_1, S_2, ..., S_t)"></span><br/>
+<em>Translation:</em> The future depends only on the present, not on the history. Once the current state is known, the history becomes irrelevant.</p>
+<h3>3.2 MDP Tuple</h3>
+<p>An MDP is defined by a 5-tuple <span class="katex-inline" data-math="(S, A, P, R, \gamma)"></span>:</p>
+<ol>
+<li><strong><span class="katex-inline" data-math="S"></span></strong>: A finite set of states.</li>
+<li><strong><span class="katex-inline" data-math="A"></span></strong>: A finite set of actions.</li>
+<li><strong><span class="katex-inline" data-math="P"></span></strong>: State transition probability matrix.<br/>
+<span class="math-display" data-math="P_{ss'}^a = P(S_{t+1} = s' | S_t = s, A_t = a)"></span></li>
+<li><strong><span class="katex-inline" data-math="R"></span></strong>: Reward function.<br/>
+<span class="math-display" data-math="R_s^a = E[R_{t+1} | S_t = s, A_t = a]"></span></li>
+<li><strong><span class="katex-inline" data-math="\gamma"></span> (Gamma)</strong>: A discount factor <span class="katex-inline" data-math="\gamma \in [0, 1]"></span>.</li>
+</ol>
+<h3>3.3 The Goal: Cumulative Reward (Return)</h3>
+<p>The agent seeks to maximize the expected return (<span class="katex-inline" data-math="G_t"></span>). The return is the total discounted reward from time-step <span class="katex-inline" data-math="t"></span>.</p>
+<p><span class="math-display" data-math="G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}"></span></p>
+<p><strong>Why Discounting (<span class="katex-inline" data-math="\gamma"></span>)?</strong></p>
+<ul>
+<li><strong>Mathematical Convergence:</strong> Ensures the sum is finite for infinite horizons.</li>
+<li><strong>Uncertainty:</strong> Future rewards are less certain than immediate ones.</li>
+<li><strong>Value:</strong> <span class="katex-inline" data-math="\gamma \rightarrow 0"></span> leads to "myopic" evaluation (cares only about immediate reward). <span class="katex-inline" data-math="\gamma \rightarrow 1"></span> leads to "far-sighted" evaluation.</li>
+</ul>
+<hr/>
+<h2>4. Value Function and Bellman Equations</h2>
+<p>Value functions estimate "how good" it is for an agent to be in a given state (or to perform a given action in a given state).</p>
+<h3>4.1 State-Value Function <span class="katex-inline" data-math="V(s)"></span></h3>
+<p>The expected return starting from state <span class="katex-inline" data-math="s"></span> and following policy <span class="katex-inline" data-math="\pi"></span>.<br/>
+<span class="math-display" data-math="V_\pi(s) = E_\pi [G_t | S_t = s]"></span></p>
+<h3>4.2 Action-Value Function <span class="katex-inline" data-math="Q(s, a)"></span></h3>
+<p>The expected return starting from state <span class="katex-inline" data-math="s"></span>, taking action <span class="katex-inline" data-math="a"></span>, and then following policy <span class="katex-inline" data-math="\pi"></span>.<br/>
+<span class="math-display" data-math="Q_\pi(s, a) = E_\pi [G_t | S_t = s, A_t = a]"></span></p>
+<h3>4.3 Bellman Expectation Equations</h3>
+<p>The Bellman equation decomposes the value function into two parts: the immediate reward plus the discounted value of the successor state.</p>
+<p><strong>For <span class="katex-inline" data-math="V(s)"></span>:</strong><br/>
+<span class="math-display" data-math="V_\pi(s) = \sum_{a} \pi(a|s) \sum_{s', r} p(s', r | s, a) [r + \gamma V_\pi(s')]"></span></p>
+<p><strong>For <span class="katex-inline" data-math="Q(s, a)"></span>:</strong><br/>
+<span class="math-display" data-math="Q_\pi(s, a) = \sum_{s', r} p(s', r | s, a) [r + \gamma \sum_{a'} \pi(a'|s') Q_\pi(s', a')]"></span></p>
+<h3>4.4 Bellman Optimality Equations</h3>
+<p>The goal of RL is to find the optimal policy <span class="katex-inline" data-math="\pi^*"></span>. The optimal value functions are denoted <span class="katex-inline" data-math="V^*"></span> and <span class="katex-inline" data-math="Q^*"></span>.</p>
+<p><strong>Optimal State-Value:</strong><br/>
+<span class="math-display" data-math="V^*(s) = \max_{a} \sum_{s', r} p(s', r | s, a) [r + \gamma V^*(s')]"></span></p>
+<p><strong>Optimal Action-Value:</strong><br/>
+<span class="math-display" data-math="Q^*(s, a) = \sum_{s', r} p(s', r | s, a) [r + \gamma \max_{a'} Q^*(s', a')]"></span></p>
+<p><em>Significance:</em> If we know <span class="katex-inline" data-math="Q^*(s, a)"></span>, the optimal policy is simply to take the action <span class="katex-inline" data-math="a"></span> that maximizes <span class="katex-inline" data-math="Q^*(s, a)"></span> (Greedy Policy).</p>
+<hr/>
+<h2>5. Temporal Difference (TD) Learning</h2>
+<p>TD Learning is a central concept in modern RL. It combines ideas from Monte Carlo methods and Dynamic Programming.</p>
+<h3>5.1 Concept</h3>
+<ul>
+<li><strong>Model-Free:</strong> Like Monte Carlo, TD learns directly from raw experience without a model of the environment dynamics.</li>
+<li><strong>Bootstrapping:</strong> Like Dynamic Programming, TD updates estimates based in part on other learned estimates, without waiting for a final outcome (episode termination).</li>
+</ul>
+<h3>5.2 TD(0) Update Rule</h3>
+<p>The simplest form of TD learning estimates <span class="katex-inline" data-math="V(s)"></span>.<br/>
+<span class="math-display" data-math="V(S_t) \leftarrow V(S_t) + \alpha [R_{t+1} + \gamma V(S_{t+1}) - V(S_t)]"></span></p>
+<p>Where:</p>
+<ul>
+<li><span class="katex-inline" data-math="V(S_t)"></span>: Current estimate of the value of state <span class="katex-inline" data-math="S_t"></span>.</li>
+<li><span class="katex-inline" data-math="\alpha"></span>: Learning rate (step size).</li>
+<li><span class="katex-inline" data-math="R_{t+1} + \gamma V(S_{t+1})"></span>: The <strong>TD Target</strong> (Estimated return).</li>
+<li><span class="katex-inline" data-math="R_{t+1} + \gamma V(S_{t+1}) - V(S_t)"></span>: The <strong>TD Error</strong> (<span class="katex-inline" data-math="\delta"></span>).</li>
+</ul>
+<h3>5.3 Advantages</h3>
+<ul>
+<li>Can learn online after every step (unlike Monte Carlo which waits for end of episode).</li>
+<li>Usually converges faster than Monte Carlo.</li>
+<li>Does not require a model of <span class="katex-inline" data-math="P"></span> (transitions) or <span class="katex-inline" data-math="R"></span> (rewards).</li>
+</ul>
+<hr/>
+<h2>6. Q-Learning</h2>
+<p>Q-Learning is one of the most popular model-free RL algorithms. It is an <strong>Off-Policy</strong> TD control algorithm.</p>
+<h3>6.1 Off-Policy vs. On-Policy</h3>
+<ul>
+<li><strong>On-Policy (e.g., SARSA):</strong> Attempts to evaluate or improve the policy that is currently being used to make decisions.</li>
+<li><strong>Off-Policy (Q-Learning):</strong> Evaluates or improves a policy different from the one used to generate the data. It learns the value of the <em>optimal</em> policy regardless of the agent's actual actions (as long as it explores enough).</li>
+</ul>
+<h3>6.2 The Q-Learning Equation</h3>
+<p>The core of the algorithm is the update rule for the Q-value (Action-Value):</p>
+<p><span class="math-display" data-math="Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma \max_{a} Q(S_{t+1}, a) - Q(S_t, A_t) \right]"></span></p>
+<p><strong>Breakdown:</strong></p>
+<ol>
+<li><strong><span class="katex-inline" data-math="Q(S_t, A_t)"></span></strong>: Old Q-value.</li>
+<li><strong><span class="katex-inline" data-math="\alpha"></span></strong>: Learning rate.</li>
+<li><strong><span class="katex-inline" data-math="R_{t+1}"></span></strong>: Immediate reward.</li>
+<li><strong><span class="katex-inline" data-math="\max_{a} Q(S_{t+1}, a)"></span></strong>: Estimate of optimal future value. <em>Note: We take the max over all actions in the next state, assuming we will act optimally, even if we are currently exploring.</em></li>
+</ol>
+<h3>6.3 The Algorithm</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">PYTHON</span></div><pre><code class="language-python">Initialize Q(s, a) arbitrarily
+Repeat (for each episode):
+    Initialize S
+    Repeat (for each step of episode):
+        Choose A from S using policy derived from Q (e.g., epsilon-greedy)
+        Take action A, observe R, S'
+        
+        # The Update
+        Q(S, A) = Q(S, A) + alpha * (R + gamma * max(Q(S', a)) - Q(S, A))
+        
+        S = S'
+    Until S is terminal
+</code></pre></div></p>
+<h3>6.4 Convergence</h3>
+<p>Q-learning is proven to converge to the optimal action-value function <span class="katex-inline" data-math="Q^*"></span> with probability 1, provided that all state-action pairs are visited infinitely often and the step-size parameter <span class="katex-inline" data-math="\alpha"></span> decays appropriately.</p> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT394/Unit4/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 4</div>
+</div>
+</a>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem5/INT394/Unit6/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 6</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

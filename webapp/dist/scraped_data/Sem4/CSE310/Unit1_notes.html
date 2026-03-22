@@ -1,0 +1,729 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem4/CSE310">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE310/Unit1/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-green-100 dark:hover:bg-green-900/30 text-slate-700 dark:text-lpu-text hover:text-green-600 dark:hover:text-green-400 transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem4/CSE310/Unit1/subjective" title="Subjective">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+<span class="hidden sm:inline">Subjective</span>
+</a>
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem4/CSE310/Unit2/notes" title="Next Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 1 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>CSE310</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            6 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 1: Introduction to Java</h1>
+<h2>1. History and Features of Java</h2>
+<h3>History</h3>
+<ul>
+<li><strong>Origin:</strong> Java was developed by <strong>James Gosling</strong> and his team (known as the "Green Team") at <strong>Sun Microsystems</strong> (now owned by Oracle) in <strong>1991</strong>.</li>
+<li><strong>Original Name:</strong> Initially called "Greentalk," then renamed to <strong>"Oak"</strong> (after an oak tree outside Gosling's office).</li>
+<li><strong>Final Name:</strong> Renamed to <strong>Java</strong> in 1995 (inspired by Java coffee).</li>
+<li><strong>Purpose:</strong> Originally designed for consumer electronics (embedded systems like set-top boxes), but it found its true calling in the nascent World Wide Web due to its portability.</li>
+<li><strong>The Motto:</strong> "Write Once, Run Anywhere" (WORA).</li>
+</ul>
+<h3>Key Features (Buzzwords)</h3>
+<ol>
+<li><strong>Simple:</strong> Syntax is based on C++ but removes complex features like pointers, operator overloading, and multiple inheritance.</li>
+<li><strong>Object-Oriented:</strong> Everything in Java is an object (except primitive data types). It follows OOP principles: Inheritance, Polymorphism, Abstraction, and Encapsulation.</li>
+<li><strong>Platform Independent:</strong> Java code is compiled into <strong>bytecode</strong>, which is not specific to any machine. This bytecode runs on the Java Virtual Machine (JVM).</li>
+<li><strong>Robust:</strong> Strong memory management (automatic Garbage Collection) and exception handling mechanisms to prevent crashes.</li>
+<li><strong>Secure:</strong> Java runs inside a virtual machine sandbox. It has no explicit pointers, preventing unauthorized memory access.</li>
+<li><strong>Multi-threaded:</strong> Allows execution of multiple parts of a program simultaneously (concurrency).</li>
+<li><strong>Dynamic:</strong> Designed to adapt to an evolving environment; classes are loaded on demand.</li>
+</ol>
+<hr/>
+<h2>2. Understanding JDK, JRE, and JVM</h2>
+<p>The architecture of Java relies on three core components that are often confused.</p>
+<p><figure class="image-figure"><img alt="A nested block diagram illustrating the relationship between JDK, JRE, and JVM. The outermost large ..." src="/notes-images/Sem4/CSE310/images/CSE310_Unit1_img1_f0374a30.jpg"><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></img></figure></p>
+<h3>JVM (Java Virtual Machine)</h3>
+<ul>
+<li><strong>Definition:</strong> An abstract machine that enables a computer to run a Java program.</li>
+<li><strong>Function:</strong> It converts Java Bytecode (.class file) into machine-specific machine code.</li>
+<li><strong>Nature:</strong> The JVM itself is platform-dependent (there is a different JVM for Windows, Linux, and Mac).</li>
+</ul>
+<h3>JRE (Java Runtime Environment)</h3>
+<ul>
+<li><strong>Definition:</strong> A software package that provides the class libraries and other resources that a specific Java program needs to run.</li>
+<li><strong>Formula:</strong> JRE = JVM + Class Libraries (rt.jar).</li>
+<li><strong>Usage:</strong> Required by end-users to <em>run</em> Java applications.</li>
+</ul>
+<h3>JDK (Java Development Kit)</h3>
+<ul>
+<li><strong>Definition:</strong> A full-featured software development kit for developers.</li>
+<li><strong>Formula:</strong> JDK = JRE + Development Tools (Compiler <code>javac</code>, Archiver <code>jar</code>, Documentation generator <code>javadoc</code>, etc.).</li>
+<li><strong>Usage:</strong> Required by developers to <em>write and compile</em> Java applications.</li>
+</ul>
+<hr/>
+<h2>3. Java Program Structure</h2>
+<p>A Java program consists of classes and methods. The filename must match the public class name.</p>
+<h3>Writing a Simple Java Class</h3>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">// File: HelloWorld.java
+public class HelloWorld {
+    // Main method execution starts here
+    public static void main(String[] args) {
+        System.out.println("Hello, Java!");
+    }
+}
+</code></pre></div></p>
+<h3>Analysis of <code>public static void main(String[] args)</code></h3>
+<ul>
+<li><strong><code>public</code>:</strong> Access modifier. The JVM calls this method from outside the class, so it must be public.</li>
+<li><strong><code>static</code>:</strong> Allows the JVM to invoke the method without creating an instance (object) of the class.</li>
+<li><strong><code>void</code>:</strong> The return type. The main method does not return any value to the JVM.</li>
+<li><strong><code>main</code>:</strong> The keyword/identifier the JVM looks for as the starting point.</li>
+<li><strong><code>String[] args</code>:</strong> Command-line arguments. It accepts an array of strings passed during execution.</li>
+</ul>
+<h3>Command-Line Arguments</h3>
+<p>Inputs passed to the program at the time of running it.</p>
+<ul>
+<li><strong>Example Code:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">    public class CmdArgs {
+        public static void main(String[] args) {
+            System.out.println("Argument 1: " + args[0]);
+        }
+    }
+    </code></pre></div></li>
+<li><strong>Execution:</strong> <code>java CmdArgs JavaIsFun</code></li>
+<li><strong>Output:</strong> <code>Argument 1: JavaIsFun</code></li>
+</ul>
+<hr/>
+<h2>4. Data Types and Variables</h2>
+<p><figure class="image-figure"><img alt='A tree diagram visualizing the Classification of Java Data Types. The root node is "Data Types". Bra...' src="/notes-images/Sem4/CSE310/images/CSE310_Unit1_img2_640f2f8c.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>Primitive Data Types</h3>
+<p>Java has 8 primitive data types:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Size</th>
+<th style="text-align: left;">Default Value</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>byte</code></td>
+<td style="text-align: left;">8-bit</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Very small integers (-128 to 127)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>short</code></td>
+<td style="text-align: left;">16-bit</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Small integers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">32-bit</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Standard integer</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>long</code></td>
+<td style="text-align: left;">64-bit</td>
+<td style="text-align: left;">0L</td>
+<td style="text-align: left;">Large integers (suffix 'L')</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>float</code></td>
+<td style="text-align: left;">32-bit</td>
+<td style="text-align: left;">0.0f</td>
+<td style="text-align: left;">Floating point (suffix 'f')</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>double</code></td>
+<td style="text-align: left;">64-bit</td>
+<td style="text-align: left;">0.0d</td>
+<td style="text-align: left;">Large floating point (default for decimals)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>char</code></td>
+<td style="text-align: left;">16-bit</td>
+<td style="text-align: left;">'\u0000'</td>
+<td style="text-align: left;">Unicode character</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>boolean</code></td>
+<td style="text-align: left;">1-bit*</td>
+<td style="text-align: left;">false</td>
+<td style="text-align: left;">True or False</td>
+</tr>
+</tbody>
+</table>
+<h3>Variables, Identifiers, and Keywords</h3>
+<ul>
+<li><strong>Keywords:</strong> Reserved words with predefined meanings (e.g., <code>class</code>, <code>if</code>, <code>void</code>, <code>new</code>). They cannot be used as variable names.</li>
+<li><strong>Identifiers:</strong> Names given to classes, methods, and variables.
+<ul>
+<li><em>Rules:</em> Must start with a letter, <code>$</code>, or <code>_</code>. Case sensitive. No whitespace.</li>
+</ul></li>
+<li><strong>Variable Declaration:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">    int age = 25;       // Declaration and Initialization
+    float salary;       // Declaration only
+    salary = 5000.50f;  // Assignment
+    </code></pre></div></li>
+</ul>
+<h3>Type Conversion (Casting)</h3>
+<ol>
+<li><strong>Widening (Implicit):</strong> Converting a smaller type to a larger type size. Done automatically.
+<ul>
+<li><code>byte</code> <span class="katex-inline" data-math="\rightarrow"></span> <code>short</code> <span class="katex-inline" data-math="\rightarrow"></span> <code>int</code> <span class="katex-inline" data-math="\rightarrow"></span> <code>long</code> <span class="katex-inline" data-math="\rightarrow"></span> <code>float</code> <span class="katex-inline" data-math="\rightarrow"></span> <code>double</code></li>
+<li>Example: <code>int i = 100; long l = i;</code></li>
+</ul></li>
+<li><strong>Narrowing (Explicit):</strong> Converting a larger type to a smaller size. Requires manual casting.
+<ul>
+<li>Example: <code>double d = 100.04; int i = (int)d;</code> (Result: 100, precision lost).</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>5. Modifiers and Wrapper Classes</h2>
+<h3>Access Modifiers</h3>
+<p>Controls the visibility of classes, methods, and variables.</p>
+<ol>
+<li><strong><code>private</code>:</strong> Accessible only within the <strong>same class</strong>.</li>
+<li><strong>Default (no keyword):</strong> Accessible within the <strong>same package</strong>.</li>
+<li><strong><code>protected</code>:</strong> Accessible within the same package and <strong>subclasses</strong> (even in different packages).</li>
+<li><strong><code>public</code>:</strong> Accessible from <strong>everywhere</strong>.</li>
+</ol>
+<h3>The <code>static</code> Keyword</h3>
+<ul>
+<li><strong>Static Variable:</strong> Shared among all instances of a class. Memory is allocated only once.</li>
+<li><strong>Static Method:</strong> Can be called without creating an object. Cannot access instance (non-static) data.</li>
+<li><strong>Static Block:</strong> Used to initialize static data members; executed before <code>main</code>.</li>
+</ul>
+<h3>Wrapper Classes</h3>
+<p>Java is an OOP language, but primitives are not objects. Wrapper classes provide a mechanism to use primitive data types as objects (essential for Collections like ArrayList).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Primitive</th>
+<th style="text-align: left;">Wrapper Class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">int</td>
+<td style="text-align: left;">Integer</td>
+</tr>
+<tr>
+<td style="text-align: left;">char</td>
+<td style="text-align: left;">Character</td>
+</tr>
+<tr>
+<td style="text-align: left;">double</td>
+<td style="text-align: left;">Double</td>
+</tr>
+<tr>
+<td style="text-align: left;">boolean</td>
+<td style="text-align: left;">Boolean</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Autoboxing:</strong> Automatic conversion of primitive to wrapper. (<code>Integer a = 5;</code>)</li>
+<li><strong>Unboxing:</strong> Automatic conversion of wrapper to primitive. (<code>int b = a;</code>)</li>
+</ul>
+<hr/>
+<h2>6. Operators</h2>
+<p>Java provides a rich set of operators to manipulate variables.</p>
+<h3>Categories</h3>
+<ol>
+<li><strong>Arithmetic:</strong> <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>%</code> (Modulo/Remainder).</li>
+<li><strong>Unary:</strong>
+<ul>
+<li><code>++</code> (Increment), <code>--</code> (Decrement).</li>
+<li>Prefix (<code>++i</code>): Change then use. Postfix (<code>i++</code>): Use then change.</li>
+</ul></li>
+<li><strong>Relational (Comparison):</strong> Returns boolean (<code>true</code>/<code>false</code>).
+<ul>
+<li><code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>.</li>
+</ul></li>
+<li><strong>Logical:</strong> Used to combine boolean conditions.
+<ul>
+<li><code>&amp;&amp;</code> (AND): True if both are true.</li>
+<li><code>||</code> (OR): True if at least one is true.</li>
+<li><code>!</code> (NOT): Reverses boolean value.</li>
+</ul></li>
+<li><strong>Bitwise:</strong> Operates on bits.
+<ul>
+<li><code>&amp;</code> (Bitwise AND), <code>|</code> (Bitwise OR), <code>^</code> (XOR), <code>~</code> (Complement).</li>
+<li><code>&lt;&lt;</code> (Left Shift), <code>&gt;&gt;</code> (Right Shift).</li>
+</ul></li>
+<li><strong>Assignment:</strong> <code>=</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>.</li>
+<li><strong>Ternary Operator:</strong> Short for if-else.
+<ul>
+<li>Syntax: <code>variable = (condition) ? expressionTrue : expressionFalse;</code></li>
+<li>Example: <code>int max = (a &gt; b) ? a : b;</code></li>
+</ul></li>
+</ol>
+<h3>Operator Precedence</h3>
+<p>The order in which operators are evaluated.</p>
+<ul>
+<li><strong>High:</strong> <code>()</code>, <code>++</code>, <code>--</code></li>
+<li><strong>Medium:</strong> <code>*</code>, <code>/</code>, <code>%</code> then <code>+</code>, <code>-</code></li>
+<li><strong>Low:</strong> <code>=</code>, <code>+=</code></li>
+</ul>
+<hr/>
+<h2>7. Control Flow Statements</h2>
+<p><figure class="image-figure"><img alt='A comparative flowchart diagram showing two control flow logic paths side-by-side. Left side: "If-El...' src="/notes-images/Sem4/CSE310/images/CSE310_Unit1_img3_10d3ec9f.jpg"/><figcaption class="ai-image-warning">AI-generated image — may contain inaccuracies</figcaption></figure></p>
+<h3>If/Else Constructs</h3>
+<p>Used for decision making based on boolean conditions.</p>
+<ol>
+<li><strong>Simple If:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">    if(age &gt; 18) {
+        System.out.println("Adult");
+    }
+    </code></pre></div></li>
+<li><strong>If-Else:</strong><br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">    if(num % 2 == 0) {
+        System.out.println("Even");
+    } else {
+        System.out.println("Odd");
+    }
+    </code></pre></div></li>
+<li><strong>Else-If Ladder:</strong> Used to check multiple conditions.<br/>
+<div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">    if(marks &gt; 90) System.out.println("A Grade");
+    else if(marks &gt; 75) System.out.println("B Grade");
+    else System.out.println("C Grade");
+    </code></pre></div></li>
+</ol>
+<h3>Switch-Case Statements</h3>
+<p>Used when a single variable is compared against multiple possible values (cases). It works with <code>byte</code>, <code>short</code>, <code>char</code>, <code>int</code>, <code>String</code>, and <code>Enums</code>.</p>
+<p><div class="code-block"><div class="code-header"><span class="code-lang">JAVA</span></div><pre><code class="language-java">int day = 3;
+switch(day) {
+    case 1:
+        System.out.println("Monday");
+        break; // Important: Prevents fall-through to next case
+    case 2:
+        System.out.println("Tuesday");
+        break;
+    case 3:
+        System.out.println("Wednesday");
+        break;
+    default:
+        // Executed if no cases match
+        System.out.println("Invalid day");
+}
+</code></pre></div></p>
+<p><strong>Key Difference:</strong></p>
+<ul>
+<li><strong>If-Else</strong> checks boolean conditions and ranges (e.g., <code>x &gt; 5</code>).</li>
+<li><strong>Switch</strong> checks for equality against specific constants (e.g., <code>x == 5</code>).</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div></div>
+<a class="group flex items-center justify-end gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all text-right" href="/Sem4/CSE310/Unit2/notes">
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Next</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 2</div>
+</div>
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6"></path></svg>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>

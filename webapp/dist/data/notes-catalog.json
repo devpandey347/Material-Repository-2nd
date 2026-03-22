@@ -1,0 +1,1828 @@
+{
+  "generatedAt": "2026-03-22T14:00:42.639Z",
+  "subjects": {
+    "Sem1_CSE111": {
+      "name": "ORIENTATION TO COMPUTING-I",
+      "desc": "This course focuses on skill development and employability by introducing the functional components of computer systems, operating systems like Linux, and networking basics. It also emphasizes the utilization of professional tools such as Git, GitHub, and AI platforms to enhance technical skills and digital practices.",
+      "units": [
+        "Computer System",
+        "Operating System",
+        "Linux Operating System",
+        "Cohorts and Skill Sets",
+        "Computer Network and Communication",
+        "Version Control"
+      ]
+    },
+    "Sem1_CSE326": {
+      "name": "INTERNET PROGRAMMING LABORATORY",
+      "desc": "This course focuses on internet programming techniques including HTML5 for structure, CSS for responsive design and layout, and JavaScript for client-side logic and DOM manipulation.",
+      "units": [
+        "Fundamentals of HTML",
+        "Expanding HTML Knowledge",
+        "Introduction to Cascading Style Sheets",
+        "JavaScript Application Development",
+        "JavaScript Functions, Events and Validation",
+        "Javascript DOM"
+      ]
+    },
+    "Sem1_INT108": {
+      "name": "PYTHON PROGRAMMING",
+      "desc": "This course focuses on employability and skill development through Python programming. It covers the installation of the Python environment, conditional and iterative statements, functions, core data structures like lists, dictionaries, tuples and sets, object-oriented programming, and file handling operations.",
+      "units": [
+        "Setting up Programming Environment; Variables, Expressions and Statements",
+        "Conditional statements; Iterative statements",
+        "Functions and Recursion",
+        "String; Lists; Tuples and Dictionaries",
+        "Classes and Objects; OOP Terminology",
+        "Files and Exceptions; Regular Expressions"
+      ]
+    },
+    "Sem1_MTH165": {
+      "name": "MATHEMATICS FOR ENGINEERS",
+      "desc": "This course focuses on employability and skill development, enabling students to apply concepts of matrices, calculus of one variable, multi-variable differential and integral calculus, and Fourier series to engineering problems.",
+      "units": [
+        "Linear Algebra",
+        "Differential and Integral Calculus",
+        "Application of Derivatives",
+        "Multivariate Functions",
+        "Multiple Integrals",
+        "Fourier Series"
+      ]
+    },
+    "Sem1_ECE131": {
+      "name": "BASIC ELECTRICAL AND ELECTRONICS ENGINEERING",
+      "desc": "This course covers the fundamental principles of electrical and electronics engineering, including electrical circuits, machines, semiconductor devices, and operational amplifiers. It also introduces concepts of IoT, cloud computing, and embedded systems.",
+      "units": [
+        "Fundamentals of D.C. Circuits",
+        "Fundamentals of A.C. Circuits",
+        "Fundamentals of Electrical Machines",
+        "Fundamentals of Semiconductor Devices and Digital Circuits",
+        "Fundamentals of Filters and Operational Amplifiers",
+        "Fundamentals of Embedded System and Applications"
+      ]
+    },
+    "Sem2_CSE101": {
+      "name": "COMPUTER PROGRAMMING",
+      "desc": "Course Focus: EMPLOYABILITY, SKILL DEVELOPMENT, ENTREPRENEURSHIP. Covers C programming fundamentals including control structures, functions, arrays, pointers, dynamic memory allocation, strings, structures and unions.",
+      "units": [
+        "Basics and Introduction to C",
+        "Control Structures and Input/Output Functions",
+        "User Defined Functions and Storage Classes",
+        "Arrays in C",
+        "Pointers, Dynamic Memory Allocation and Strings",
+        "Derived Types Including Structures and Unions"
+      ]
+    },
+    "Sem2_MTH401": {
+      "name": "DISCRETE MATHEMATICS",
+      "desc": "This course on Discrete Mathematics focuses on employability and skill development, covering topics such as logic and proofs, combinatorics, recurrence relations, graph theory, and number theory.",
+      "units": [
+        "Logic and Proofs",
+        "Recurrence Relations",
+        "Counting Principles and Relations",
+        "Graphs Theory I",
+        "Graphs Theory II",
+        "Number Theory and its Application in Cryptography"
+      ]
+    },
+    "Sem2_PEL130": {
+      "name": "ADVANCED COMMUNICATION SKILLS I",
+      "desc": "The course focuses on competitive and placement examinations for higher education and mass recruiters, along with skill enhancement and personality development.",
+      "units": [
+        "Substitution and Ellipsis",
+        "Sentence Structure",
+        "Conditionals",
+        "Infinitives, Gerunds and Quantifiers",
+        "Reduced Clauses, Connectors and Focus Structures",
+        "Professional Vocabulary"
+      ]
+    },
+    "Sem2_ECE182": {
+      "name": "ELECTRONICS FOR ROBOTS",
+      "desc": "This course focuses on employability and skill development, enabling students to understand, analyze, and apply electronic devices such as p-n junction diodes, BJTs, FETs, and op-amps.",
+      "units": [
+        "Semiconductor and its Application",
+        "Bipolar Junction Transistors",
+        "Field Effect Transistors",
+        "Feedback Amplifiers and Power Amplifier",
+        "Oscillators",
+        "Operational Amplifiers and Applications"
+      ]
+    },
+    "Sem2_ECE213": {
+      "name": "DIGITAL ELECTRONICS",
+      "desc": "This course covers digital number systems, boolean algebra, and the application of binary arithmetic concepts for designing combinational circuits. Students will also learn to develop various flip-flops, registers, counters, and analyze memory design and FPGA applications.",
+      "units": [
+        "Number Systems",
+        "Boolean Algebra and Logic Gates",
+        "Introduction to Combinational Logic Circuits",
+        "Introduction to Sequential Logic Circuits",
+        "Sequential Logic Circuits Applications",
+        "Memory and Programmable Logic"
+      ]
+    },
+    "Sem3_CSE202": {
+      "name": "OBJECT ORIENTED PROGRAMMING",
+      "desc": "The course focuses on employability, skill development, and entrepreneurship, enabling students to identify basic programming constructs, interpret object-oriented model principles, and apply them in C++ language implementation.",
+      "units": [
+        "Concepts and Basics of C++ Programming and Functions",
+        "Pointers, Reference Variables, Arrays and String Concepts",
+        "Data File Operations, Constructors, Destructors and File Handling",
+        "Operator Overloading, Type Conversion and Inheritance",
+        "Dynamic Memory Management and Polymorphism",
+        "Exception Handling, Templates and STL"
+      ]
+    },
+    "Sem3_CSE205": {
+      "name": "DATA STRUCTURES AND ALGORITHMS",
+      "desc": "This course focuses on employability and skill development, designed to enable students to understand time and space complexity of programs and data structures. It covers the implementation and importance of Linked Lists, Stacks, Queues, Trees, Heap operations, and Hashing techniques.",
+      "units": [
+        "Introduction, Arrays, Sorting and Searching",
+        "Linked Lists",
+        "Stacks and Queues",
+        "Trees and Recursion",
+        "Heaps and Hashing",
+        "Graphs"
+      ]
+    },
+    "Sem3_CSE306": {
+      "name": "COMPUTER NETWORKS",
+      "desc": "This course covers the fundamentals of computer networking, including network models, protocols, data transmission, routing algorithms, and network security concepts.",
+      "units": [
+        "Introduction to Computer Networks",
+        "Physical Layer",
+        "Data Link Layer",
+        "Network Layer",
+        "Transport Layer",
+        "Application Layer"
+      ]
+    },
+    "Sem3_CSE316": {
+      "name": "OPERATING SYSTEMS",
+      "desc": "This course covers the core concepts of operating systems including process management, memory management, file systems, and I/O management.",
+      "units": [
+        "Introduction to Operating Systems",
+        "Process Management",
+        "CPU Scheduling",
+        "Memory Management",
+        "File Systems",
+        "I/O Management"
+      ]
+    },
+    "Sem3_CSC104": {
+      "name": "IT FUNDAMENTALS",
+      "desc": "This course covers the fundamental concepts of Information Technology including hardware, software, networking, databases, and security.",
+      "units": [
+        "IT Fundamentals Overview",
+        "Computer Hardware",
+        "Software and Operating Systems",
+        "Networking Basics",
+        "Database Fundamentals",
+        "IT Security"
+      ]
+    },
+    "Sem4_CSE211": {
+      "name": "COMPUTER ORGANIZATION AND DESIGN",
+      "desc": "This course covers the fundamentals of computer organization including digital logic, processor design, memory hierarchy, and I/O systems.",
+      "units": [
+        "Digital Logic and Computer Architecture",
+        "Instruction Set Architecture",
+        "Processor Design",
+        "Memory Hierarchy",
+        "I/O Systems",
+        "Pipelining and Parallel Processing"
+      ]
+    },
+    "Sem4_CSE273": {
+      "name": "CSE273",
+      "desc": "Core computer science course covering advanced topics in algorithms and system design.",
+      "units": [
+        "Unit 1",
+        "Unit 2",
+        "Unit 3",
+        "Unit 4",
+        "Unit 5",
+        "Unit 6"
+      ]
+    },
+    "Sem4_CSE310": {
+      "name": "PROGRAMMING IN JAVA",
+      "desc": "This course covers Java programming fundamentals including OOP concepts, exception handling, multithreading, collections framework, and GUI development.",
+      "units": [
+        "Introduction to Java",
+        "Object-Oriented Programming in Java",
+        "Exception Handling and Multithreading",
+        "Collections Framework",
+        "I/O Streams and File Handling",
+        "GUI Development with JavaFX"
+      ]
+    },
+    "Sem4_CSE325": {
+      "name": "OPERATING SYSTEMS LABORATORY",
+      "desc": "Practical laboratory course focusing on hands-on experience with operating system concepts including process management, scheduling, and memory management.",
+      "units": [
+        "Introduction to OS Lab",
+        "Process Management",
+        "CPU Scheduling Algorithms",
+        "Memory Management Techniques",
+        "File System Operations",
+        "System Calls and Shell Programming"
+      ]
+    },
+    "Sem4_INT428": {
+      "name": "ARTIFICIAL INTELLIGENCE ESSENTIALS",
+      "desc": "This course covers the foundations and applications of AI, including problem solving, search algorithms, machine learning, deep neural networks, NLP, generative AI, and prompt engineering.",
+      "units": [
+        "Foundations & Applications of AI",
+        "AI Problem Modeling & Search Concepts",
+        "Problem Solving & Search in AI",
+        "Machine Learning",
+        "Introduction to Deep Neural Networks / Modern NLP",
+        "Generative AI & Ethics / Prompt Engineering"
+      ]
+    },
+    "Sem4_PEA305": {
+      "name": "ANALYTICAL SKILLS-I",
+      "desc": "This course focuses on developing analytical and quantitative aptitude skills for competitive exams and placements.",
+      "units": [
+        "Quantitative Aptitude I",
+        "Quantitative Aptitude II",
+        "Logical Reasoning I",
+        "Logical Reasoning II",
+        "Data Interpretation",
+        "Verbal Reasoning"
+      ]
+    },
+    "Sem4_CSE274": {
+      "name": "APPLIED MACHINE LEARNING",
+      "desc": "This course covers practical machine learning techniques including supervised learning, unsupervised learning, model evaluation, and deployment.",
+      "units": [
+        "Introduction to Machine Learning",
+        "Supervised Learning - Regression",
+        "Supervised Learning - Classification",
+        "Unsupervised Learning",
+        "Model Evaluation and Selection",
+        "ML Deployment and Applications"
+      ]
+    },
+    "Sem4_CSE275": {
+      "name": "OPTIMIZATION TECHNIQUES FOR ML",
+      "desc": "This course covers mathematical optimization techniques used in machine learning algorithms.",
+      "units": [
+        "Mathematical Foundations",
+        "Gradient Descent Methods",
+        "Convex Optimization",
+        "Constrained Optimization",
+        "Stochastic Optimization",
+        "Advanced Optimization Techniques"
+      ]
+    },
+    "Sem4_INT219": {
+      "name": "FRONT END WEB DEVELOPER",
+      "desc": "This course covers front-end web development technologies including HTML5, CSS3, JavaScript, and modern frameworks.",
+      "units": [
+        "HTML5 Fundamentals",
+        "CSS3 and Responsive Design",
+        "JavaScript ES6+",
+        "DOM Manipulation and Events",
+        "Modern CSS Frameworks",
+        "Frontend Build Tools"
+      ]
+    },
+    "Sem4_INT222": {
+      "name": "ADVANCED WEB DEVELOPMENT",
+      "desc": "This course covers advanced concepts in web development including server-side programming, databases, APIs, and full-stack development.",
+      "units": [
+        "Server-Side Programming",
+        "Database Integration",
+        "RESTful APIs",
+        "Authentication and Authorization",
+        "Deployment and DevOps",
+        "Full Stack Project"
+      ]
+    },
+    "Sem4_INT242": {
+      "name": "CYBER SECURITY ESSENTIALS",
+      "desc": "This course covers fundamental concepts of cybersecurity including threat analysis, cryptography, network security, and security management.",
+      "units": [
+        "Introduction to Cyber Security",
+        "Cryptography Fundamentals",
+        "Network Security",
+        "Web Application Security",
+        "Security Operations",
+        "Cyber Security Management"
+      ]
+    },
+    "Sem4_INT249": {
+      "name": "SYSTEM ADMINISTRATION",
+      "desc": "This course covers system administration concepts including server management, user management, storage, and network services.",
+      "units": [
+        "Introduction to System Administration",
+        "User and Group Management",
+        "File System and Storage",
+        "Network Services",
+        "System Monitoring and Maintenance",
+        "Virtualization and Cloud Basics"
+      ]
+    },
+    "Sem4_INT255": {
+      "name": "MATHEMATICS BEHIND MACHINE LEARNING",
+      "desc": "This course covers the mathematical foundations essential for understanding machine learning algorithms.",
+      "units": [
+        "Linear Algebra for ML",
+        "Probability and Statistics",
+        "Calculus for Optimization",
+        "Information Theory",
+        "Matrix Decomposition",
+        "Statistical Learning Theory"
+      ]
+    },
+    "Sem4_CSC202": {
+      "name": "SYSTEM ADMINISTRATION",
+      "desc": "This specialty course covers system administration concepts for managing enterprise IT infrastructure.",
+      "units": [
+        "Enterprise Server Administration",
+        "Directory Services",
+        "Storage Management",
+        "Network Services Configuration",
+        "System Security",
+        "Automation and Scripting"
+      ]
+    },
+    "Sem4_CSC203": {
+      "name": "INTRODUCTION TO BLOCKCHAIN",
+      "desc": "This course covers blockchain technology fundamentals including distributed ledgers, consensus mechanisms, smart contracts, and cryptocurrency.",
+      "units": [
+        "Introduction to Blockchain",
+        "Cryptographic Foundations",
+        "Consensus Mechanisms",
+        "Smart Contracts",
+        "Ethereum and DApps",
+        "Blockchain Applications"
+      ]
+    },
+    "Sem4_ERT425": {
+      "name": "ENTREPRENEURSHIP AND BUSINESS BASICS",
+      "desc": "This course covers the fundamentals of entrepreneurship and business management.",
+      "units": [
+        "Introduction to Entrepreneurship",
+        "Business Planning",
+        "Financial Management",
+        "Marketing Strategies",
+        "Legal and Regulatory Framework",
+        "Startup Ecosystem"
+      ]
+    },
+    "Sem5_CSE322": {
+      "name": "CSE322",
+      "desc": "Core computer science course for semester 5.",
+      "units": [
+        "Unit 1",
+        "Unit 2",
+        "Unit 3",
+        "Unit 4",
+        "Unit 5",
+        "Unit 6"
+      ]
+    },
+    "Sem5_PEV301": {
+      "name": "VERBAL ABILITY",
+      "desc": "This course focuses on developing verbal ability skills for competitive exams and placements.",
+      "units": [
+        "Reading Comprehension",
+        "Vocabulary Building",
+        "Grammar and Usage",
+        "Sentence Completion",
+        "Para Jumbles and Logical Ordering",
+        "Verbal Reasoning"
+      ]
+    },
+    "Sem5_INT222": {
+      "name": "ADVANCED WEB DEVELOPMENT",
+      "desc": "Advanced concepts in web development including server-side programming, databases, APIs, and full-stack development.",
+      "units": [
+        "Server-Side Programming",
+        "Database Integration",
+        "RESTful APIs",
+        "Authentication and Authorization",
+        "Deployment and DevOps",
+        "Full Stack Project"
+      ]
+    },
+    "Sem5_INT234": {
+      "name": "PREDICTIVE ANALYTICS",
+      "desc": "This course covers predictive analytics techniques including regression, classification, time series analysis, and model deployment.",
+      "units": [
+        "Introduction to Predictive Analytics",
+        "Regression Analysis",
+        "Classification Techniques",
+        "Time Series Analysis",
+        "Ensemble Methods",
+        "Model Deployment"
+      ]
+    },
+    "Sem5_INT244": {
+      "name": "SECURING COMPUTING SYSTEMS",
+      "desc": "This course covers advanced security concepts for computing systems.",
+      "units": [
+        "Security Architecture",
+        "Access Control Mechanisms",
+        "Cryptographic Protocols",
+        "Intrusion Detection",
+        "Incident Response",
+        "Security Compliance"
+      ]
+    },
+    "Sem5_INT250": {
+      "name": "DIGITAL EVIDENCE ANALYSIS",
+      "desc": "This course covers digital forensics and evidence analysis techniques.",
+      "units": [
+        "Introduction to Digital Forensics",
+        "Evidence Collection",
+        "File System Analysis",
+        "Network Forensics",
+        "Mobile Forensics",
+        "Legal Aspects of Digital Evidence"
+      ]
+    },
+    "Sem5_INT252": {
+      "name": "WEB APP DEVELOPMENT WITH REACTJS",
+      "desc": "This course covers modern web application development using ReactJS including components, state management, routing, and deployment.",
+      "units": [
+        "Introduction to React",
+        "Components and Props",
+        "State Management and Hooks",
+        "Routing and Navigation",
+        "API Integration",
+        "Testing and Deployment"
+      ]
+    },
+    "Sem5_INT344": {
+      "name": "NATURAL LANGUAGE PROCESSING",
+      "desc": "This course covers NLP techniques including text processing, sentiment analysis, language models, and modern transformer architectures.",
+      "units": [
+        "Introduction to NLP",
+        "Text Preprocessing",
+        "Language Models",
+        "Sentiment Analysis",
+        "Named Entity Recognition",
+        "Transformers and BERT"
+      ]
+    },
+    "Sem5_INT363": {
+      "name": "CLOUD MICROSERVICES",
+      "desc": "This course covers microservices architecture, containerization, and cloud-native application development.",
+      "units": [
+        "Introduction to Microservices",
+        "Service Design Patterns",
+        "Containerization with Docker",
+        "Orchestration with Kubernetes",
+        "API Gateway and Service Mesh",
+        "Cloud Deployment"
+      ]
+    },
+    "Sem5_INT364": {
+      "name": "CLOUD ARCHITECTURE AND IMPLEMENTATION-II",
+      "desc": "Advanced cloud computing concepts including multi-cloud strategies, serverless computing, and cloud security.",
+      "units": [
+        "Advanced Cloud Architecture",
+        "Serverless Computing",
+        "Multi-Cloud Strategies",
+        "Cloud Security",
+        "Cloud Monitoring",
+        "Cost Optimization"
+      ]
+    },
+    "Sem5_INT374": {
+      "name": "DATA ANALYTICS WITH POWER BI",
+      "desc": "This course covers data analytics and visualization using Microsoft Power BI.",
+      "units": [
+        "Introduction to Power BI",
+        "Data Transformation",
+        "Data Modeling",
+        "DAX Formulas",
+        "Visualization and Reports",
+        "Dashboard Deployment"
+      ]
+    },
+    "Sem5_INT394": {
+      "name": "MACHINE LEARNING ALGORITHMS",
+      "desc": "This course covers core machine learning algorithms including supervised, unsupervised, and reinforcement learning.",
+      "units": [
+        "Introduction to ML Algorithms",
+        "Linear Models",
+        "Decision Trees and Random Forests",
+        "Support Vector Machines",
+        "Clustering Algorithms",
+        "Neural Networks"
+      ]
+    },
+    "Sem5_INT395": {
+      "name": "SUPERVISED LEARNING",
+      "desc": "This course covers supervised learning techniques in depth including regression, classification, and ensemble methods.",
+      "units": [
+        "Introduction to Supervised Learning",
+        "Linear Regression",
+        "Logistic Regression",
+        "Decision Trees",
+        "Ensemble Methods",
+        "Model Evaluation and Tuning"
+      ]
+    },
+    "Sem5_INT423": {
+      "name": "MACHINE LEARNING-II",
+      "desc": "Advanced machine learning topics including deep learning, reinforcement learning, and generative models.",
+      "units": [
+        "Deep Learning Foundations",
+        "Convolutional Neural Networks",
+        "Recurrent Neural Networks",
+        "Generative Models",
+        "Reinforcement Learning",
+        "Advanced ML Applications"
+      ]
+    },
+    "Sem5_ENG606": {
+      "name": "CONTEMPORARY SHORT STORIES",
+      "desc": "This open minor course explores contemporary short fiction from diverse literary traditions.",
+      "units": [
+        "Introduction to Short Fiction",
+        "Narrative Techniques",
+        "Character Development",
+        "Theme and Symbolism",
+        "Cultural Contexts",
+        "Critical Analysis"
+      ]
+    },
+    "Sem5_FIN212": {
+      "name": "BASIC FINANCIAL MANAGEMENT",
+      "desc": "This course covers fundamental concepts of financial management including financial planning, analysis, and investment decisions.",
+      "units": [
+        "Introduction to Financial Management",
+        "Financial Planning",
+        "Capital Budgeting",
+        "Cost of Capital",
+        "Working Capital Management",
+        "Financial Analysis"
+      ]
+    },
+    "Sem5_FST801": {
+      "name": "FASHION STUDIES",
+      "desc": "This open minor course covers the fundamentals of fashion design, history, and industry.",
+      "units": [
+        "History of Fashion",
+        "Fashion Design Principles",
+        "Textile Science",
+        "Fashion Marketing",
+        "Sustainable Fashion",
+        "Fashion Technology"
+      ]
+    },
+    "Sem5_GEO295": {
+      "name": "PHYSICAL GEOGRAPHY",
+      "desc": "This open minor course covers the physical aspects of geography including landforms, climate, and ecosystems.",
+      "units": [
+        "Introduction to Physical Geography",
+        "Geomorphology",
+        "Climatology",
+        "Hydrology",
+        "Biogeography",
+        "Environmental Geography"
+      ]
+    },
+    "Sem5_HIS291": {
+      "name": "ANCIENT INDIAN HISTORY AND CULTURE",
+      "desc": "This open minor course explores the history and cultural heritage of ancient India.",
+      "units": [
+        "Prehistoric India",
+        "Indus Valley Civilization",
+        "Vedic Period",
+        "Mauryan Empire",
+        "Gupta Period",
+        "Art and Architecture"
+      ]
+    },
+    "Sem5_HRM203": {
+      "name": "HUMAN RESOURCE PLANNING AND DEVELOPMENT",
+      "desc": "This open minor course covers HR planning, recruitment, training, and organizational development.",
+      "units": [
+        "Introduction to HRM",
+        "HR Planning",
+        "Recruitment and Selection",
+        "Training and Development",
+        "Performance Management",
+        "Employee Relations"
+      ]
+    },
+    "Sem5_INT323": {
+      "name": "DATABASE ESSENTIALS TOWARD INFORMATICA",
+      "desc": "This course covers database management concepts with focus on Informatica tools for data integration.",
+      "units": [
+        "Database Fundamentals",
+        "SQL Programming",
+        "Data Warehousing",
+        "ETL Concepts",
+        "Informatica PowerCenter",
+        "Data Quality and Governance"
+      ]
+    },
+    "Sem5_INT331": {
+      "name": "FUNDAMENTALS OF DEVOPS",
+      "desc": "This course covers DevOps principles, practices, and tools for continuous integration and deployment.",
+      "units": [
+        "Introduction to DevOps",
+        "Version Control with Git",
+        "CI/CD Pipelines",
+        "Configuration Management",
+        "Containerization",
+        "Monitoring and Logging"
+      ]
+    },
+    "Sem5_INT346": {
+      "name": "ROBOTIC PROCESS AUTOMATION",
+      "desc": "This course covers RPA concepts, tools, and implementation for business process automation.",
+      "units": [
+        "Introduction to RPA",
+        "RPA Tools Overview",
+        "Process Design",
+        "Bot Development",
+        "Exception Handling",
+        "RPA Deployment"
+      ]
+    },
+    "Sem5_PSY291": {
+      "name": "PSYCHOLOGICAL TESTING",
+      "desc": "This open minor course covers the fundamentals of psychological testing and assessment.",
+      "units": [
+        "Introduction to Psychological Testing",
+        "Test Construction",
+        "Intelligence Testing",
+        "Personality Assessment",
+        "Aptitude Testing",
+        "Clinical Assessment"
+      ]
+    },
+    "Sem5_SOC371": {
+      "name": "SOCIOLOGY OF MEDIA",
+      "desc": "This open minor course explores the relationship between media and society.",
+      "units": [
+        "Introduction to Media Studies",
+        "Media Theories",
+        "Social Media and Society",
+        "Media Representation",
+        "Digital Culture",
+        "Media Ethics"
+      ]
+    },
+    "Sem6_CSE332": {
+      "name": "INDUSTRY ETHICS AND LEGAL ISSUES",
+      "desc": "This course covers ethical and legal considerations in the IT industry including intellectual property, privacy, and cyber law.",
+      "units": [
+        "Introduction to IT Ethics",
+        "Intellectual Property Rights",
+        "Privacy and Data Protection",
+        "Cyber Law",
+        "Professional Ethics",
+        "Case Studies in IT Ethics"
+      ]
+    },
+    "Sem6_CSE357": {
+      "name": "COMBINATORIAL STUDIES",
+      "desc": "This course covers advanced combinatorial mathematics and its applications in computer science.",
+      "units": [
+        "Counting Techniques",
+        "Generating Functions",
+        "Recurrence Relations",
+        "Graph Enumeration",
+        "Combinatorial Optimization",
+        "Applications in CS"
+      ]
+    },
+    "Sem6_PES319": {
+      "name": "SOFT SKILLS-II",
+      "desc": "This course focuses on developing advanced soft skills for professional growth and career readiness.",
+      "units": [
+        "Leadership Skills",
+        "Team Management",
+        "Negotiation and Conflict Resolution",
+        "Presentation Skills",
+        "Interview Preparation",
+        "Professional Communication"
+      ]
+    },
+    "Sem6_INT221": {
+      "name": "MVC PROGRAMMING",
+      "desc": "This course covers Model-View-Controller architecture and web application development using MVC frameworks.",
+      "units": [
+        "Introduction to MVC Pattern",
+        "Server-Side MVC Frameworks",
+        "Models and Data Access",
+        "Views and Templates",
+        "Controllers and Routing",
+        "Full Stack MVC Application"
+      ]
+    },
+    "Sem6_INT245": {
+      "name": "PENETRATION TESTING",
+      "desc": "This course covers penetration testing methodologies, tools, and techniques for security assessment.",
+      "units": [
+        "Introduction to Penetration Testing",
+        "Reconnaissance and Scanning",
+        "Vulnerability Assessment",
+        "Exploitation Techniques",
+        "Post-Exploitation",
+        "Reporting and Remediation"
+      ]
+    },
+    "Sem6_INT327": {
+      "name": "CLOUD INFRASTRUCTURE AND RESOURCE MANAGEMENT",
+      "desc": "This course covers cloud infrastructure management, resource optimization, and cloud operations.",
+      "units": [
+        "Cloud Infrastructure Overview",
+        "Compute Resources",
+        "Storage Management",
+        "Network Configuration",
+        "Resource Optimization",
+        "Cloud Operations"
+      ]
+    },
+    "Sem6_ENG607": {
+      "name": "CONTEMPORARY PROSE AND POETRY",
+      "desc": "This open minor course explores contemporary prose and poetry from diverse literary traditions.",
+      "units": [
+        "Modern Prose",
+        "Contemporary Poetry",
+        "Literary Criticism",
+        "Narrative Forms",
+        "Poetic Techniques",
+        "Comparative Literature"
+      ]
+    },
+    "Sem6_FIN215": {
+      "name": "MUTUAL FUNDS AND EXCHANGE TRADED FUNDS",
+      "desc": "This course covers the fundamentals of mutual funds and ETFs including types, analysis, and investment strategies.",
+      "units": [
+        "Introduction to Mutual Funds",
+        "Types of Mutual Funds",
+        "Fund Analysis",
+        "Exchange Traded Funds",
+        "Portfolio Construction",
+        "Regulatory Framework"
+      ]
+    },
+    "Sem6_HIS292": {
+      "name": "MEDIEVAL INDIAN HISTORY AND CULTURE",
+      "desc": "This open minor course explores the history and cultural developments during medieval India.",
+      "units": [
+        "Early Medieval India",
+        "Delhi Sultanate",
+        "Mughal Empire",
+        "Regional Kingdoms",
+        "Art and Architecture",
+        "Socio-Cultural Developments"
+      ]
+    },
+    "Sem6_LAW352": {
+      "name": "TRADEMARKS AND ALLIED LAWS",
+      "desc": "This open minor course covers trademark law, intellectual property rights, and related legal frameworks.",
+      "units": [
+        "Introduction to Trademark Law",
+        "Trademark Registration",
+        "Infringement and Remedies",
+        "Passing Off",
+        "International Trademark Law",
+        "Allied IP Laws"
+      ]
+    },
+    "Sem6_PSY292": {
+      "name": "POSITIVE PSYCHOLOGY",
+      "desc": "This open minor course covers the science of well-being, happiness, and human flourishing.",
+      "units": [
+        "Introduction to Positive Psychology",
+        "Character Strengths",
+        "Flow and Engagement",
+        "Positive Emotions",
+        "Resilience",
+        "Applying Positive Psychology"
+      ]
+    }
+  },
+  "bySemester": {
+    "Sem1": [
+      {
+        "key": "Sem1_CSE111",
+        "sem": "Sem1",
+        "code": "CSE111",
+        "name": "ORIENTATION TO COMPUTING-I",
+        "desc": "This course focuses on skill development and employability by introducing the functional components of computer systems, operating systems like Linux, and networking basics. It also emphasizes the utilization of professional tools such as Git, GitHub, and AI platforms to enhance technical skills and digital practices.",
+        "units": [
+          "Computer System",
+          "Operating System",
+          "Linux Operating System",
+          "Cohorts and Skill Sets",
+          "Computer Network and Communication",
+          "Version Control"
+        ]
+      },
+      {
+        "key": "Sem1_CSE326",
+        "sem": "Sem1",
+        "code": "CSE326",
+        "name": "INTERNET PROGRAMMING LABORATORY",
+        "desc": "This course focuses on internet programming techniques including HTML5 for structure, CSS for responsive design and layout, and JavaScript for client-side logic and DOM manipulation.",
+        "units": [
+          "Fundamentals of HTML",
+          "Expanding HTML Knowledge",
+          "Introduction to Cascading Style Sheets",
+          "JavaScript Application Development",
+          "JavaScript Functions, Events and Validation",
+          "Javascript DOM"
+        ]
+      },
+      {
+        "key": "Sem1_ECE131",
+        "sem": "Sem1",
+        "code": "ECE131",
+        "name": "BASIC ELECTRICAL AND ELECTRONICS ENGINEERING",
+        "desc": "This course covers the fundamental principles of electrical and electronics engineering, including electrical circuits, machines, semiconductor devices, and operational amplifiers. It also introduces concepts of IoT, cloud computing, and embedded systems.",
+        "units": [
+          "Fundamentals of D.C. Circuits",
+          "Fundamentals of A.C. Circuits",
+          "Fundamentals of Electrical Machines",
+          "Fundamentals of Semiconductor Devices and Digital Circuits",
+          "Fundamentals of Filters and Operational Amplifiers",
+          "Fundamentals of Embedded System and Applications"
+        ]
+      },
+      {
+        "key": "Sem1_INT108",
+        "sem": "Sem1",
+        "code": "INT108",
+        "name": "PYTHON PROGRAMMING",
+        "desc": "This course focuses on employability and skill development through Python programming. It covers the installation of the Python environment, conditional and iterative statements, functions, core data structures like lists, dictionaries, tuples and sets, object-oriented programming, and file handling operations.",
+        "units": [
+          "Setting up Programming Environment; Variables, Expressions and Statements",
+          "Conditional statements; Iterative statements",
+          "Functions and Recursion",
+          "String; Lists; Tuples and Dictionaries",
+          "Classes and Objects; OOP Terminology",
+          "Files and Exceptions; Regular Expressions"
+        ]
+      },
+      {
+        "key": "Sem1_MTH165",
+        "sem": "Sem1",
+        "code": "MTH165",
+        "name": "MATHEMATICS FOR ENGINEERS",
+        "desc": "This course focuses on employability and skill development, enabling students to apply concepts of matrices, calculus of one variable, multi-variable differential and integral calculus, and Fourier series to engineering problems.",
+        "units": [
+          "Linear Algebra",
+          "Differential and Integral Calculus",
+          "Application of Derivatives",
+          "Multivariate Functions",
+          "Multiple Integrals",
+          "Fourier Series"
+        ]
+      }
+    ],
+    "Sem2": [
+      {
+        "key": "Sem2_CSE101",
+        "sem": "Sem2",
+        "code": "CSE101",
+        "name": "COMPUTER PROGRAMMING",
+        "desc": "Course Focus: EMPLOYABILITY, SKILL DEVELOPMENT, ENTREPRENEURSHIP. Covers C programming fundamentals including control structures, functions, arrays, pointers, dynamic memory allocation, strings, structures and unions.",
+        "units": [
+          "Basics and Introduction to C",
+          "Control Structures and Input/Output Functions",
+          "User Defined Functions and Storage Classes",
+          "Arrays in C",
+          "Pointers, Dynamic Memory Allocation and Strings",
+          "Derived Types Including Structures and Unions"
+        ]
+      },
+      {
+        "key": "Sem2_ECE182",
+        "sem": "Sem2",
+        "code": "ECE182",
+        "name": "ELECTRONICS FOR ROBOTS",
+        "desc": "This course focuses on employability and skill development, enabling students to understand, analyze, and apply electronic devices such as p-n junction diodes, BJTs, FETs, and op-amps.",
+        "units": [
+          "Semiconductor and its Application",
+          "Bipolar Junction Transistors",
+          "Field Effect Transistors",
+          "Feedback Amplifiers and Power Amplifier",
+          "Oscillators",
+          "Operational Amplifiers and Applications"
+        ]
+      },
+      {
+        "key": "Sem2_ECE213",
+        "sem": "Sem2",
+        "code": "ECE213",
+        "name": "DIGITAL ELECTRONICS",
+        "desc": "This course covers digital number systems, boolean algebra, and the application of binary arithmetic concepts for designing combinational circuits. Students will also learn to develop various flip-flops, registers, counters, and analyze memory design and FPGA applications.",
+        "units": [
+          "Number Systems",
+          "Boolean Algebra and Logic Gates",
+          "Introduction to Combinational Logic Circuits",
+          "Introduction to Sequential Logic Circuits",
+          "Sequential Logic Circuits Applications",
+          "Memory and Programmable Logic"
+        ]
+      },
+      {
+        "key": "Sem2_MTH401",
+        "sem": "Sem2",
+        "code": "MTH401",
+        "name": "DISCRETE MATHEMATICS",
+        "desc": "This course on Discrete Mathematics focuses on employability and skill development, covering topics such as logic and proofs, combinatorics, recurrence relations, graph theory, and number theory.",
+        "units": [
+          "Logic and Proofs",
+          "Recurrence Relations",
+          "Counting Principles and Relations",
+          "Graphs Theory I",
+          "Graphs Theory II",
+          "Number Theory and its Application in Cryptography"
+        ]
+      },
+      {
+        "key": "Sem2_PEL130",
+        "sem": "Sem2",
+        "code": "PEL130",
+        "name": "ADVANCED COMMUNICATION SKILLS I",
+        "desc": "The course focuses on competitive and placement examinations for higher education and mass recruiters, along with skill enhancement and personality development.",
+        "units": [
+          "Substitution and Ellipsis",
+          "Sentence Structure",
+          "Conditionals",
+          "Infinitives, Gerunds and Quantifiers",
+          "Reduced Clauses, Connectors and Focus Structures",
+          "Professional Vocabulary"
+        ]
+      }
+    ],
+    "Sem3": [
+      {
+        "key": "Sem3_CSC104",
+        "sem": "Sem3",
+        "code": "CSC104",
+        "name": "IT FUNDAMENTALS",
+        "desc": "This course covers the fundamental concepts of Information Technology including hardware, software, networking, databases, and security.",
+        "units": [
+          "IT Fundamentals Overview",
+          "Computer Hardware",
+          "Software and Operating Systems",
+          "Networking Basics",
+          "Database Fundamentals",
+          "IT Security"
+        ]
+      },
+      {
+        "key": "Sem3_CSE202",
+        "sem": "Sem3",
+        "code": "CSE202",
+        "name": "OBJECT ORIENTED PROGRAMMING",
+        "desc": "The course focuses on employability, skill development, and entrepreneurship, enabling students to identify basic programming constructs, interpret object-oriented model principles, and apply them in C++ language implementation.",
+        "units": [
+          "Concepts and Basics of C++ Programming and Functions",
+          "Pointers, Reference Variables, Arrays and String Concepts",
+          "Data File Operations, Constructors, Destructors and File Handling",
+          "Operator Overloading, Type Conversion and Inheritance",
+          "Dynamic Memory Management and Polymorphism",
+          "Exception Handling, Templates and STL"
+        ]
+      },
+      {
+        "key": "Sem3_CSE205",
+        "sem": "Sem3",
+        "code": "CSE205",
+        "name": "DATA STRUCTURES AND ALGORITHMS",
+        "desc": "This course focuses on employability and skill development, designed to enable students to understand time and space complexity of programs and data structures. It covers the implementation and importance of Linked Lists, Stacks, Queues, Trees, Heap operations, and Hashing techniques.",
+        "units": [
+          "Introduction, Arrays, Sorting and Searching",
+          "Linked Lists",
+          "Stacks and Queues",
+          "Trees and Recursion",
+          "Heaps and Hashing",
+          "Graphs"
+        ]
+      },
+      {
+        "key": "Sem3_CSE306",
+        "sem": "Sem3",
+        "code": "CSE306",
+        "name": "COMPUTER NETWORKS",
+        "desc": "This course covers the fundamentals of computer networking, including network models, protocols, data transmission, routing algorithms, and network security concepts.",
+        "units": [
+          "Introduction to Computer Networks",
+          "Physical Layer",
+          "Data Link Layer",
+          "Network Layer",
+          "Transport Layer",
+          "Application Layer"
+        ]
+      },
+      {
+        "key": "Sem3_CSE316",
+        "sem": "Sem3",
+        "code": "CSE316",
+        "name": "OPERATING SYSTEMS",
+        "desc": "This course covers the core concepts of operating systems including process management, memory management, file systems, and I/O management.",
+        "units": [
+          "Introduction to Operating Systems",
+          "Process Management",
+          "CPU Scheduling",
+          "Memory Management",
+          "File Systems",
+          "I/O Management"
+        ]
+      }
+    ],
+    "Sem4": [
+      {
+        "key": "Sem4_CSC202",
+        "sem": "Sem4",
+        "code": "CSC202",
+        "name": "SYSTEM ADMINISTRATION",
+        "desc": "This specialty course covers system administration concepts for managing enterprise IT infrastructure.",
+        "units": [
+          "Enterprise Server Administration",
+          "Directory Services",
+          "Storage Management",
+          "Network Services Configuration",
+          "System Security",
+          "Automation and Scripting"
+        ]
+      },
+      {
+        "key": "Sem4_CSC203",
+        "sem": "Sem4",
+        "code": "CSC203",
+        "name": "INTRODUCTION TO BLOCKCHAIN",
+        "desc": "This course covers blockchain technology fundamentals including distributed ledgers, consensus mechanisms, smart contracts, and cryptocurrency.",
+        "units": [
+          "Introduction to Blockchain",
+          "Cryptographic Foundations",
+          "Consensus Mechanisms",
+          "Smart Contracts",
+          "Ethereum and DApps",
+          "Blockchain Applications"
+        ]
+      },
+      {
+        "key": "Sem4_CSE211",
+        "sem": "Sem4",
+        "code": "CSE211",
+        "name": "COMPUTER ORGANIZATION AND DESIGN",
+        "desc": "This course covers the fundamentals of computer organization including digital logic, processor design, memory hierarchy, and I/O systems.",
+        "units": [
+          "Digital Logic and Computer Architecture",
+          "Instruction Set Architecture",
+          "Processor Design",
+          "Memory Hierarchy",
+          "I/O Systems",
+          "Pipelining and Parallel Processing"
+        ]
+      },
+      {
+        "key": "Sem4_CSE273",
+        "sem": "Sem4",
+        "code": "CSE273",
+        "name": "CSE273",
+        "desc": "Core computer science course covering advanced topics in algorithms and system design.",
+        "units": [
+          "Unit 1",
+          "Unit 2",
+          "Unit 3",
+          "Unit 4",
+          "Unit 5",
+          "Unit 6"
+        ]
+      },
+      {
+        "key": "Sem4_CSE274",
+        "sem": "Sem4",
+        "code": "CSE274",
+        "name": "APPLIED MACHINE LEARNING",
+        "desc": "This course covers practical machine learning techniques including supervised learning, unsupervised learning, model evaluation, and deployment.",
+        "units": [
+          "Introduction to Machine Learning",
+          "Supervised Learning - Regression",
+          "Supervised Learning - Classification",
+          "Unsupervised Learning",
+          "Model Evaluation and Selection",
+          "ML Deployment and Applications"
+        ]
+      },
+      {
+        "key": "Sem4_CSE275",
+        "sem": "Sem4",
+        "code": "CSE275",
+        "name": "OPTIMIZATION TECHNIQUES FOR ML",
+        "desc": "This course covers mathematical optimization techniques used in machine learning algorithms.",
+        "units": [
+          "Mathematical Foundations",
+          "Gradient Descent Methods",
+          "Convex Optimization",
+          "Constrained Optimization",
+          "Stochastic Optimization",
+          "Advanced Optimization Techniques"
+        ]
+      },
+      {
+        "key": "Sem4_CSE310",
+        "sem": "Sem4",
+        "code": "CSE310",
+        "name": "PROGRAMMING IN JAVA",
+        "desc": "This course covers Java programming fundamentals including OOP concepts, exception handling, multithreading, collections framework, and GUI development.",
+        "units": [
+          "Introduction to Java",
+          "Object-Oriented Programming in Java",
+          "Exception Handling and Multithreading",
+          "Collections Framework",
+          "I/O Streams and File Handling",
+          "GUI Development with JavaFX"
+        ]
+      },
+      {
+        "key": "Sem4_CSE325",
+        "sem": "Sem4",
+        "code": "CSE325",
+        "name": "OPERATING SYSTEMS LABORATORY",
+        "desc": "Practical laboratory course focusing on hands-on experience with operating system concepts including process management, scheduling, and memory management.",
+        "units": [
+          "Introduction to OS Lab",
+          "Process Management",
+          "CPU Scheduling Algorithms",
+          "Memory Management Techniques",
+          "File System Operations",
+          "System Calls and Shell Programming"
+        ]
+      },
+      {
+        "key": "Sem4_ERT425",
+        "sem": "Sem4",
+        "code": "ERT425",
+        "name": "ENTREPRENEURSHIP AND BUSINESS BASICS",
+        "desc": "This course covers the fundamentals of entrepreneurship and business management.",
+        "units": [
+          "Introduction to Entrepreneurship",
+          "Business Planning",
+          "Financial Management",
+          "Marketing Strategies",
+          "Legal and Regulatory Framework",
+          "Startup Ecosystem"
+        ]
+      },
+      {
+        "key": "Sem4_INT219",
+        "sem": "Sem4",
+        "code": "INT219",
+        "name": "FRONT END WEB DEVELOPER",
+        "desc": "This course covers front-end web development technologies including HTML5, CSS3, JavaScript, and modern frameworks.",
+        "units": [
+          "HTML5 Fundamentals",
+          "CSS3 and Responsive Design",
+          "JavaScript ES6+",
+          "DOM Manipulation and Events",
+          "Modern CSS Frameworks",
+          "Frontend Build Tools"
+        ]
+      },
+      {
+        "key": "Sem4_INT222",
+        "sem": "Sem4",
+        "code": "INT222",
+        "name": "ADVANCED WEB DEVELOPMENT",
+        "desc": "This course covers advanced concepts in web development including server-side programming, databases, APIs, and full-stack development.",
+        "units": [
+          "Server-Side Programming",
+          "Database Integration",
+          "RESTful APIs",
+          "Authentication and Authorization",
+          "Deployment and DevOps",
+          "Full Stack Project"
+        ]
+      },
+      {
+        "key": "Sem4_INT242",
+        "sem": "Sem4",
+        "code": "INT242",
+        "name": "CYBER SECURITY ESSENTIALS",
+        "desc": "This course covers fundamental concepts of cybersecurity including threat analysis, cryptography, network security, and security management.",
+        "units": [
+          "Introduction to Cyber Security",
+          "Cryptography Fundamentals",
+          "Network Security",
+          "Web Application Security",
+          "Security Operations",
+          "Cyber Security Management"
+        ]
+      },
+      {
+        "key": "Sem4_INT249",
+        "sem": "Sem4",
+        "code": "INT249",
+        "name": "SYSTEM ADMINISTRATION",
+        "desc": "This course covers system administration concepts including server management, user management, storage, and network services.",
+        "units": [
+          "Introduction to System Administration",
+          "User and Group Management",
+          "File System and Storage",
+          "Network Services",
+          "System Monitoring and Maintenance",
+          "Virtualization and Cloud Basics"
+        ]
+      },
+      {
+        "key": "Sem4_INT255",
+        "sem": "Sem4",
+        "code": "INT255",
+        "name": "MATHEMATICS BEHIND MACHINE LEARNING",
+        "desc": "This course covers the mathematical foundations essential for understanding machine learning algorithms.",
+        "units": [
+          "Linear Algebra for ML",
+          "Probability and Statistics",
+          "Calculus for Optimization",
+          "Information Theory",
+          "Matrix Decomposition",
+          "Statistical Learning Theory"
+        ]
+      },
+      {
+        "key": "Sem4_INT428",
+        "sem": "Sem4",
+        "code": "INT428",
+        "name": "ARTIFICIAL INTELLIGENCE ESSENTIALS",
+        "desc": "This course covers the foundations and applications of AI, including problem solving, search algorithms, machine learning, deep neural networks, NLP, generative AI, and prompt engineering.",
+        "units": [
+          "Foundations & Applications of AI",
+          "AI Problem Modeling & Search Concepts",
+          "Problem Solving & Search in AI",
+          "Machine Learning",
+          "Introduction to Deep Neural Networks / Modern NLP",
+          "Generative AI & Ethics / Prompt Engineering"
+        ]
+      },
+      {
+        "key": "Sem4_PEA305",
+        "sem": "Sem4",
+        "code": "PEA305",
+        "name": "ANALYTICAL SKILLS-I",
+        "desc": "This course focuses on developing analytical and quantitative aptitude skills for competitive exams and placements.",
+        "units": [
+          "Quantitative Aptitude I",
+          "Quantitative Aptitude II",
+          "Logical Reasoning I",
+          "Logical Reasoning II",
+          "Data Interpretation",
+          "Verbal Reasoning"
+        ]
+      }
+    ],
+    "Sem5": [
+      {
+        "key": "Sem5_CSE322",
+        "sem": "Sem5",
+        "code": "CSE322",
+        "name": "CSE322",
+        "desc": "Core computer science course for semester 5.",
+        "units": [
+          "Unit 1",
+          "Unit 2",
+          "Unit 3",
+          "Unit 4",
+          "Unit 5",
+          "Unit 6"
+        ]
+      },
+      {
+        "key": "Sem5_ENG606",
+        "sem": "Sem5",
+        "code": "ENG606",
+        "name": "CONTEMPORARY SHORT STORIES",
+        "desc": "This open minor course explores contemporary short fiction from diverse literary traditions.",
+        "units": [
+          "Introduction to Short Fiction",
+          "Narrative Techniques",
+          "Character Development",
+          "Theme and Symbolism",
+          "Cultural Contexts",
+          "Critical Analysis"
+        ]
+      },
+      {
+        "key": "Sem5_FIN212",
+        "sem": "Sem5",
+        "code": "FIN212",
+        "name": "BASIC FINANCIAL MANAGEMENT",
+        "desc": "This course covers fundamental concepts of financial management including financial planning, analysis, and investment decisions.",
+        "units": [
+          "Introduction to Financial Management",
+          "Financial Planning",
+          "Capital Budgeting",
+          "Cost of Capital",
+          "Working Capital Management",
+          "Financial Analysis"
+        ]
+      },
+      {
+        "key": "Sem5_FST801",
+        "sem": "Sem5",
+        "code": "FST801",
+        "name": "FASHION STUDIES",
+        "desc": "This open minor course covers the fundamentals of fashion design, history, and industry.",
+        "units": [
+          "History of Fashion",
+          "Fashion Design Principles",
+          "Textile Science",
+          "Fashion Marketing",
+          "Sustainable Fashion",
+          "Fashion Technology"
+        ]
+      },
+      {
+        "key": "Sem5_GEO295",
+        "sem": "Sem5",
+        "code": "GEO295",
+        "name": "PHYSICAL GEOGRAPHY",
+        "desc": "This open minor course covers the physical aspects of geography including landforms, climate, and ecosystems.",
+        "units": [
+          "Introduction to Physical Geography",
+          "Geomorphology",
+          "Climatology",
+          "Hydrology",
+          "Biogeography",
+          "Environmental Geography"
+        ]
+      },
+      {
+        "key": "Sem5_HIS291",
+        "sem": "Sem5",
+        "code": "HIS291",
+        "name": "ANCIENT INDIAN HISTORY AND CULTURE",
+        "desc": "This open minor course explores the history and cultural heritage of ancient India.",
+        "units": [
+          "Prehistoric India",
+          "Indus Valley Civilization",
+          "Vedic Period",
+          "Mauryan Empire",
+          "Gupta Period",
+          "Art and Architecture"
+        ]
+      },
+      {
+        "key": "Sem5_HRM203",
+        "sem": "Sem5",
+        "code": "HRM203",
+        "name": "HUMAN RESOURCE PLANNING AND DEVELOPMENT",
+        "desc": "This open minor course covers HR planning, recruitment, training, and organizational development.",
+        "units": [
+          "Introduction to HRM",
+          "HR Planning",
+          "Recruitment and Selection",
+          "Training and Development",
+          "Performance Management",
+          "Employee Relations"
+        ]
+      },
+      {
+        "key": "Sem5_INT222",
+        "sem": "Sem5",
+        "code": "INT222",
+        "name": "ADVANCED WEB DEVELOPMENT",
+        "desc": "Advanced concepts in web development including server-side programming, databases, APIs, and full-stack development.",
+        "units": [
+          "Server-Side Programming",
+          "Database Integration",
+          "RESTful APIs",
+          "Authentication and Authorization",
+          "Deployment and DevOps",
+          "Full Stack Project"
+        ]
+      },
+      {
+        "key": "Sem5_INT234",
+        "sem": "Sem5",
+        "code": "INT234",
+        "name": "PREDICTIVE ANALYTICS",
+        "desc": "This course covers predictive analytics techniques including regression, classification, time series analysis, and model deployment.",
+        "units": [
+          "Introduction to Predictive Analytics",
+          "Regression Analysis",
+          "Classification Techniques",
+          "Time Series Analysis",
+          "Ensemble Methods",
+          "Model Deployment"
+        ]
+      },
+      {
+        "key": "Sem5_INT244",
+        "sem": "Sem5",
+        "code": "INT244",
+        "name": "SECURING COMPUTING SYSTEMS",
+        "desc": "This course covers advanced security concepts for computing systems.",
+        "units": [
+          "Security Architecture",
+          "Access Control Mechanisms",
+          "Cryptographic Protocols",
+          "Intrusion Detection",
+          "Incident Response",
+          "Security Compliance"
+        ]
+      },
+      {
+        "key": "Sem5_INT250",
+        "sem": "Sem5",
+        "code": "INT250",
+        "name": "DIGITAL EVIDENCE ANALYSIS",
+        "desc": "This course covers digital forensics and evidence analysis techniques.",
+        "units": [
+          "Introduction to Digital Forensics",
+          "Evidence Collection",
+          "File System Analysis",
+          "Network Forensics",
+          "Mobile Forensics",
+          "Legal Aspects of Digital Evidence"
+        ]
+      },
+      {
+        "key": "Sem5_INT252",
+        "sem": "Sem5",
+        "code": "INT252",
+        "name": "WEB APP DEVELOPMENT WITH REACTJS",
+        "desc": "This course covers modern web application development using ReactJS including components, state management, routing, and deployment.",
+        "units": [
+          "Introduction to React",
+          "Components and Props",
+          "State Management and Hooks",
+          "Routing and Navigation",
+          "API Integration",
+          "Testing and Deployment"
+        ]
+      },
+      {
+        "key": "Sem5_INT323",
+        "sem": "Sem5",
+        "code": "INT323",
+        "name": "DATABASE ESSENTIALS TOWARD INFORMATICA",
+        "desc": "This course covers database management concepts with focus on Informatica tools for data integration.",
+        "units": [
+          "Database Fundamentals",
+          "SQL Programming",
+          "Data Warehousing",
+          "ETL Concepts",
+          "Informatica PowerCenter",
+          "Data Quality and Governance"
+        ]
+      },
+      {
+        "key": "Sem5_INT331",
+        "sem": "Sem5",
+        "code": "INT331",
+        "name": "FUNDAMENTALS OF DEVOPS",
+        "desc": "This course covers DevOps principles, practices, and tools for continuous integration and deployment.",
+        "units": [
+          "Introduction to DevOps",
+          "Version Control with Git",
+          "CI/CD Pipelines",
+          "Configuration Management",
+          "Containerization",
+          "Monitoring and Logging"
+        ]
+      },
+      {
+        "key": "Sem5_INT344",
+        "sem": "Sem5",
+        "code": "INT344",
+        "name": "NATURAL LANGUAGE PROCESSING",
+        "desc": "This course covers NLP techniques including text processing, sentiment analysis, language models, and modern transformer architectures.",
+        "units": [
+          "Introduction to NLP",
+          "Text Preprocessing",
+          "Language Models",
+          "Sentiment Analysis",
+          "Named Entity Recognition",
+          "Transformers and BERT"
+        ]
+      },
+      {
+        "key": "Sem5_INT346",
+        "sem": "Sem5",
+        "code": "INT346",
+        "name": "ROBOTIC PROCESS AUTOMATION",
+        "desc": "This course covers RPA concepts, tools, and implementation for business process automation.",
+        "units": [
+          "Introduction to RPA",
+          "RPA Tools Overview",
+          "Process Design",
+          "Bot Development",
+          "Exception Handling",
+          "RPA Deployment"
+        ]
+      },
+      {
+        "key": "Sem5_INT363",
+        "sem": "Sem5",
+        "code": "INT363",
+        "name": "CLOUD MICROSERVICES",
+        "desc": "This course covers microservices architecture, containerization, and cloud-native application development.",
+        "units": [
+          "Introduction to Microservices",
+          "Service Design Patterns",
+          "Containerization with Docker",
+          "Orchestration with Kubernetes",
+          "API Gateway and Service Mesh",
+          "Cloud Deployment"
+        ]
+      },
+      {
+        "key": "Sem5_INT364",
+        "sem": "Sem5",
+        "code": "INT364",
+        "name": "CLOUD ARCHITECTURE AND IMPLEMENTATION-II",
+        "desc": "Advanced cloud computing concepts including multi-cloud strategies, serverless computing, and cloud security.",
+        "units": [
+          "Advanced Cloud Architecture",
+          "Serverless Computing",
+          "Multi-Cloud Strategies",
+          "Cloud Security",
+          "Cloud Monitoring",
+          "Cost Optimization"
+        ]
+      },
+      {
+        "key": "Sem5_INT374",
+        "sem": "Sem5",
+        "code": "INT374",
+        "name": "DATA ANALYTICS WITH POWER BI",
+        "desc": "This course covers data analytics and visualization using Microsoft Power BI.",
+        "units": [
+          "Introduction to Power BI",
+          "Data Transformation",
+          "Data Modeling",
+          "DAX Formulas",
+          "Visualization and Reports",
+          "Dashboard Deployment"
+        ]
+      },
+      {
+        "key": "Sem5_INT394",
+        "sem": "Sem5",
+        "code": "INT394",
+        "name": "MACHINE LEARNING ALGORITHMS",
+        "desc": "This course covers core machine learning algorithms including supervised, unsupervised, and reinforcement learning.",
+        "units": [
+          "Introduction to ML Algorithms",
+          "Linear Models",
+          "Decision Trees and Random Forests",
+          "Support Vector Machines",
+          "Clustering Algorithms",
+          "Neural Networks"
+        ]
+      },
+      {
+        "key": "Sem5_INT395",
+        "sem": "Sem5",
+        "code": "INT395",
+        "name": "SUPERVISED LEARNING",
+        "desc": "This course covers supervised learning techniques in depth including regression, classification, and ensemble methods.",
+        "units": [
+          "Introduction to Supervised Learning",
+          "Linear Regression",
+          "Logistic Regression",
+          "Decision Trees",
+          "Ensemble Methods",
+          "Model Evaluation and Tuning"
+        ]
+      },
+      {
+        "key": "Sem5_INT423",
+        "sem": "Sem5",
+        "code": "INT423",
+        "name": "MACHINE LEARNING-II",
+        "desc": "Advanced machine learning topics including deep learning, reinforcement learning, and generative models.",
+        "units": [
+          "Deep Learning Foundations",
+          "Convolutional Neural Networks",
+          "Recurrent Neural Networks",
+          "Generative Models",
+          "Reinforcement Learning",
+          "Advanced ML Applications"
+        ]
+      },
+      {
+        "key": "Sem5_PEV301",
+        "sem": "Sem5",
+        "code": "PEV301",
+        "name": "VERBAL ABILITY",
+        "desc": "This course focuses on developing verbal ability skills for competitive exams and placements.",
+        "units": [
+          "Reading Comprehension",
+          "Vocabulary Building",
+          "Grammar and Usage",
+          "Sentence Completion",
+          "Para Jumbles and Logical Ordering",
+          "Verbal Reasoning"
+        ]
+      },
+      {
+        "key": "Sem5_PSY291",
+        "sem": "Sem5",
+        "code": "PSY291",
+        "name": "PSYCHOLOGICAL TESTING",
+        "desc": "This open minor course covers the fundamentals of psychological testing and assessment.",
+        "units": [
+          "Introduction to Psychological Testing",
+          "Test Construction",
+          "Intelligence Testing",
+          "Personality Assessment",
+          "Aptitude Testing",
+          "Clinical Assessment"
+        ]
+      },
+      {
+        "key": "Sem5_SOC371",
+        "sem": "Sem5",
+        "code": "SOC371",
+        "name": "SOCIOLOGY OF MEDIA",
+        "desc": "This open minor course explores the relationship between media and society.",
+        "units": [
+          "Introduction to Media Studies",
+          "Media Theories",
+          "Social Media and Society",
+          "Media Representation",
+          "Digital Culture",
+          "Media Ethics"
+        ]
+      }
+    ],
+    "Sem6": [
+      {
+        "key": "Sem6_CSE332",
+        "sem": "Sem6",
+        "code": "CSE332",
+        "name": "INDUSTRY ETHICS AND LEGAL ISSUES",
+        "desc": "This course covers ethical and legal considerations in the IT industry including intellectual property, privacy, and cyber law.",
+        "units": [
+          "Introduction to IT Ethics",
+          "Intellectual Property Rights",
+          "Privacy and Data Protection",
+          "Cyber Law",
+          "Professional Ethics",
+          "Case Studies in IT Ethics"
+        ]
+      },
+      {
+        "key": "Sem6_CSE357",
+        "sem": "Sem6",
+        "code": "CSE357",
+        "name": "COMBINATORIAL STUDIES",
+        "desc": "This course covers advanced combinatorial mathematics and its applications in computer science.",
+        "units": [
+          "Counting Techniques",
+          "Generating Functions",
+          "Recurrence Relations",
+          "Graph Enumeration",
+          "Combinatorial Optimization",
+          "Applications in CS"
+        ]
+      },
+      {
+        "key": "Sem6_ENG607",
+        "sem": "Sem6",
+        "code": "ENG607",
+        "name": "CONTEMPORARY PROSE AND POETRY",
+        "desc": "This open minor course explores contemporary prose and poetry from diverse literary traditions.",
+        "units": [
+          "Modern Prose",
+          "Contemporary Poetry",
+          "Literary Criticism",
+          "Narrative Forms",
+          "Poetic Techniques",
+          "Comparative Literature"
+        ]
+      },
+      {
+        "key": "Sem6_FIN215",
+        "sem": "Sem6",
+        "code": "FIN215",
+        "name": "MUTUAL FUNDS AND EXCHANGE TRADED FUNDS",
+        "desc": "This course covers the fundamentals of mutual funds and ETFs including types, analysis, and investment strategies.",
+        "units": [
+          "Introduction to Mutual Funds",
+          "Types of Mutual Funds",
+          "Fund Analysis",
+          "Exchange Traded Funds",
+          "Portfolio Construction",
+          "Regulatory Framework"
+        ]
+      },
+      {
+        "key": "Sem6_HIS292",
+        "sem": "Sem6",
+        "code": "HIS292",
+        "name": "MEDIEVAL INDIAN HISTORY AND CULTURE",
+        "desc": "This open minor course explores the history and cultural developments during medieval India.",
+        "units": [
+          "Early Medieval India",
+          "Delhi Sultanate",
+          "Mughal Empire",
+          "Regional Kingdoms",
+          "Art and Architecture",
+          "Socio-Cultural Developments"
+        ]
+      },
+      {
+        "key": "Sem6_INT221",
+        "sem": "Sem6",
+        "code": "INT221",
+        "name": "MVC PROGRAMMING",
+        "desc": "This course covers Model-View-Controller architecture and web application development using MVC frameworks.",
+        "units": [
+          "Introduction to MVC Pattern",
+          "Server-Side MVC Frameworks",
+          "Models and Data Access",
+          "Views and Templates",
+          "Controllers and Routing",
+          "Full Stack MVC Application"
+        ]
+      },
+      {
+        "key": "Sem6_INT245",
+        "sem": "Sem6",
+        "code": "INT245",
+        "name": "PENETRATION TESTING",
+        "desc": "This course covers penetration testing methodologies, tools, and techniques for security assessment.",
+        "units": [
+          "Introduction to Penetration Testing",
+          "Reconnaissance and Scanning",
+          "Vulnerability Assessment",
+          "Exploitation Techniques",
+          "Post-Exploitation",
+          "Reporting and Remediation"
+        ]
+      },
+      {
+        "key": "Sem6_INT327",
+        "sem": "Sem6",
+        "code": "INT327",
+        "name": "CLOUD INFRASTRUCTURE AND RESOURCE MANAGEMENT",
+        "desc": "This course covers cloud infrastructure management, resource optimization, and cloud operations.",
+        "units": [
+          "Cloud Infrastructure Overview",
+          "Compute Resources",
+          "Storage Management",
+          "Network Configuration",
+          "Resource Optimization",
+          "Cloud Operations"
+        ]
+      },
+      {
+        "key": "Sem6_LAW352",
+        "sem": "Sem6",
+        "code": "LAW352",
+        "name": "TRADEMARKS AND ALLIED LAWS",
+        "desc": "This open minor course covers trademark law, intellectual property rights, and related legal frameworks.",
+        "units": [
+          "Introduction to Trademark Law",
+          "Trademark Registration",
+          "Infringement and Remedies",
+          "Passing Off",
+          "International Trademark Law",
+          "Allied IP Laws"
+        ]
+      },
+      {
+        "key": "Sem6_PES319",
+        "sem": "Sem6",
+        "code": "PES319",
+        "name": "SOFT SKILLS-II",
+        "desc": "This course focuses on developing advanced soft skills for professional growth and career readiness.",
+        "units": [
+          "Leadership Skills",
+          "Team Management",
+          "Negotiation and Conflict Resolution",
+          "Presentation Skills",
+          "Interview Preparation",
+          "Professional Communication"
+        ]
+      },
+      {
+        "key": "Sem6_PSY292",
+        "sem": "Sem6",
+        "code": "PSY292",
+        "name": "POSITIVE PSYCHOLOGY",
+        "desc": "This open minor course covers the science of well-being, happiness, and human flourishing.",
+        "units": [
+          "Introduction to Positive Psychology",
+          "Character Strengths",
+          "Flow and Engagement",
+          "Positive Emotions",
+          "Resilience",
+          "Applying Positive Psychology"
+        ]
+      }
+    ]
+  }
+}

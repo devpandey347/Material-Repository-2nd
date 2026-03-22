@@ -1,0 +1,724 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: var(--bg-color, #121212) !important;
+        color: var(--text-color, #f0f0f0) !important;
+        font-family: 'Space Grotesk', sans-serif !important;
+        padding: 20px;
+        margin: 0;
+        line-height: 1.6;
+        cursor: default !important; /* Ensure cursor shows up inside the iframe */
+    }
+    
+    /* Hide native lpuverto navigation / feedback elements that are broken offline */
+    a[href^="/Sem"], button[onclick*="FeedbackModal"], .ad-in-content { 
+        display: none !important; 
+    }
+    
+    /* Global Elements */
+    a { color: #e63946 !important; text-decoration: none; transition: 0.3s; cursor: pointer; }
+    a:hover { color: #ff6b6b !important; text-decoration: underline; }
+    h1, h2, h3, h4, h5, h6 { color: #ffffff !important; margin-top: 1.5em; margin-bottom: 0.8em; font-weight: 600; }
+    p, li { color: #d0d0d0 !important; margin-bottom: 1em; }
+    ul, ol { padding-left: 20px; }
+    code, pre { background-color: #1e1e1e !important; color: #ff6b6b !important; border-radius: 6px; border: 1px solid #333 !important; }
+    code { padding: 4px 6px; font-size: 0.9em; }
+    pre { padding: 15px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-block: 20px; }
+    th, td { border: 1px solid #3a3a3a !important; padding: 12px; text-align: left; }
+    th { background-color: #1f1f1f !important; color: #fff !important; }
+    hr { border-color: #2a2a2a !important; margin: 30px 0; border-width: 1px 0 0 0; }
+    img { max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #333 !important; }
+    
+    /* Layout & Cards overriding light theme tailwind */
+    .bg-white, .bg-slate-50, .bg-gray-50, .bg-gray-100, .bg-slate-100 {
+        background-color: #1a1a1a !important; /* Proper Card background instead of transparent */
+        border-radius: 12px !important;
+    }
+    .shadow, .shadow-sm, .shadow-md, .shadow-lg {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    }
+    .border, .border-slate-200, .border-gray-200, .border-lpu-border {
+        border: 1px solid #2a2a2a !important;
+    }
+    
+    /* Text Color Resets */
+    .text-gray-900, .text-slate-900, .text-black { color: #ffffff !important; }
+    .text-gray-800, .text-gray-700, .text-slate-700 { color: #e0e0e0 !important; }
+    .text-gray-600, .text-gray-500, .text-slate-500 { color: #a0a0a0 !important; }
+    .text-green-900, .text-green-800 { color: #4ade80 !important; } /* Fix dark green on dark mode */
+    .text-red-900, .text-red-800 { color: #f87171 !important; }
+    .text-white { color: #ffffff !important; }
+    
+    /* specific utility overrides */
+    .bg-green-50, .bg-green-100 { background-color: rgba(74, 222, 128, 0.1) !important; border: 1px solid #4ade80 !important; padding: 15px !important; border-radius: 8px !important; }
+    .bg-red-50, .bg-red-100 { background-color: rgba(248, 113, 113, 0.1) !important; border: 1px solid #f87171 !important; padding: 15px !important; border-radius: 8px !important;}
+    .bg-lpu-primary, .bg-orange-500, .bg-orange-600 { background-color: #e63946 !important; color: white !important;} /* Button Red */
+    
+    /* Spacing and Flex Utilities */
+    .flex { display: flex !important; }
+    .items-center { align-items: center !important; }
+    .items-start { align-items: flex-start !important; }
+    .justify-between { justify-content: space-between !important; }
+    .justify-center { justify-content: center !important; }
+    .gap-2 { gap: 0.5rem !important; }
+    .gap-3 { gap: 0.75rem !important; }
+    .p-3 { padding: 0.75rem !important; }
+    .p-4 { padding: 1rem !important; }
+    .p-6 { padding: 1.5rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+    .mb-6 { margin-bottom: 1.5rem !important; }
+    .mt-4 { margin-top: 1rem !important; }
+    .ml-10 { margin-left: 2.5rem !important; }
+    .rounded-lg { border-radius: 0.5rem !important; }
+    .rounded-xl { border-radius: 0.75rem !important; }
+    .w-8 { width: 2rem !important; }
+    .h-8 { height: 2rem !important; }
+    .w-full { width: 100% !important; }
+
+    /* MCQ UI Fixes */
+    .hidden { display: none !important; }
+    .option-item {
+        border-width: 2px !important;
+        border-color: #333 !important;
+        background-color: #1e1e1e !important;
+        border-radius: 12px !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+    }
+    .option-item:hover {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.05) !important;
+    }
+    .option-item.selected {
+        border-color: #e63946 !important;
+        background-color: rgba(230, 57, 70, 0.15) !important;
+    }
+    
+    /* Action Buttons */
+    .reveal-btn, .hide-btn {
+        background-color: #333 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: 0.2s !important;
+        margin-top: 10px !important;
+        display: inline-flex !important;
+    }
+    .reveal-btn { background-color: #e63946 !important; }
+    .reveal-btn:hover { background-color: #ff5252 !important; }
+    .hide-btn:hover { background-color: #444 !important; }
+</style>
+
+<script>
+    // MCQ Interactive Logic
+    function revealAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (ansBtn) ansBtn.classList.add('hidden');
+        if (hideBtn) hideBtn.classList.remove('hidden');
+        
+        // Show all answer/explanation boxes
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.remove('hidden'));
+    }
+
+    function hideAnswer(index) {
+        const qDiv = document.getElementById('question-' + index);
+        if (!qDiv) return;
+        
+        const ansBtn = qDiv.querySelector('.reveal-btn');
+        const hideBtn = qDiv.querySelector('.hide-btn');
+        
+        if (hideBtn) hideBtn.classList.add('hidden');
+        if (ansBtn) ansBtn.classList.remove('hidden');
+        
+        // Hide all answer elements
+        const ansSecs = qDiv.querySelectorAll('.answer-section');
+        ansSecs.forEach(sec => sec.classList.add('hidden'));
+    }
+    
+    // Select option logic
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+    });
+</script>
+
+<div style="max-width: 850px; margin: 0 auto; padding-bottom: 50px;">
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<!-- Highlight.js for Code Syntax Highlighting -->
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha384-wH75j6z1lH97ZOpMOInqhgKzFkAInZPPSPlZpYKYTOqsaizPvhQZmAtLcPKXpLyH" rel="stylesheet"/>
+<script crossorigin="anonymous" integrity="sha384-F/bZzf7p3Joyp5psL90p/p89AZJsndkSoGwRpXcZhleCWhd8SnRuoYo4d0yirjJp" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- Markdown Styles -->
+<link href="/assets/css/markdown.css?v=1773833749" rel="stylesheet"/>
+<div class="max-w-4xl mx-auto">
+<!-- Breadcrumb Navigation -->
+<nav class="flex items-center text-sm text-slate-500 dark:text-lpu-muted mb-4 flex-wrap gap-1">
+<a class="hover:text-lpu-primary transition-colors" href="/">Home</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5">Sem 5</a>
+<span>/</span>
+<a class="hover:text-lpu-primary transition-colors" href="/Sem5/INT250">INT250</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-lpu-text font-medium">Unit 6</span>
+</nav>
+<!-- Navigation Header -->
+<div class="flex items-center justify-between mb-6">
+<a class="flex items-center text-slate-600 dark:text-lpu-muted hover:text-lpu-primary dark:hover:text-lpu-primary transition-colors" href="/Sem5/INT250">
+<svg class="mr-1" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+            Back to Subject
+        </a>
+<div class="flex items-center space-x-2">
+<!-- Switch to MCQ -->
+<a class="p-2 sm:px-4 sm:py-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text hover:text-slate-900 dark:hover:text-white transition-smooth text-sm font-medium flex items-center gap-2 ripple btn-press" href="/Sem5/INT250/Unit6/mcq" title="Practice MCQ">
+<svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" x2="12.01" y1="17" y2="17"></line></svg>
+<span class="hidden sm:inline">Practice MCQ</span>
+</a>
+<!-- Switch to Subjective (if available) -->
+<!-- Navigation arrows -->
+<a class="p-2 rounded-lg bg-slate-100 dark:bg-lpu-surface hover:bg-slate-200 dark:hover:bg-lpu-border text-slate-700 dark:text-lpu-text transition-smooth ripple" href="/Sem5/INT250/Unit5/notes" title="Previous Unit">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+</a>
+</div>
+</div>
+<div class="bg-white dark:bg-lpu-surface rounded-2xl shadow-sm border border-slate-200 dark:border-lpu-border overflow-hidden">
+<div class="p-6 md:p-8 border-b border-slate-200 dark:border-lpu-border">
+<div class="flex items-center justify-between">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-lpu-text mb-2">Unit 6 - Notes</h1>
+<div class="flex items-center gap-3 text-slate-500 dark:text-lpu-muted text-sm">
+<span>INT250</span>
+<span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-lpu-border"></span>
+<span class="flex items-center gap-1">
+<svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            8 min read
+                        </span>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl shadow-sm hover:shadow transition-all group" onclick="openFeedbackModal()">
+<svg class="group-hover:scale-110 transition-transform" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+<span class="font-medium">Feedback</span>
+</button>
+</div>
+</div>
+<div class="p-6 md:p-8">
+<!-- In-content Ad (between header and content) -->
+<div class="ad-in-content">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="horizontal" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<!-- Table of Contents -->
+<div class="mb-8 bg-slate-50 dark:bg-lpu-border/20 rounded-xl p-6 border border-slate-200 dark:border-lpu-border/40 hidden" id="toc-container">
+<div class="flex items-center justify-between mb-4 cursor-pointer" onclick="document.getElementById('toc-content').classList.toggle('hidden')">
+<h3 class="text-lg font-bold text-slate-800 dark:text-lpu-text flex items-center gap-2">
+<svg class="text-slate-600 dark:text-lpu-muted" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<line x1="8" x2="21" y1="6" y2="6"></line>
+<line x1="8" x2="21" y1="12" y2="12"></line>
+<line x1="8" x2="21" y1="18" y2="18"></line>
+<line x1="3" x2="3.01" y1="6" y2="6"></line>
+<line x1="3" x2="3.01" y1="12" y2="12"></line>
+<line x1="3" x2="3.01" y1="18" y2="18"></line>
+</svg>
+                            Table of Contents
+                        </h3>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-lpu-text transition-smooth">
+<svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 15l-6-6-6 6"></path>
+</svg>
+</button>
+</div>
+<nav class="toc-links space-y-1" id="toc-content"></nav>
+</div>
+<div class="markdown-content" id="markdown-content">
+<h1>Unit 6: Analysis of Malware</h1>
+<h2>1. Define Malware and Identify Common Spreading Techniques</h2>
+<h3>Definition of Malware</h3>
+<p>Malware (Malicious Software) refers to any software intentionally designed to cause damage to a computer, server, client, or computer network. It is used by threat actors to extract data, disrupt operations, or gain unauthorized access.</p>
+<p><strong>Key Categories:</strong></p>
+<ul>
+<li><strong>Virus:</strong> Self-replicating code that attaches to clean files.</li>
+<li><strong>Worm:</strong> Standalone malware that replicates to spread to other computers, often exploiting network vulnerabilities.</li>
+<li><strong>Trojan:</strong> Software that disguises itself as legitimate but performs malicious activity in the background.</li>
+<li><strong>Ransomware:</strong> Encrypts user data and demands payment for the decryption key.</li>
+<li><strong>Spyware/Keylogger:</strong> Monitors user activity and captures keystrokes (passwords, banking info).</li>
+<li><strong>Rootkit:</strong> Tools designed to hide the existence of certain processes or programs from normal methods of detection, often operating at the kernel level.</li>
+</ul>
+<h3>Common Spreading Techniques</h3>
+<p>Attackers use various vectors to deliver malware to the target system:</p>
+<ol>
+<li><strong>Social Engineering (Phishing/Spear Phishing):</strong>
+<ul>
+<li>Emails containing malicious attachments (Word docs, PDFs) or links to malicious sites.</li>
+<li>Relies on human error and manipulation.</li>
+</ul></li>
+<li><strong>Drive-by Downloads:</strong>
+<ul>
+<li>Unintended downloads that occur when visiting a compromised website.</li>
+<li>Often utilizes <strong>Exploit Kits</strong> (automated threats that identify browser vulnerabilities).</li>
+</ul></li>
+<li><strong>Removable Media:</strong>
+<ul>
+<li>Infection via USB drives using <code>autorun.inf</code> or disguised executables.</li>
+</ul></li>
+<li><strong>Software Vulnerabilities (Exploits):</strong>
+<ul>
+<li>Exploiting unpatched flaws in Operating Systems or applications (e.g., SMB vulnerabilities like EternalBlue).</li>
+</ul></li>
+<li><strong>Malvertising:</strong>
+<ul>
+<li>Injecting malicious code into legitimate online advertising networks.</li>
+</ul></li>
+<li><strong>Bundling:</strong>
+<ul>
+<li>Packaging malware inside pirated software, cracks, or keygens.</li>
+</ul></li>
+</ol>
+<hr/>
+<h2>2. Malware Forensics Fundamentals and Types of Analysis</h2>
+<h3>Fundamentals</h3>
+<p>Malware forensics involves the study of malicious code to understand its behavior, origin, and impact. The primary goals are:</p>
+<ul>
+<li><strong>Identification:</strong> Determining the type of malware.</li>
+<li><strong>Capability Assessment:</strong> Understanding what the malware <em>can</em> do (steal data, delete files, etc.).</li>
+<li><strong>Attribution:</strong> Attempting to identify the author (difficult and often obfuscated).</li>
+<li><strong>IOC Generation:</strong> Creating Indicators of Compromise (File Hashes, C2 IP addresses, Mutexes) to detect the threat on other systems.</li>
+</ul>
+<p><strong>Safety Protocol:</strong></p>
+<ul>
+<li><strong>Isolation:</strong> Never analyze malware on a production machine.</li>
+<li><strong>Virtualization:</strong> Use Virtual Machines (VMs) with "Host-Only" networking to prevent leakage.</li>
+<li><strong>Snapshots:</strong> Take snapshots of the clean VM state before execution to allow quick reversion.</li>
+</ul>
+<h3>Types of Malware Analysis</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Pros</th>
+<th style="text-align: left;">Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Static Analysis</strong></td>
+<td style="text-align: left;">Analyzing the code without executing it. Involves reverse engineering binaries.</td>
+<td style="text-align: left;">Safe; Reveals code structure; Can detect logic bombs.</td>
+<td style="text-align: left;">Can be defeated by packing/obfuscation; Time-consuming.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Dynamic Analysis</strong></td>
+<td style="text-align: left;">Running the malware in a controlled environment (sandbox) to observe behavior.</td>
+<td style="text-align: left;">Shows true behavior; Faster than deep reverse engineering.</td>
+<td style="text-align: left;">Can be detected by malware (anti-VM techniques); specific triggers may be missed.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hybrid Analysis</strong></td>
+<td style="text-align: left;">Combining static and dynamic approaches.</td>
+<td style="text-align: left;">Comprehensive view.</td>
+<td style="text-align: left;">Resource intensive.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Memory Forensics</strong></td>
+<td style="text-align: left;">Analyzing the computer's RAM dump to find artifacts of malware execution.</td>
+<td style="text-align: left;">Detects fileless malware and unpacked code.</td>
+<td style="text-align: left;">Requires a memory image capture; volatile data.</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+<h2>3. Understand and Perform Static Analysis of Malware</h2>
+<p>Static analysis is the first step in the triage process. It dissects the binary file to extract metadata and code structure.</p>
+<h3>Key Static Analysis Techniques</h3>
+<h4>A. File Fingerprinting (Hashing)</h4>
+<p>Generating a unique cryptographic hash to identify the specific malware sample and check against databases like VirusTotal.</p>
+<ul>
+<li><strong>Algorithms:</strong> MD5, SHA-1, SHA-256.</li>
+<li><strong>Tools:</strong> <code>CertUtil</code>, <code>HashCalc</code>, <code>md5sum</code>.</li>
+</ul>
+<h4>B. String Analysis</h4>
+<p>Extracting readable ASCII and Unicode characters from the binary. This can reveal:</p>
+<ul>
+<li>Filenames/Paths.</li>
+<li>URL/IP addresses (Command &amp; Control).</li>
+<li>Registry keys.</li>
+<li>Error messages.</li>
+<li><strong>Tool:</strong> <code>Strings</code> (Sysinternals or Linux command).
+<ul>
+<li><em>Command:</em> <code>strings -n 5 malware.exe</code> (Shows strings longer than 5 chars).</li>
+</ul></li>
+</ul>
+<h4>C. Portable Executable (PE) Header Analysis</h4>
+<p>Windows executables follow the PE format. Analyzing headers reveals how the OS should load the file.</p>
+<ul>
+<li><strong>Sections:</strong>
+<ul>
+<li><code>.text</code>: Contains the executable code.</li>
+<li><code>.data</code>: Contains global/static variables.</li>
+<li><code>.rsrc</code>: Resources (icons, images, embedded files).</li>
+</ul></li>
+<li><strong>Import Address Table (IAT):</strong> Lists functions the malware imports from Windows DLLs.
+<ul>
+<li><em>Example:</em> If imports include <code>InternetOpenUrl</code> and <code>WriteFile</code>, the malware likely downloads and saves files.</li>
+<li><em>Example:</em> <code>IsDebuggerPresent</code> indicates anti-analysis capabilities.</li>
+</ul></li>
+<li><strong>Tools:</strong> <code>PEStudio</code>, <code>CFF Explorer</code>, <code>PEview</code>.</li>
+</ul>
+<h4>D. Obfuscation and Packing Detection</h4>
+<p>Authors compress or encrypt malware (packing) to hide the code from static analysis.</p>
+<ul>
+<li><strong>Indicators:</strong> High entropy (randomness) in file sections; lack of readable strings; few imports in the IAT.</li>
+<li><strong>Tools:</strong> <code>Detect It Easy (DiE)</code>, <code>PEiD</code>.</li>
+</ul>
+<h4>E. Disassembly</h4>
+<p>Translating machine code (binary) into Assembly language for logic analysis.</p>
+<ul>
+<li><strong>Tools:</strong> <code>IDA Pro</code>, <code>Ghidra</code>, <code>Cutter</code>.</li>
+</ul>
+<hr/>
+<h2>4. Analyze Suspicious Word and PDF Documents</h2>
+<p>Attackers frequently use document-based malware as an entry point.</p>
+<h3>Analyzing Malicious Word Documents (OLE)</h3>
+<p>Microsoft Office files often use the OLE (Object Linking and Embedding) format or the newer XML format (docx/docm). The primary vector is <strong>VBA Macros</strong>.</p>
+<ul>
+<li><strong>Mechanism:</strong>
+<ul>
+<li><strong>AutoOpen() / Document_Open():</strong> Macros that execute immediately upon opening the file.</li>
+<li><strong>Payload:</strong> Typically spawns PowerShell or CMD to download the actual exe payload.</li>
+</ul></li>
+<li><strong>Analysis Tools (OLETools Suite):</strong>
+<ul>
+<li><code>oleid</code>: Analyzes OLE streams to detect dangerous properties.</li>
+<li><code>olevba</code>: Extracts and decompiles VBA macros, highlighting suspicious keywords (e.g., <code>Shell</code>, <code>Call</code>, <code>CreateObject</code>).</li>
+<li><code>olebrowse</code>: Browses the internal structure of the file.</li>
+</ul></li>
+</ul>
+<h3>Analyzing Malicious PDF Documents</h3>
+<p>PDFs consist of a header, body (objects), cross-reference table, and trailer. Malware usually resides in specific objects.</p>
+<ul>
+<li><strong>Mechanism:</strong>
+<ul>
+<li><strong>JavaScript:</strong> Embedded JS execution (<code>/JS</code>, <code>/JavaScript</code>).</li>
+<li><strong>OpenAction:</strong> Commands executed upon opening (<code>/OpenAction</code>, <code>/AA</code>).</li>
+<li><strong>Launch:</strong> Launching external applications.</li>
+</ul></li>
+<li><strong>Analysis Tools:</strong>
+<ul>
+<li><code>pdfid</code>: Scans for keywords like <code>/JS</code>, <code>/Encrypt</code>, <code>/OpenAction</code>.</li>
+<li><code>pdf-parser</code>: Extracts specific objects or streams for further analysis.</li>
+<li><code>peepdf</code>: Comprehensive python tool for PDF analysis.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>5. Dynamic Malware Analysis Fundamentals and Approaches</h2>
+<p>Dynamic analysis involves detonating the malware. The environment must be strictly controlled to prevent the malware from spreading or signaling the attacker that it is being analyzed.</p>
+<h3>The Environment (The Sandbox)</h3>
+<ul>
+<li><strong>Virtual Machine:</strong> VMware or VirtualBox.</li>
+<li><strong>Network Simulation:</strong>
+<ul>
+<li><strong>Host-Only Adapter:</strong> The VM can talk to the host (if allowed) but not the internet.</li>
+<li><strong>FakeNet / INetSim:</strong> Tools running on a Linux gateway that simulate internet services (DNS, HTTP, SMTP) so the malware "thinks" it is online and reveals its network behavior.</li>
+</ul></li>
+<li><strong>Agents:</strong> Monitoring agents installed inside the VM.</li>
+</ul>
+<h3>Approaches</h3>
+<ol>
+<li><strong>Automated Sandboxing:</strong> Submitting the file to a system that runs it and generates a report automatically.
+<ul>
+<li><em>Examples:</em> Cuckoo Sandbox, Joe Sandbox, Any.Run.</li>
+</ul></li>
+<li><strong>Manual Dynamic Analysis:</strong> The analyst runs the tools and the malware manually to observe specific behaviors in real-time.</li>
+<li><strong>Debugging:</strong> Using a debugger (<code>x64dbg</code>, <code>OllyDbg</code>) to step through the assembly instructions line-by-line while the program runs. This allows manipulation of the CPU registers and memory.</li>
+</ol>
+<hr/>
+<h2>6. Analyze Malware Behavior on System Properties in Real-time</h2>
+<p>When malware executes, it interacts with the Operating System. Analysts monitor these interactions to determine the malware's intent.</p>
+<h3>A. Process Activity</h3>
+<ul>
+<li><strong>What to look for:</strong>
+<ul>
+<li>Child processes (e.g., a Word doc spawning <code>powershell.exe</code>).</li>
+<li><strong>Process Injection/Hollowing:</strong> Malware replacing the memory of a legitimate process (like <code>svchost.exe</code>) with malicious code to hide.</li>
+</ul></li>
+<li><strong>Tool:</strong> <strong>Process Explorer</strong> (Sysinternals). Look for color-coded processes (purple for packed/compressed) and verify digital signatures.</li>
+</ul>
+<h3>B. File System Activity</h3>
+<ul>
+<li><strong>What to look for:</strong>
+<ul>
+<li>Dropping files (payloads) into <code>%TEMP%</code> or <code>System32</code>.</li>
+<li>Modifying user files (Ransomware encryption).</li>
+<li>Self-deletion (cleaning up the dropper).</li>
+</ul></li>
+<li><strong>Tool:</strong> <strong>Procmon (Process Monitor)</strong>.
+<ul>
+<li><em>Filter:</em> Filter by <code>Process Name</code> is <code>[malware_name]</code> and <code>Operation</code> contains <code>WriteFile</code>.</li>
+</ul></li>
+</ul>
+<h3>C. Registry Activity (Persistence)</h3>
+<p>Malware modifies the registry to survive reboots (Persistence).</p>
+<ul>
+<li><strong>Key Locations:</strong>
+<ul>
+<li><code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code></li>
+<li><code>HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce</code></li>
+<li><code>HKLM\System\CurrentControlSet\Services</code></li>
+</ul></li>
+<li><strong>Tool:</strong> <strong>Regshot</strong>.
+<ul>
+<li><em>Method:</em> Take "1st shot" before infection. Infect system. Take "2nd shot". Click "Compare" to see changes.</li>
+</ul></li>
+</ul>
+<hr/>
+<h2>7. Analyze Malware Behavior on Network in Real-time</h2>
+<p>Malware usually requires network access for Command &amp; Control (C2), exfiltration, or downloading additional payloads.</p>
+<h3>Network Artifacts</h3>
+<ol>
+<li><strong>DNS Queries:</strong> Malware resolves the domain name of the C2 server.
+<ul>
+<li><em>Suspicious:</em> Random looking domains (DGA - Domain Generation Algorithms) or non-existent TLDs.</li>
+</ul></li>
+<li><strong>TCP/UDP Connections:</strong> Establishing connections (SYN packets).</li>
+<li><strong>HTTP/HTTPS Requests:</strong>
+<ul>
+<li><em>User-Agent:</em> Often abnormal or mimics outdated browsers.</li>
+<li><em>Payload:</em> Data sent in POST requests (stolen passwords, system info).</li>
+</ul></li>
+</ol>
+<h3>Tools and Techniques</h3>
+<ul>
+<li><strong>Wireshark:</strong> The standard for packet capture.
+<ul>
+<li><em>Filter:</em> <code>http.request</code>, <code>dns</code>, or <code>ip.addr == [victim_ip]</code>.</li>
+<li><em>Follow TCP Stream:</em> Reconstructs the data exchange to read plaintext traffic.</li>
+</ul></li>
+<li><strong>TCPView:</strong> Shows active ports and the processes linked to them on the host.</li>
+<li><strong>Fiddler / Burp Suite:</strong> Intercepts and decrypts HTTPS traffic (requires installing a root CA on the victim VM).</li>
+<li><strong>ApateDNS / Fakedns:</strong> Redirects all DNS queries to a specific IP (usually the analysis machine) to trick malware into connecting.</li>
+</ul>
+<hr/>
+<h2>8. Fileless Malware Attacks</h2>
+<p>Fileless malware is a technique where threats execute without writing malicious executables to the hard drive, making them invisible to traditional antivirus file scanning.</p>
+<h3>How it Happens (The Infection Chain)</h3>
+<p>It leverages "Living off the Land" (LotL) tactics, using legitimate system administration tools.</p>
+<ol>
+<li><strong>Delivery:</strong> Usually via a Phishing email with a script or macro, or a drive-by download.</li>
+<li><strong>Execution (Memory Only):</strong>
+<ul>
+<li>The script (e.g., VBA in a Word doc) executes.</li>
+<li>It launches a trusted system utility like <strong>PowerShell</strong>, <strong>WMI</strong> (Windows Management Instrumentation), or <strong>Mshta.exe</strong>.</li>
+<li>The malicious code is injected directly into the RAM of these trusted processes.</li>
+</ul></li>
+<li><strong>Persistence:</strong>
+<ul>
+<li>Since there is no file to run at startup, the malware stores scripts in the <strong>Windows Registry</strong> or creates <strong>Scheduled Tasks</strong> that invoke PowerShell commands stored in registry keys upon boot.</li>
+</ul></li>
+</ol>
+<h3>Analysis of Fileless Malware</h3>
+<p>Since there is no binary to analyze statically:</p>
+<ul>
+<li><strong>Memory Forensics:</strong> Analysts must capture a RAM image (using tools like <code>DumpIt</code> or <code>FTK Imager</code>) and analyze it with <strong>Volatility Framework</strong>.</li>
+<li><strong>Behavioral Monitoring:</strong> Rely on EDR (Endpoint Detection and Response) tools to flag suspicious behavior (e.g., PowerShell launching a network connection to an unknown IP).</li>
+<li><strong>Script Analysis:</strong> De-obfuscating the PowerShell or VBScript extracted from macros or registry keys.</li>
+</ul> </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const markdownContent = document.getElementById('markdown-content');
+    if (!markdownContent) return;
+    
+    // Apply syntax highlighting to code blocks
+    if (typeof hljs !== 'undefined') {
+        markdownContent.querySelectorAll('pre code').forEach(function(block) {
+            hljs.highlightElement(block);
+        });
+    }
+    
+    // Smooth scroll for anchor links
+    markdownContent.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href').slice(1);
+            const target = document.getElementById(targetId);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    
+    // Auto-scroll to hash on page load
+    if (window.location.hash) {
+        setTimeout(function() {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
+    // Generate Table of Contents
+    function generateTOC() {
+        const headings = markdownContent.querySelectorAll('h1, h2, h3, h4');
+        if (headings.length === 0) return;
+
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+        
+        headings.forEach((heading, index) => {
+            // Generate ID if not present
+            if (!heading.id) {
+                const id = 'heading-' + index;
+                heading.id = id;
+            }
+            
+            const level = parseInt(heading.tagName.substring(1));
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            link.className = 'block py-1.5 px-3 text-sm text-slate-600 dark:text-lpu-muted hover:text-slate-900 dark:hover:text-lpu-text hover:bg-slate-100 dark:hover:bg-lpu-border/30 rounded transition-smooth';
+            
+            // Add indentation based on heading level
+            if (level === 2) link.style.paddingLeft = '0.75rem';
+            if (level === 3) link.style.paddingLeft = '1.5rem';
+            if (level === 4) link.style.paddingLeft = '2.25rem';
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.history.pushState(null, null, '#' + heading.id);
+                
+                // Highlight active link
+                tocContent.querySelectorAll('a').forEach(a => a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text'));
+                link.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text');
+            });
+            
+            tocContent.appendChild(link);
+        });
+        
+        // Show TOC if headings exist
+        tocContainer.classList.remove('hidden');
+
+        // Highlight active heading on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    tocContent.querySelectorAll('a').forEach(a => {
+                        a.classList.remove('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        if (a.getAttribute('href') === '#' + id) {
+                            a.classList.add('font-semibold', 'text-slate-900', 'dark:text-lpu-text', 'bg-slate-100', 'dark:bg-lpu-border/30');
+                        }
+                    });
+                }
+            });
+        }, {
+            rootMargin: '-80px 0px -80% 0px',
+            threshold: 0
+        });
+
+        headings.forEach(heading => observer.observe(heading));
+    }
+    
+    generateTOC();
+
+    // Ensure KaTeX math is rendered (fallback if CDN was still loading at defer-time)
+    if (window.renderAllMath) window.renderAllMath();
+
+    // Image Lightbox functionality
+    function setupImageLightbox() {
+        const images = markdownContent.querySelectorAll('img');
+        if (images.length === 0) return;
+
+        // Create lightbox element
+        const lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.innerHTML = `
+            <button class="lightbox-close" aria-label="Close">&times;</button>
+            <img src="" alt="">
+            <div class="lightbox-caption"></div>
+        `;
+        document.body.appendChild(lightbox);
+
+        const lightboxImg = lightbox.querySelector('img');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const closeBtn = lightbox.querySelector('.lightbox-close');
+
+        // Click on image to open lightbox
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.textContent = img.alt || '';
+                lightboxCaption.style.display = img.alt ? 'block' : 'none';
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Close lightbox
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLightbox();
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                closeLightbox();
+            }
+        });
+    }
+
+    setupImageLightbox();
+});
+</script>
+<!-- Bottom Unit Navigation -->
+<div class="max-w-4xl mx-auto mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<a class="group flex items-center gap-3 p-4 bg-white dark:bg-lpu-surface rounded-xl border border-slate-200 dark:border-lpu-border hover:border-lpu-primary/50 hover:shadow-md transition-all" href="/Sem5/INT250/Unit5/notes">
+<svg class="text-slate-400 group-hover:text-lpu-primary transition-colors flex-shrink-0" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6"></path></svg>
+<div>
+<div class="text-xs text-slate-400 dark:text-lpu-muted uppercase tracking-wider">Previous</div>
+<div class="font-semibold text-slate-800 dark:text-lpu-text group-hover:text-lpu-primary transition-colors">Unit 5</div>
+</div>
+</a>
+</div>
+</div>
+<!-- AdSense Bottom (lazy-loaded, after content) -->
+<div class="mt-10 text-center overflow-hidden content-below-fold">
+<ins class="adsbygoogle" data-ad-client="ca-pub-6155060420672692" data-ad-format="auto" data-ad-slot="8171693585" data-full-width-responsive="true" style="display:block"></ins>
+<script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+</div>
+</main>
+</div>
