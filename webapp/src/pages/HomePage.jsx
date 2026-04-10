@@ -248,7 +248,7 @@ function HomePage() {
                     <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                         <a
                             className="btn-red-outline inline-flex rounded-full px-6 py-3 text-sm"
-                            href="https://dev-portfolio-452krrpu5-dev-pandeys-projects-24e9f338.vercel.app/"
+                            href="https://devpandey347.github.io/devpandey347-Portfolio/"
                             target="_blank"
                             rel="noreferrer"
                         >
